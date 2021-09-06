@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Simon&#39;s Blog</title>
   
-  
+  <subtitle>To be or not to be, that is a question.</subtitle>
   <link href="https://simon7520.github.io/atom.xml" rel="self"/>
   
   <link href="https://simon7520.github.io/"/>
