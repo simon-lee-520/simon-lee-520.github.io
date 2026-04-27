@@ -20,7 +20,7 @@ timezone: Asia/Shanghai
 
 nav:
   # Navigation bar logo image
-  logo: /img/Conan.jpeg
+  logo: /img/butterfly-icon.png
   display_title: true
   display_post_title: true
   # Whether to fix navigation bar
