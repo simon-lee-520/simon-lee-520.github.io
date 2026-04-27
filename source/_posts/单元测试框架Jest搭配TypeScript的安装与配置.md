@@ -1,4 +1,5 @@
 ---
+title: 单元测试框架Jest搭配TypeScript的安装与配置
 abbrlink: '0'
 ---
 为项目安装并配置Jest单元测试环境
