@@ -3,7 +3,7 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Simon's Blog
+title: Simon
 subtitle: IT Technology Blog
 description: To be or not to be, that is a question.
 keywords: 算法 C C++ Java 前端 JavaScript TypeScript Vue React
@@ -109,7 +109,7 @@ ignore:
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: next
+theme: butterfly
 
 symbols_count_time:
   total_symbols: true
