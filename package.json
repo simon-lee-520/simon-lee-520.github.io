@@ -23,7 +23,7 @@
     "start": "pnpm run dev",
     "build": "hexo generate",
     "clean": "hexo clean",
-    "deploy": "hexo deploy",
+    "deploy": "hexo generate && hexo deploy",
     "server": "hexo server",
     "dev": "hexo server -p 80"
   },
