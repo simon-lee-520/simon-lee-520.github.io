@@ -1,3 +1,12 @@
+# Site
+title: Simon
+# subtitle: IT Technology Blog
+description: To be or not to be, that is a question.
+keywords: 算法 C C++ Java 前端 JavaScript TypeScript Vue React
+author: Simon
+language: zh-CN
+timezone: Asia/Shanghai
+
 # --------------------------------------
 # Hexo Butterfly Theme Configuration
 # If you have any questions, please refer to the documentation
@@ -11,7 +20,7 @@
 
 nav:
   # Navigation bar logo image
-  logo:
+  logo: /img/Conan.jpeg
   display_title: true
   display_post_title: true
   # Whether to fix navigation bar
@@ -29,8 +38,8 @@ menu:
 
 code_blocks:
   # Code block theme: darker / pale night / light / ocean / false
-  theme: light
-  macStyle: false
+  theme: ocean
+  macStyle: true
   # Code block height limit (unit: px)
   height_limit: false
   word_wrap: false
@@ -149,12 +158,12 @@ index_top_img_height:
 
 # The subtitle on homepage
 subtitle:
-  enable: false
+  enable: true
   # Typewriter Effect
   effect: true
   # Customize typed.js
   # https://github.com/mattboldt/typed.js/#customization
-  typed_option:
+  typed_option: 3
   # Source - Call the third-party service API (Chinese only)
   # It will show the source first, then show the content of sub
   # Choose: false/1/2/3
@@ -162,9 +171,12 @@ subtitle:
   # 1 - hitokoto.cn
   # 2 - https://api.aa1.cn/doc/yiyan.html
   # 3 - jinrishici.com
-  source: false
+  source: true
   # If you close the typewriter effect, the subtitle will only show the first line of sub
-  sub:
+  sub: 
+   - To be or not to be, that is a question.
+   - Life is a journey, not a destination.
+   - Never put off till tomorrow what you can do today.
 
 # Article layout on the homepage
 # 1: Cover on the left, info on the right
