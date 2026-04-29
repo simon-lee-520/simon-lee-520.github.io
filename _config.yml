@@ -14,7 +14,7 @@ timezone: Asia/Shanghai
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
 url: https://simon7520.github.io
-permalink: posts/:abbrlink.html
+permalink: posts/:abbrlink
 abbrlink:
   alg: crc32 # 算法：crc16(default) and crc32
   rep: hex # 进制：dec(default) and hex
@@ -50,14 +50,14 @@ marked:
 relative_link: false
 future: true
 highlight:
-  enable: false
+  enable: true
   line_number: true
   auto_detect: false
   tab_replace: '  '
   wrap: true
-  hljs: false
+  hljs: true
 prismjs:
-  enable: true
+  enable: false
   preprocess: false
   line_number: true
   tab_replace: '  '
@@ -136,3 +136,9 @@ deploy:
   repository: git@github.com:Simon7520/simon7520.github.io.git # 设置repository对应的链接
   branch: master # 设置提交到的分支
   message: Site updated at {{ now("YYYY-MM-DD HH:mm:ss") }} # 设置我们提交的信息
+
+
+#aplayer
+aplayer:
+  meting: true
+  asset_inject: false

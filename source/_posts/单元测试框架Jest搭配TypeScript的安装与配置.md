@@ -1,6 +1,8 @@
 ---
 title: 单元测试框架Jest搭配TypeScript的安装与配置
-abbrlink: '0'
+abbrlink: 7984b310
+created: 2022-07-21 23:25:07
+updated: 2022-07-22 11:16:08
 ---
 为项目安装并配置Jest单元测试环境
 
