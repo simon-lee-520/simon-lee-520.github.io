@@ -1,7 +1,10 @@
 ---
 title: 单元测试框架Jest搭配TypeScript的安装与配置
+comments: true
+date: 2022-07-21 23:25:07
+categories:
+tags:
 abbrlink: 7984b310
-created: 2022-07-21 23:25:07
 updated: 2022-07-22 11:16:08
 ---
 为项目安装并配置Jest单元测试环境
@@ -17,7 +20,8 @@ npm i jest ts-jest @types/jest -D
 ## 2. 初始化：
 npx jest --init
 按照图中所示选择
-![jest --init](https://i-blog.csdnimg.cn/blog_migrate/9bb199f2aa35579c5f27a52af34849a5.png)
+![jest --init](9bb199f2aa35579c5f27a52af34849a5.png)
+
 tip:
 	- *no;不使用ts，使用jest.config.js作为jest的配置文件；*
 	- *jsdom;使用jsdom作为测试环境（jsdom:一个类似浏览器的环境，项目是运行在浏览器的，需要在浏览器dom环境下测试）；*
@@ -32,7 +36,7 @@ npm i jest-environment-jsdom eslint-plugin-jest eslint-import-resolver-typescrip
 ```
 ## 4. 创建test目录
 在项目根目录下创建test目录，然后在test下创建__mocks和__tests__目录，创建.eslintrc.js和tsconfig.json文件
-![在这里插入图片描述](https://i-blog.csdnimg.cn/blog_migrate/9aa30da4eb5b38c96a92d3d765ef8bd2.png)
+![目录结构示例](9aa30da4eb5b38c96a92d3d765ef8bd2.png)
 >附：配置示例
 >
 *`jest.config.js`*
