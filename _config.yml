@@ -138,7 +138,8 @@ deploy:
   message: Site updated at {{ now("YYYY-MM-DD HH:mm:ss") }} # 设置我们提交的信息
 
 
-#aplayer
+# aplayer
 aplayer:
   meting: true
-  asset_inject: false
+  # meting_api: https://meting-api.9887665.xyz/api
+  asset_inject: true

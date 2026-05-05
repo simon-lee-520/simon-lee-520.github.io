@@ -1071,7 +1071,9 @@ inject:
     - <script async src="/js/diytitle.js"></script>
     # - <script async src="/js/cursor.js"></script>
     - <script async src="/js/grayscale.js"></script>
-    # - <div class="aplayer no-destroy" data-id="2762963245" data-server="netease" data-type="playlist" data-fixed="true" data-mini="true" data-autoplay="true"> </div>
+    - <script src="/js/custom-sync.js"></script>
+    - <script async src="/js/custom-async.js"></script>
+    - <div class="aplayer no-destroy" data-id="17949662811" data-server="netease" data-type="playlist" data-fixed="true" data-mini="true" data-autoplay="true" data-theme="#ad7a86"></div>
 
 # CDN Settings
 # Don't modify the following settings unless you know how they work

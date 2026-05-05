@@ -12,7 +12,6 @@ updated: 2022-07-22 11:16:08
 # 分步指南
 传送门：[Jest - 快速入门](https://jestjs.io/docs/getting-started)
 
-
 ## 1. 安装jest：
 ```bash
 npm i jest ts-jest @types/jest -D
