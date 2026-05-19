@@ -1,0 +1,261 @@
+/* 个人主页（/）— 赛博风落地页 */
+
+.page-landing {
+  margin: 0;
+  overflow-x: hidden;
+  color: #e8f4f8;
+}
+
+.page-landing #loading-box,
+.page-landing #loading-box.loaded {
+  z-index: 99999;
+}
+
+#landing {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+}
+
+/* ---------- 首屏 ---------- */
+.landing-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem 1.5rem 4rem;
+  text-align: center;
+}
+
+.landing-hero-inner {
+  max-width: 36rem;
+}
+
+.landing-theme-btn {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.25rem;
+  z-index: 10;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid rgba(0, 245, 255, 0.35);
+  border-radius: 50%;
+  background: rgba(8, 12, 20, 0.55);
+  color: #00f5ff;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.landing-theme-btn:hover {
+  border-color: rgba(255, 0, 170, 0.6);
+  box-shadow: 0 0 12px rgba(0, 245, 255, 0.25);
+}
+
+.landing-avatar {
+  width: 7rem;
+  height: 7rem;
+  margin: 0 auto 1.25rem;
+  border: 2px solid rgba(0, 245, 255, 0.45);
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 24px rgba(0, 168, 196, 0.25);
+}
+
+.landing-name {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.5rem, 5vw, 2.35rem);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-shadow: 0 0 20px rgba(0, 245, 255, 0.35);
+}
+
+#landing-subtitle {
+  min-height: 1.75em;
+  margin: 0.75rem 0 0;
+  font-size: clamp(1rem, 3.5vw, 1.25rem);
+  line-height: 1.6;
+  color: rgba(0, 245, 255, 0.9);
+  text-shadow: 0 0 16px rgba(0, 245, 255, 0.25);
+}
+
+#landing-subtitle #subtitle {
+  font-family: 'YanShiXiaXingKai', sans-serif;
+}
+
+#landing-subtitle .typed-cursor {
+  color: #ff00aa;
+  opacity: 0.9;
+}
+
+.landing-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 2rem;
+  padding: 0.85rem 2rem;
+  border: 1px solid rgba(0, 245, 255, 0.55);
+  border-radius: 2px;
+  background: linear-gradient(135deg, rgba(0, 245, 255, 0.12), rgba(255, 0, 170, 0.08));
+  color: #e8f4f8;
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  backdrop-filter: blur(6px);
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.landing-cta:hover {
+  transform: translateY(-2px);
+  border-color: #ff00aa;
+  box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+  color: #fff;
+}
+
+.landing-scroll-hint {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(0, 245, 255, 0.6);
+  font-size: 1.25rem;
+  text-decoration: none;
+  animation: landing-bounce 2s ease-in-out infinite;
+}
+
+@keyframes landing-bounce {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(8px);
+  }
+}
+
+/* ---------- 内容区 ---------- */
+.landing-content {
+  position: relative;
+  padding: 4rem 1.5rem 5rem;
+}
+
+.landing-content-inner {
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 2rem 2.25rem;
+  border: 1px solid rgba(0, 245, 255, 0.2);
+  border-radius: 4px;
+  background: rgba(8, 12, 20, 0.72);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+.landing-content-inner h2 {
+  margin: 2rem 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(0, 245, 255, 0.25);
+  color: #00f5ff;
+  font-size: 1.35rem;
+}
+
+.landing-content-inner h2:first-child {
+  margin-top: 0;
+}
+
+.landing-content-inner p,
+.landing-content-inner li {
+  line-height: 1.75;
+  color: rgba(232, 244, 248, 0.88);
+}
+
+.landing-content-inner a {
+  color: #00d4ff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.landing-content-inner a:hover {
+  color: #ff6ec7;
+}
+
+.landing-content-inner blockquote {
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  border-left: 3px solid #ff00aa;
+  background: rgba(255, 0, 170, 0.06);
+  color: rgba(232, 244, 248, 0.75);
+}
+
+/* ---------- 页脚 ---------- */
+.landing-footer {
+  padding: 1.5rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: rgba(232, 244, 248, 0.5);
+}
+
+.landing-footer a {
+  color: rgba(0, 212, 255, 0.85);
+  text-decoration: none;
+}
+
+.landing-footer a:hover {
+  color: #ff6ec7;
+}
+
+.landing-footer-sep {
+  margin: 0 0.35rem;
+}
+
+/* 浅色主题 */
+[data-theme='light'] .page-landing {
+  color: #1a2332;
+}
+
+[data-theme='light'] .landing-name {
+  text-shadow: none;
+  color: #0d1b2a;
+}
+
+[data-theme='light'] #landing-subtitle {
+  color: #006978;
+  text-shadow: none;
+}
+
+[data-theme='light'] .landing-content-inner {
+  background: rgba(255, 255, 255, 0.82);
+  border-color: rgba(0, 131, 143, 0.25);
+}
+
+[data-theme='light'] .landing-content-inner h2 {
+  color: #006978;
+}
+
+[data-theme='light'] .landing-content-inner p,
+[data-theme='light'] .landing-content-inner li {
+  color: #37474f;
+}
+
+[data-theme='light'] .landing-theme-btn {
+  background: rgba(255, 255, 255, 0.75);
+  color: #006978;
+  border-color: rgba(0, 131, 143, 0.35);
+}
+
+[data-theme='light'] .landing-cta {
+  color: #0d1b2a;
+  border-color: rgba(0, 131, 143, 0.45);
+  background: linear-gradient(135deg, rgba(0, 131, 143, 0.1), rgba(94, 53, 177, 0.08));
+}
+
+@media (max-width: 768px) {
+  .landing-content-inner {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .landing-avatar {
+    width: 5.5rem;
+    height: 5.5rem;
+  }
+}
