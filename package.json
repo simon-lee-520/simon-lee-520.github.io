@@ -20,12 +20,11 @@
     }
   },
   "scripts": {
-    "start": "pnpm run dev",
+    "start": "pnpm run server",
+    "server": "hexo server",
     "build": "hexo generate",
     "clean": "hexo clean",
-    "deploy": "hexo generate && hexo deploy",
-    "server": "hexo server",
-    "dev": "hexo server -p 80"
+    "deploy": "hexo generate && hexo deploy"
   },
   "hexo": {
     "version": "8.1.1"
