@@ -1,5 +1,6 @@
 ---
 title: JS四则运算重新封装，解决精度丢失问题
+copyright_type: original
 comments: true
 date: '2021-07-28 13:42:12'
 tags:

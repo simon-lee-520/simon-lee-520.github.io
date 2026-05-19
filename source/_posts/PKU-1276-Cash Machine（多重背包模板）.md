@@ -1,5 +1,6 @@
 ---
 title: PKU-1276-Cash Machine（多重背包模板）
+copyright_type: original
 comments: true
 date: '2016-08-20 15:30:52'
 tags:

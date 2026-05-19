@@ -1,5 +1,6 @@
 ---
 title: 单元测试框架Jest搭配TypeScript的安装与配置
+copyright_type: original
 comments: true
 date: '2022-07-21 23:25:07'
 tags:

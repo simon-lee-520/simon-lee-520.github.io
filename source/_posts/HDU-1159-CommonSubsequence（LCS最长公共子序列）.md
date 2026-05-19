@@ -1,5 +1,6 @@
 ---
 title: HDU-1159-CommonSubsequence（LCS最长公共子序列）
+copyright_type: original
 comments: true
 date: '2016-08-20 15:51:37'
 tags:

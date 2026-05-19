@@ -1,5 +1,6 @@
 ---
 title: PKU-2524-Ubiquitous Religions（并查集模板）
+copyright_type: original
 comments: true
 date: '2016-08-20 15:34:39'
 tags:

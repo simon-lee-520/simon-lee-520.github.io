@@ -1,5 +1,6 @@
 ---
 title: HNUC-2330 Casino-算法Manacher最长回文子串
+copyright_type: original
 comments: true
 date: '2015-08-03 17:22:47'
 tags:

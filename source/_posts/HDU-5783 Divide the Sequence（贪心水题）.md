@@ -1,5 +1,6 @@
 ---
 title: HDU-5783 Divide the Sequence（贪心水题）
+copyright_type: repost
 comments: true
 date: '2016-08-20 15:39:29'
 tags:

@@ -1,5 +1,6 @@
 ---
 title: git pre-commit & husky配置教程
+copyright_type: original
 comments: true
 date: '2024-12-18 18:55:31'
 tags:
