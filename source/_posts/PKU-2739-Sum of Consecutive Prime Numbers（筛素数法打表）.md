@@ -1,5 +1,6 @@
 ---
 title: PKU-2739-Sum of Consecutive Prime Numbers（筛素数法打表）
+copyright_type: original
 comments: true
 date: '2016-08-20 15:37:05'
 tags:

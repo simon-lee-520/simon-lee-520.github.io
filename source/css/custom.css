@@ -1,7 +1,6 @@
 /* =========== 模糊渐入效果 =========== */
 /*10s为加载动画的时间，1为加载动画的次数，ease-in-out为动画效果*/
-#page-header,
-#web_bg {
+#page-header {
   -webkit-animation: imgblur 2s 1 ease-in-out;
   animation: imgblur 2s 1 ease-in-out;
 }
@@ -90,6 +89,33 @@ i:hover {
   cursor: url('/img/cursor/normal.png'), auto;
 }
 
+/* =========== Three.js 赛博背景 =========== */
+#bg-tech-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* 轻微扫描线叠层（仅个人主页） */
+body.page-landing::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.04;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 245, 255, 0.15) 2px,
+    rgba(0, 245, 255, 0.15) 3px
+  );
+}
+
 /* =========== 自定义透明度 =========== */
 /* 页脚透明 */
 #footer {
@@ -113,4 +139,60 @@ i:hover {
 }
 [data-theme='dark'] #page-header::before {
   background: transparent !important;
+}
+
+/* =========== 原创 / 转载 标签（CSDN 官方配色） =========== */
+/* 参考 blogv2 list_enter：type-1 原创 / type-2 转载 */
+.copyright-badge {
+  display: inline-block;
+  box-sizing: border-box;
+  min-width: 34px;
+  margin-right: 8px;
+  padding: 0 4px;
+  border: none;
+  border-radius: 2px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 20px;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.copyright-badge--original {
+  color: #fc5531;
+  background-color: #fff5f2;
+}
+
+.copyright-badge--repost {
+  color: #67bb55;
+  background-color: rgba(103, 187, 85, 0.1);
+}
+
+#post-info #post-meta .meta-firstline .copyright-badge,
+.recent-post-info .article-meta-wrap .copyright-badge,
+.article-sort-item-time .copyright-badge,
+.card-recent-post .aside-post-meta .copyright-badge {
+  margin-right: 6px;
+}
+
+.card-recent-post .aside-post-meta {
+  margin-top: 4px;
+  color: var(--card-meta);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.card-recent-post .aside-post-meta time {
+  vertical-align: middle;
+}
+
+[data-theme='dark'] .copyright-badge--original {
+  color: #fc5531;
+  background-color: rgba(252, 85, 49, 0.15);
+}
+
+[data-theme='dark'] .copyright-badge--repost {
+  color: #67bb55;
+  background-color: rgba(103, 187, 85, 0.18);
 }

@@ -1,5 +1,6 @@
 ---
 title: HDU-5806-NanoApeLovesSequenceⅡ（尺取法）
+copyright_type: original
 comments: true
 date: '2016-08-20 15:58:55'
 tags:

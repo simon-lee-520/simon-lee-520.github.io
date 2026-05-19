@@ -47,6 +47,7 @@
     "hexo-tag-aplayer": "^3.0.4",
     "hexo-theme-landscape": "^0.0.3",
     "hexo-word-counter": "0.0.3",
-    "prism-themes": "^1.8.0"
+    "prism-themes": "^1.8.0",
+    "three": "^0.172.0"
   }
 }

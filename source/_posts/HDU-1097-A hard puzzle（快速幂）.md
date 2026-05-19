@@ -1,5 +1,6 @@
 ---
 title: HDU-1097-A hard puzzle（快速幂）
+copyright_type: original
 comments: true
 date: '2016-08-20 15:42:36'
 tags:

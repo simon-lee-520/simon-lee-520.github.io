@@ -1,5 +1,6 @@
 ---
 title: HDU-5805-NanoApe Loves Sequence（思维题）
+copyright_type: original
 comments: true
 date: '2016-08-20 15:56:22'
 tags:

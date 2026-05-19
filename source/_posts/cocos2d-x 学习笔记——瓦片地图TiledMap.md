@@ -1,5 +1,6 @@
 ---
 title: cocos2d-x 学习笔记——瓦片地图TiledMap
+copyright_type: repost
 comments: true
 date: '2016-08-07 16:14:08'
 tags:

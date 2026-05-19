@@ -1,5 +1,6 @@
 ---
 title: Vue props传入function时的this指向问题
+copyright_type: original
 comments: true
 date: '2021-01-04 16:01:58'
 tags:
