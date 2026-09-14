@@ -30,7 +30,7 @@
     "version": "8.1.1"
   },
   "dependencies": {
-    "hexo": "^8.1.1",
+    "hexo": "^8.1.2",
     "hexo-abbrlink": "^2.2.1",
     "hexo-butterfly-tag-plugins-plus": "^1.0.18",
     "hexo-deployer-git": "^4.0.0",
