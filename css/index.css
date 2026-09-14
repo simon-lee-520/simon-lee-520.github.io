@@ -1742,7 +1742,7 @@ body {
   background: var(--global-bg);
   color: var(--font-color);
   font-size: var(--global-font-size);
-  font-family: HanchanKT;
+  font-family: '851dianjiwenziti';
   line-height: 2;
   -webkit-tap-highlight-color: rgba(0,0,0,0);
   scroll-behavior: smooth;
@@ -7920,14 +7920,21 @@ blockquote.pullquote.right {
     transform: rotate(360deg);
   }
 }
-/* 自定义字体 */
+/* 本地字体 @font-face */
 @font-face {
-  font-family: 'YanShiXiaXingKai';
-  src: url('/fonts/YanShiXiaXingKai.ttf');
+  font-family: '851dianjiwenziti';
+  src: url('/fonts/851dianjiwenziti.ttf') format('truetype');
   font-display: swap;
 }
 
-h1#site-title, #subtitle {
+@font-face {
+  font-family: 'YanShiXiaXingKai';
+  src: url('/fonts/YanShiXiaXingKai.ttf') format('truetype');
+  font-display: swap;
+}
+
+h1#site-title,
+#subtitle {
   font-family: 'YanShiXiaXingKai', sans-serif;
 }
 
