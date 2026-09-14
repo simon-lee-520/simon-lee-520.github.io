@@ -1,0 +1,227 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>JS四则运算重新封装，解决精度丢失问题 | Simon</title><meta name="author" content="Simon"><meta name="copyright" content="Simon"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="math.js&#x2F;* eslint-disable one-var *&#x2F; &#x2F;* eslint-disable no-extend-native *&#x2F; &#x2F;*  * @Author: Simon  * @Date: 2021-07-14 16:32:43  * @LastEditors: Simon  * @LastEditTime: 2022-04-11 18:49:53  * @Descriptio">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JS四则运算重新封装，解决精度丢失问题">
+<meta property="og:url" content="https://simon-lee-520.github.io/posts/4f53ca67/index.html">
+<meta property="og:site_name" content="Simon">
+<meta property="og:description" content="math.js&#x2F;* eslint-disable one-var *&#x2F; &#x2F;* eslint-disable no-extend-native *&#x2F; &#x2F;*  * @Author: Simon  * @Date: 2021-07-14 16:32:43  * @LastEditors: Simon  * @LastEditTime: 2022-04-11 18:49:53  * @Descriptio">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://simon-lee-520.github.io/img/Conan.jpeg">
+<meta property="article:published_time" content="2021-07-28T05:42:12.000Z">
+<meta property="article:modified_time" content="2021-07-28T05:42:12.000Z">
+<meta property="article:author" content="Simon">
+<meta property="article:tag" content="javascript">
+<meta property="article:tag" content="前端">
+<meta property="article:tag" content="原型模式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://simon-lee-520.github.io/img/Conan.jpeg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "JS四则运算重新封装，解决精度丢失问题",
+  "url": "https://simon-lee-520.github.io/posts/4f53ca67/",
+  "image": "https://simon-lee-520.github.io/img/Conan.jpeg",
+  "datePublished": "2021-07-28T05:42:12.000Z",
+  "dateModified": "2021-07-28T05:42:12.000Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Simon",
+      "url": "https://simon-lee-520.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://simon-lee-520.github.io/posts/4f53ca67/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":150,"languages":{"author":"作者: Simon","link":"链接: ","source":"来源: Simon","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'JS四则运算重新封装，解决精度丢失问题',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"  media="defer" onload="this.media='all'"><meta name="generator" content="Hexo 8.1.2"></head><body><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+btf.addGlobalFn('pjaxSend', () => {
+  Pace.restart()
+}, 'pace_restart')
+
+</script><link rel="stylesheet" href="/css/pace/flash.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/Conan.jpeg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">23</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">55</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-user"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/blog/"><i class="fa-fw fas fa-home"></i><span> 博客</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img fixed" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/logo_wangye.jpg" alt="Logo"><span class="site-name">Simon</span></a><a class="nav-page-title" href="/"><span class="site-name">JS四则运算重新封装，解决精度丢失问题</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-user"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/blog/"><i class="fa-fw fas fa-home"></i><span> 博客</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">JS四则运算重新封装，解决精度丢失问题</h1><div id="post-meta"><div class="meta-firstline"><span class="copyright-badge copyright-badge--original">原创</span><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-07-28T05:42:12.000Z" title="发表于 2021-07-28 13:42:12">2021-07-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-07-28T05:42:12.000Z" title="更新于 2021-07-28 13:42:12">2021-07-28</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/note/">前端踩坑笔记</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="container post-content" id="article-container"><h2 id="math-js"><a href="#math-js" class="headerlink" title="math.js"></a>math.js</h2><pre><code>/* eslint-disable one-var */
+/* eslint-disable no-extend-native */
+/*
+ * @Author: Simon
+ * @Date: 2021-07-14 16:32:43
+ * @LastEditors: Simon
+ * @LastEditTime: 2022-04-11 18:49:53
+ * @Description: 四则运算重新封装，解决精度丢失问题
+ */
+
+// 加法
+Number.prototype.add = function (arg) {
+  let r1, r2, m
+  try { r1 = this.toString().split(&#39;.&#39;)[1].length } catch (e) { r1 = 0 }
+  try { r2 = arg.toString().split(&#39;.&#39;)[1].length } catch (e) { r2 = 0 }
+  m = Math.pow(10, Math.max(r1, r2))
+  return (this * m + arg * m) / m
+}
+// 减法
+Number.prototype.sub = function (arg) {
+  let r1, r2, m, n
+  try { r1 = this.toString().split(&#39;.&#39;)[1].length } catch (e) { r1 = 0 }
+  try { r2 = arg.toString().split(&#39;.&#39;)[1].length } catch (e) { r2 = 0 }
+  m = Math.pow(10, Math.max(r1, r2))
+  // 动态控制精度长度
+  n = (r1 &gt;= r2) ? r1 : r2
+  return Number(((this * m - arg * m) / m).toFixed(n))
+}
+// 乘法
+Number.prototype.mul = function (arg) {
+  let m = 0, s1 = this.toString(), s2 = arg.toString()
+  try { m += s1.split(&#39;.&#39;)[1].length } catch (e) { }
+  try { m += s2.split(&#39;.&#39;)[1].length } catch (e) { }
+  return Number(s1.replace(&#39;.&#39;, &#39;&#39;)) * Number(s2.replace(&#39;.&#39;, &#39;&#39;)) / Math.pow(10, m)
+}
+// 除法
+Number.prototype.div = function (arg) {
+  let t1 = 0, t2 = 0, r1, r2
+  try { t1 = this.toString().split(&#39;.&#39;)[1].length } catch (e) { }
+  try { t2 = arg.toString().split(&#39;.&#39;)[1].length } catch (e) { }
+  r1 = Number(this.toString().replace(&#39;.&#39;, &#39;&#39;))
+  r2 = Number(arg.toString().replace(&#39;.&#39;, &#39;&#39;))
+  return (r1 / r2) * Math.pow(10, t2 - t1)
+}
+
+// 三位分节法（千分位加逗号）
+Number.prototype.toThousandsString = function () {
+  let str = this.toString()
+  let reg = ~str.indexOf(&#39;.&#39;) ? /(\d)(?=(\d{3})+\.)/g : /(\d)(?=(?:\d{3})+$)/g
+  return str.replace(reg, &#39;$1,&#39;)
+}
+</code></pre></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://simon-lee-520.github.io">Simon</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://simon-lee-520.github.io/posts/4f53ca67/">https://simon-lee-520.github.io/posts/4f53ca67/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://simon-lee-520.github.io" target="_blank">Simon</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/javascript/">javascript</a><a class="post-meta__tags" href="/tags/%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/">原型模式</a><a class="post-meta__tags" href="/tags/%E5%89%8D%E7%AB%AF/">前端</a></div><div class="post-share"><div class="social-share" data-image="/img/Conan.jpeg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/posts/0f0c1d65/" title="新 MacBook Pro（M1 Pro）开箱记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">新 MacBook Pro（M1 Pro）开箱记</div></div><div class="info-2"><div class="info-item-1">快下班了，拆机 16 英寸 MacBook M1 Pro，深空灰。 快递是送到公司的，先不回家了，就在办公室完成第一次开机：按下电源键，屏幕亮起，首次体验Macbook的丝滑金属大触摸板。  初始设置走完后，我换了一张城市剪影的壁纸。工位上还是熟悉的木桌、水瓶和鼠标，只是中间多了一台新机器。  为什么自己买公司配了 Windows 电脑，日常开发能用，没什么大问题。但我想把硬件配置提一提：上班写代码更顺畅，下班和周末自己学东西、捣鼓项目，也别太将就。 全款教育优惠购入，上班带着用，晚上带回家，兼顾工作和自学。 第一天今天没装多少软件，主要是走完系统设置、换壁纸、熟悉键盘和触控板。新电脑到手，心情挺好，记一篇开箱，先继续用公司电脑开发，明天来给新电脑装开发环境。 </div></div></div></a><a class="pagination-related" href="/posts/ffe0b7c/" title="Vue props传入function时的this指向问题"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Vue props传入function时的this指向问题</div></div><div class="info-2"><div class="info-item-1">Vue props传入function时的this指向问题Parent.vue &lt;template&gt;   &lt;div&gt;     &lt;Child :func=&quot;parentFunc&quot;&gt;&lt;/Child&gt;   &lt;/div&gt; &lt;/template&gt;  &lt;script&gt; import Child from &#39;./Child&#39; export default {   data () {     return {       msg: &#39;this is parent.&#39;     }   },   components: {     Child   },   methods: {     parentFunc () {       console.log(this.msg)     }   } } &lt;/script&gt; Child.vue &lt;template&gt;   &lt;div&gt;     &lt;button @click=&quot;c...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/posts/7984b310/" title="单元测试框架Jest搭配TypeScript的安装与配置"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-07-21</div><div class="info-item-2">单元测试框架Jest搭配TypeScript的安装与配置</div></div><div class="info-2"><div class="info-item-1">为项目安装并配置Jest单元测试环境 分步指南传送门：Jest - 快速入门 1. 安装jest：npm i jest ts-jest @types/jest -D 2. 初始化：npx jest —init按照图中所示选择tip:- no;不使用ts，使用jest.config.js作为jest的配置文件；- jsdom;使用jsdom作为测试环境（jsdom:一个类似浏览器的环境，项目是运行在浏览器的，需要在浏览器dom环境下测试）；- yes;是否添加测试报告；- babel;使用babel提供的测试报告（官网说明v8仍处于试验阶段，需node14以上使用，效果未知，不稳定，因此选用babel）； 3. 安装jsdom环境： jest 28及以上版本不再内置jsdom插件，需要单独安装 安装官方eslint插件：  npm i jest-environment-jsdom eslint-plugin-jest eslint-import-resolver-typescript jest-canvas-mock -D 4. 创建test目录在项目根目录下创建test目录，然后...</div></div></div></a><a class="pagination-related" href="/posts/effd06de/" title="深入理解虚拟列表：从固定高度到不定高度前端实现（附完整代码）"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-17</div><div class="info-item-2">深入理解虚拟列表：从固定高度到不定高度前端实现（附完整代码）</div></div><div class="info-2"><div class="info-item-1">本文转载自 nanchen_J（CSDN），原标题《深入理解虚拟列表：从固定高度到不定高度前端实现（附完整代码）》，作者：nanchen_J，发布时间：2025-11-17。 虚拟列表（Virtual List），也叫虚拟滚动（Virtual Scrolling / Windowing），是前端性能优化中最经典、最实用的技术之一。当我们需要渲染成千上万条数据时，如果直接把所有 DOM 节点一次性创建并插入页面，浏览器会面临巨大的内存压力和重排重绘开销，导致页面卡顿、滚动掉帧，甚至直接崩溃。 虚拟列表的核心思想非常简单：在任意时刻，只渲染可视区域 + 少量缓冲区的真实 DOM 节点，其余部分用一个占位容器撑起总高度。当用户滚动时，动态计算当前应该显示哪些项，回收不可见的 DOM，复用或新建可见的 DOM，从而把 DOM 节点数量控制在几十个的量级，无论数据总量是 1 万还是 100 万，性能都几乎一致。 今天我们通过两个完整、可直接运行的纯前端示例，来彻底拆解虚拟列表的实现原理：  固定高度版本（最简单、最高效，适合绝大多数场景） 不定高度版本（更通用，但实现复杂度显著提升）  两...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/Conan.jpeg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Simon</div><div class="author-info-description">To be or not to be, that is a question.</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">23</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">55</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/simon-lee-520"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/simon-lee-520" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:simon520ljc@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#math-js"><span class="toc-number">1.</span> <span class="toc-text">math.js</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/e8a4b2c1/" title="Vue3 + Element Plus：ElSelect Maximum recursive updates 的一次排障">Vue3 + Element Plus：ElSelect Maximum recursive updates 的一次排障</a><div class="aside-post-meta"><span class="copyright-badge copyright-badge--original">原创</span><time datetime="2026-08-31T13:40:00.000Z" title="发表于 2026-08-31 21:40:00">2026-08-31</time></div></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/a7f3c1e2/" title="Vue3 scoped 样式失效：Tooltip 打断 data-v 根链的一次排障">Vue3 scoped 样式失效：Tooltip 打断 data-v 根链的一次排障</a><div class="aside-post-meta"><span class="copyright-badge copyright-badge--original">原创</span><time datetime="2026-08-27T13:10:00.000Z" title="发表于 2026-08-27 21:10:00">2026-08-27</time></div></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/d34c62e9/" title="Vue2 到 Vue3 表格上下移失效：从 $set 到 VXE 回写的一次排障">Vue2 到 Vue3 表格上下移失效：从 $set 到 VXE 回写的一次排障</a><div class="aside-post-meta"><span class="copyright-badge copyright-badge--original">原创</span><time datetime="2026-08-26T12:00:00.000Z" title="发表于 2026-08-26 20:00:00">2026-08-26</time></div></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/ce080db8/" title="我把前端开发 SOP 写进 Skill，Codex 终于不乱发挥了">我把前端开发 SOP 写进 Skill，Codex 终于不乱发挥了</a><div class="aside-post-meta"><span class="copyright-badge copyright-badge--repost">转载</span><time datetime="2026-04-22T01:55:00.000Z" title="发表于 2026-04-22 09:55:00">2026-04-22</time></div></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/d28b0bf0/" title="AI 编程工作流选型：Spec-Kit、OpenSpec、Superpowers 深度对比">AI 编程工作流选型：Spec-Kit、OpenSpec、Superpowers 深度对比</a><div class="aside-post-meta"><span class="copyright-badge copyright-badge--repost">转载</span><time datetime="2026-04-01T12:03:05.000Z" title="发表于 2026-04-01 20:03:05">2026-04-01</time></div></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2022 - 2026 By Simon</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async src="/js/diytitle.js"></script><script async src="/js/grayscale.js"></script><script src="/js/custom-sync.js"></script><script async src="/js/custom-async.js"></script><div class="aplayer no-destroy" data-id="17949662811" data-server="netease" data-type="playlist" data-fixed="true" data-mini="true" data-autoplay="true" data-theme="#ad7a86"></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-nest.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/click-show-text.min.js" data-mobile="false" data-text="I,LOVE,YOU" data-fontsize="15px" data-random="false" async="async"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/metingjs/dist/Meting.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章..." type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.4"></script></div></div></body></html>

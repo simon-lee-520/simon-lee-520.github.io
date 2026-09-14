@@ -1,0 +1,311 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Vue3 scoped 样式失效：Tooltip 打断 data-v 根链的一次排障 | Simon</title><meta name="author" content="Simon"><meta name="copyright" content="Simon"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="迁移一套 HIS 公共图标组件时，遇到一个很「迷惑」的现象：去掉内部的 WgTooltip，根节点 &lt;i&gt; 上有调用方的 data-v-*；加上之后，根节点还是 &lt;i&gt;，但 data-v-* 没了，调用方的 scoped 样式全部失效。 表面像属性丢了，深挖下去其实是 Vue scoped CSS 的「单根作用域继承」被 Element Plus Tooltip 的 Fra">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue3 scoped 样式失效：Tooltip 打断 data-v 根链的一次排障">
+<meta property="og:url" content="https://simon-lee-520.github.io/posts/a7f3c1e2/index.html">
+<meta property="og:site_name" content="Simon">
+<meta property="og:description" content="迁移一套 HIS 公共图标组件时，遇到一个很「迷惑」的现象：去掉内部的 WgTooltip，根节点 &lt;i&gt; 上有调用方的 data-v-*；加上之后，根节点还是 &lt;i&gt;，但 data-v-* 没了，调用方的 scoped 样式全部失效。 表面像属性丢了，深挖下去其实是 Vue scoped CSS 的「单根作用域继承」被 Element Plus Tooltip 的 Fra">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://simon-lee-520.github.io/img/Conan.jpeg">
+<meta property="article:published_time" content="2026-08-27T13:10:00.000Z">
+<meta property="article:modified_time" content="2026-08-27T13:10:00.000Z">
+<meta property="article:author" content="Simon">
+<meta property="article:tag" content="Element Plus">
+<meta property="article:tag" content="Scoped CSS">
+<meta property="article:tag" content="Tooltip">
+<meta property="article:tag" content="Vue3">
+<meta property="article:tag" content="前端踩坑">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://simon-lee-520.github.io/img/Conan.jpeg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Vue3 scoped 样式失效：Tooltip 打断 data-v 根链的一次排障",
+  "url": "https://simon-lee-520.github.io/posts/a7f3c1e2/",
+  "image": "https://simon-lee-520.github.io/img/Conan.jpeg",
+  "datePublished": "2026-08-27T13:10:00.000Z",
+  "dateModified": "2026-08-27T13:10:00.000Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Simon",
+      "url": "https://simon-lee-520.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://simon-lee-520.github.io/posts/a7f3c1e2/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":150,"languages":{"author":"作者: Simon","link":"链接: ","source":"来源: Simon","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Vue3 scoped 样式失效：Tooltip 打断 data-v 根链的一次排障',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"  media="defer" onload="this.media='all'"><meta name="generator" content="Hexo 8.1.2"></head><body><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+btf.addGlobalFn('pjaxSend', () => {
+  Pace.restart()
+}, 'pace_restart')
+
+</script><link rel="stylesheet" href="/css/pace/flash.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/Conan.jpeg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">23</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">55</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-user"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/blog/"><i class="fa-fw fas fa-home"></i><span> 博客</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img fixed" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/logo_wangye.jpg" alt="Logo"><span class="site-name">Simon</span></a><a class="nav-page-title" href="/"><span class="site-name">Vue3 scoped 样式失效：Tooltip 打断 data-v 根链的一次排障</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-user"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/blog/"><i class="fa-fw fas fa-home"></i><span> 博客</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">Vue3 scoped 样式失效：Tooltip 打断 data-v 根链的一次排障</h1><div id="post-meta"><div class="meta-firstline"><span class="copyright-badge copyright-badge--original">原创</span><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-08-27T13:10:00.000Z" title="发表于 2026-08-27 21:10:00">2026-08-27</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-08-27T13:10:00.000Z" title="更新于 2026-08-27 21:10:00">2026-08-27</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/note/">前端踩坑笔记</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="container post-content" id="article-container"><p>迁移一套 HIS 公共图标组件时，遇到一个很「迷惑」的现象：<strong>去掉内部的 <code>WgTooltip</code>，根节点 <code>&lt;i&gt;</code> 上有调用方的 <code>data-v-*</code>；加上之后，根节点还是 <code>&lt;i&gt;</code>，但 <code>data-v-*</code> 没了，调用方的 scoped 样式全部失效。</strong></p>
+<p>表面像属性丢了，深挖下去其实是 Vue scoped CSS 的「单根作用域继承」被 Element Plus Tooltip 的 Fragment 根打断了。这篇记录完整推理链、Element UI / Plus 的实现差异，以及真正不受 <code>disabled</code> 影响的修法。</p>
+<h2 id="现象"><a href="#现象" class="headerlink" title="现象"></a>现象</h2><p>调用方大致是这样：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs vue">&lt;template&gt;<br>  &lt;wg-icon v-if=&quot;iconName&quot; class=&quot;order-type-icon f40&quot; :name=&quot;iconName&quot; /&gt;<br>&lt;/template&gt;<br><br>&lt;style scoped&gt;<br>.order-type-icon.f40 &#123;<br>  font-size: 40px;<br>  max-height: 20px;<br>&#125;<br>&lt;/style&gt;<br></code></pre></td></tr></table></figure>
+<p><code>wgIcon</code> 门面内部曾把图标包在 tooltip 里：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs vue">&lt;template&gt;<br>  &lt;WgTooltip :disabled=&quot;disabled&quot; :content=&quot;content&quot; :placement=&quot;placement&quot;&gt;<br>    &lt;WgIcon ...&gt;<br>      &lt;WgIconGlyph ... /&gt;<br>    &lt;/WgIcon&gt;<br>  &lt;/WgTooltip&gt;<br>&lt;/template&gt;<br></code></pre></td></tr></table></figure>
+<p>DevTools 里对照：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>结构</th>
+<th>根 DOM</th>
+<th>调用方 <code>data-v-*</code></th>
+<th>scoped 样式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>去掉 <code>WgTooltip</code></td>
+<td><code>&lt;i class=&quot;wg-icon order-type-icon&quot;&gt;</code></td>
+<td>有</td>
+<td>生效</td>
+</tr>
+<tr>
+<td>加上 <code>WgTooltip</code></td>
+<td>还是同一个 <code>&lt;i&gt;</code></td>
+<td><strong>无</strong></td>
+<td>失效</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>DOM 形态几乎没变，偏偏作用域属性没了——这正是误判点。</p>
+<h2 id="机制：data-v-不是谁「贴」上去的"><a href="#机制：data-v-不是谁「贴」上去的" class="headerlink" title="机制：data-v-* 不是谁「贴」上去的"></a>机制：<code>data-v-*</code> 不是谁「贴」上去的</h2><p><code>wgIcon</code> 和底层 <code>WgIcon</code> 都没有 <code>&lt;style scoped&gt;</code>。<code>&lt;i&gt;</code> 上的 <code>data-v-xxx</code> <strong>不是自己加的</strong>，而来自 Vue 的一条额外规则：</p>
+<blockquote>
+<p>子组件的<strong>根节点</strong>会同时带上父组件的 scope id，这样父组件的 scoped 样式才能给子组件根元素设外边距、字号等。</p>
+</blockquote>
+<p>Vue 3 在 patch 元素时走 <code>setScopeId</code>：除了打上当前 vnode 自己的 <code>scopeId</code>，还会判断「这个 vnode 是否正好等于某个组件实例的 <code>subTree</code>」；只要是，就取该组件 vnode 的 <code>scopeId</code> 继续往上递归。<strong>一旦某一层的根不是它，递归立刻终止。</strong></p>
+<p>可以把它想成一条「单根链」：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">调用方 &lt;wg-icon&gt; vnode（带 data-v-caller）<br>  → 必须是 wgIcon.subTree 的根<br>  → 必须是下一层组件.subTree 的根<br>  → ……<br>  → 最终落到真实 DOM（这里是 &lt;i&gt;）<br></code></pre></td></tr></table></figure>
+<p>链上任何一环变成 Fragment / 多根 / 插槽深处的孩子，继承就断。</p>
+<h2 id="为什么加了-Tooltip，链就断了"><a href="#为什么加了-Tooltip，链就断了" class="headerlink" title="为什么加了 Tooltip，链就断了"></a>为什么加了 Tooltip，链就断了</h2><p>去掉 tooltip 时，链是完整的：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">orderTypeIcon 的 &lt;wg-icon&gt; vnode<br>  → wgIcon.subTree 根 = WgIcon<br>  → WgIcon.subTree 根 = &lt;i&gt;<br></code></pre></td></tr></table></figure>
+<p><code>&lt;i&gt;</code> 一路继承到 <code>data-v-caller</code>，<code>.order-type-icon { font-size: 40px }</code> 命中。</p>
+<p>加上 <code>WgTooltip</code> 后，<code>wgIcon</code> 的 <code>subTree</code> 根变成了 <code>WgTooltip</code>。它只是转发到 <code>ElTooltip</code>，再落到 <code>ElPopper</code>。而 <code>ElPopper</code> 必须同时渲染：</p>
+<ol>
+<li>trigger（触发器）</li>
+<li>teleport 出去的 content（浮层）</li>
+</ol>
+<p>也就是一个 <strong>Fragment</strong>。<code>&lt;i&gt;</code> 是作为 slot 内容塞进 trigger 的，<strong>已经不在「根链」上了</strong>。递归在 Fragment 处停住，调用方的 <code>data-v-*</code> 到不了 <code>&lt;i&gt;</code>。</p>
+<h3 id="为什么-DOM-上看不出变化？"><a href="#为什么-DOM-上看不出变化？" class="headerlink" title="为什么 DOM 上看不出变化？"></a>为什么 DOM 上看不出变化？</h3><p>Element Plus 的 trigger 走 <code>ElOnlyChild</code>：不产生额外包裹元素，只透传并挂事件。所以肉眼看到的根还是 <code>&lt;i&gt;</code>，但 vnode 树的「谁是谁的 subTree 根」已经变了。</p>
+<p><strong>scoped 看的是 vnode 身份，不是最终 DOM 标签名。</strong></p>
+<h2 id="误区一：-deep-能治吗？"><a href="#误区一：-deep-能治吗？" class="headerlink" title="误区一：:deep() 能治吗？"></a>误区一：<code>:deep()</code> 能治吗？</h2><p>结构上就不可能。<code>:deep(.order-type-icon)</code> 编译出来是<strong>后代选择器</strong>：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-attr">[data-v-caller]</span> <span class="hljs-selector-class">.order-type-icon</span> &#123; ... &#125;<br></code></pre></td></tr></table></figure>
+<p>它要求存在一个带 <code>data-v-caller</code> 的<strong>祖先元素</strong>。而 <code>orderTypeIcon</code> 的模板根就是 <code>&lt;wg-icon&gt;</code> 本身——组件自己没有渲染任何真实包裹节点，<code>data-v-caller</code> 唯一可能落脚的地方就是那个 <code>&lt;i&gt;</code>。</p>
+<p>于是两头都不成立：</p>
+<ul>
+<li>加了 tooltip 后，<code>&lt;i&gt;</code> 连 id 都拿不到；</li>
+<li>就算拿到了，<code>:deep</code> 是后代组合器，也选不到元素自身。</li>
+</ul>
+<p><strong><code>:deep()</code> 治不了「组件根节点就是子组件」这种情况。</strong> 它只在你自己模板里有真实包裹元素时才有用——比如页面里 <code>&lt;div class=&quot;cell&quot;&gt;&lt;wg-order-type-icon /&gt;&lt;/div&gt;</code>，再写 <code>:deep(.order-type-icon)</code> 才能命中。</p>
+<p><code>class</code> / <code>style</code> 倒是能正常透传到 <code>&lt;i&gt;</code>（经 <code>$attrs</code> 转发），所以「类名在、样式挂不上」会显得更诡异。</p>
+<h2 id="误区二：默认关掉-tooltip-算根治吗？"><a href="#误区二：默认关掉-tooltip-算根治吗？" class="headerlink" title="误区二：默认关掉 tooltip 算根治吗？"></a>误区二：默认关掉 tooltip 算根治吗？</h2><p>有人会想：把 <code>disabled</code> 默认设为 <code>true</code>，大多数调用不渲染浮层，不就好了？</p>
+<p>这只是把暴露面从「100% 的调用」缩到「真正开 tip 的调用」。<strong>只要 <code>disabled: false</code>，tooltip 仍出现在根链上，链照样断。</strong> 称它「根治」是说过头了。</p>
+<p>结构上绕不过去：Element Plus 的 tooltip 一旦出现在根链上，就必须是 Fragment（trigger + content），Vue 3 的 scope id 只沿单根传递，遇到 Fragment 必停。没有「某个 prop 让它变回单根」的配置。</p>
+<h2 id="这是-Vue2→3-的规则变了，还是-EU→EP-的实现变了？"><a href="#这是-Vue2→3-的规则变了，还是-EU→EP-的实现变了？" class="headerlink" title="这是 Vue2→3 的规则变了，还是 EU→EP 的实现变了？"></a>这是 Vue2→3 的规则变了，还是 EU→EP 的实现变了？</h2><p>对照旧 HIS 同一组件：用或不用 tooltip，<code>.order-type-icon</code> 的 scoped 样式都生效。</p>
+<p><strong>主因是 Element UI 与 Element Plus 的实现差异，不是 Vue 2/3 的 scoped 规则变了。</strong></p>
+<p>Vue 2 的 <code>setScope</code> 同样只沿「渲染根」向上走：<code>vnode.parent</code> 只有在该 vnode 是某个组件的渲染根时才有值。语义和 Vue 3 的 <code>subTree</code> 判断同构——链断了照样拿不到 id。</p>
+<p>差异在 tooltip 本身：</p>
+<p><strong>Element UI</strong>：把 slot 的第一个 vnode <strong>直接当作自己的渲染结果返回</strong>，只往上挂事件和指令。根链天然不断，<code>&lt;svg&gt;</code> / <code>&lt;i&gt;</code> 能同时拿到组件自己的和调用方的 scope id。</p>
+<p><strong>Element Plus</strong>：必须同时渲染 trigger 与 teleport content，根是 Fragment。行为增强变成了结构改变。</p>
+<p>这是 Vue2→Vue3 迁移里一类<strong>隐性破坏面</strong>：旧代码「包一层 tooltip」在 EU 下无感，迁到 EP 后调用方 scoped 样式会静默失效，DevTools 里还几乎看不出 DOM 差了什么。</p>
+<h2 id="真正不受-disabled-影响的修法"><a href="#真正不受-disabled-影响的修法" class="headerlink" title="真正不受 disabled 影响的修法"></a>真正不受 <code>disabled</code> 影响的修法</h2><p>目标语义应回到 Element UI 时代：</p>
+<blockquote>
+<p>tooltip 是行为增强，不应该改变 vnode 结构。</p>
+</blockquote>
+<p>Element Plus 提供了公开 API：<code>virtual-triggering</code> + <code>virtual-ref</code>。trigger 不渲染任何元素，事件直接 <code>addEventListener</code> 到外部 DOM 上。</p>
+<p>把 <code>WgTooltip</code> 从外层挪进 <code>WgIcon</code> 的 slot：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs vue">&lt;script setup&gt;<br>const inner = ref(null)<br>const triggerEl = computed(() =&gt; inner.value?.$el ?? undefined)<br>&lt;/script&gt;<br><br>&lt;template&gt;<br>  &lt;WgIcon ref=&quot;inner&quot; v-bind=&quot;forwardedAttrs&quot; @click=&quot;onInnerClick&quot;&gt;<br>    &lt;slot&gt;<br>      &lt;WgIconGlyph :name=&quot;name&quot; :height=&quot;height&quot; /&gt;<br>    &lt;/slot&gt;<br>    &lt;WgTooltip<br>      v-if=&quot;!disabled&quot;<br>      virtual-triggering<br>      :virtual-ref=&quot;triggerEl&quot;<br>      :content=&quot;content&quot;<br>      :placement=&quot;placement&quot;<br>    /&gt;<br>  &lt;/WgIcon&gt;<br>&lt;/template&gt;<br></code></pre></td></tr></table></figure>
+<p>要点：</p>
+<ol>
+<li><strong>根永远是 <code>WgIcon</code></strong>，单根链恢复，<code>disabled</code> 真假都不断。</li>
+<li><code>v-if=&quot;!disabled&quot;</code> 只是少挂一个空 tooltip 实例，不是作用域修复本身。</li>
+<li><code>virtual-ref</code> / <code>virtual-triggering</code> 必须是 <code>ElTooltip</code> 的<strong>声明式 prop</strong>。若中间门面只转发 <code>props</code>、不转发 <code>$attrs</code>，这两个字段必须出现在 props 声明里，否则会被丢掉。</li>
+</ol>
+<p>用 Vite SSR 通道做了真实渲染对照（SSR 与客户端同一套 <code>subTree</code> 判断）：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th><code>&lt;i&gt;</code> 上的 <code>data-v-caller</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>对照：根是 <code>WgIcon</code></td>
+<td>有</td>
+</tr>
+<tr>
+<td>对照：根是 <code>WgTooltip</code> 包 <code>WgIcon</code>（改前坏结构）</td>
+<td>无</td>
+</tr>
+<tr>
+<td>实际组件，<code>disabled=true</code></td>
+<td>有</td>
+</tr>
+<tr>
+<td>实际组件，<code>disabled=false</code></td>
+<td>有</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>对照成功复现了现象，实际组件两种状态都拿到了 id。</p>
+<p>再加一条契约测试锁住结构——谁以后把 tooltip 挪回外层，AST 根节点就不是 <code>WgIcon</code>，测试立刻红：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-title function_">test</span>(<span class="hljs-string">&#x27;wgIcon keeps WgIcon as the single root so caller scoped styles still apply&#x27;</span>, <span class="hljs-function">() =&gt;</span> &#123;<br>  <span class="hljs-keyword">const</span> &#123; descriptor &#125; = <span class="hljs-title function_">parse</span>(source, &#123; filename &#125;)<br>  <span class="hljs-keyword">const</span> roots = descriptor.<span class="hljs-property">template</span>.<span class="hljs-property">ast</span>.<span class="hljs-property">children</span>.<span class="hljs-title function_">filter</span>(<br>    <span class="hljs-function">(<span class="hljs-params">node</span>) =&gt;</span> node.<span class="hljs-property">type</span> === <span class="hljs-number">1</span> || (node.<span class="hljs-property">type</span> === <span class="hljs-number">2</span> &amp;&amp; node.<span class="hljs-property">content</span>.<span class="hljs-title function_">trim</span>()),<br>  )<br>  assert.<span class="hljs-title function_">equal</span>(roots.<span class="hljs-property">length</span>, <span class="hljs-number">1</span>)<br>  assert.<span class="hljs-title function_">equal</span>(roots[<span class="hljs-number">0</span>].<span class="hljs-property">tag</span>, <span class="hljs-string">&#x27;WgIcon&#x27;</span>)<br>  assert.<span class="hljs-title function_">match</span>(source, <span class="hljs-regexp">/virtual-triggering/</span>)<br>&#125;)<br></code></pre></td></tr></table></figure>
+<h2 id="不止这一个组件"><a href="#不止这一个组件" class="headerlink" title="不止这一个组件"></a>不止这一个组件</h2><p>凡是「模板根就是 tooltip / popover」的封装，调用方写 scoped 定尺寸都会静默失效。迁移库里同类结构还包括 drag 容器、popTable、各类树选择输入等。</p>
+<p>排查清单可以记成四句：</p>
+<ol>
+<li>DevTools 看根 DOM 有没有调用方的 <code>data-v-*</code>。</li>
+<li>看组件模板根是不是 <code>el-tooltip</code> / <code>el-popover</code> 一类多出口组件。</li>
+<li>不要指望 <code>:deep()</code> 救「根就是子组件」的场景。</li>
+<li>行为增强优先用 <code>virtual-triggering</code>，或自己包一层真实 DOM 当根（会改变布局语义时再慎用）。</li>
+</ol>
+<h2 id="顺带踩到的相邻坑（同一轮清理）"><a href="#顺带踩到的相邻坑（同一轮清理）" class="headerlink" title="顺带踩到的相邻坑（同一轮清理）"></a>顺带踩到的相邻坑（同一轮清理）</h2><p>修完作用域链之后，同一组件上还有两处容易一起误判：</p>
+<p><strong>1. <code>height</code> 只设内层 SVG</strong></p>
+<p>Element Plus 给 <code>.wg-icon</code> 容器和 <code>.wg-icon svg</code> 都写死 <code>1em</code>。只给槽内 Iconify 设 <code>height=&quot;32px&quot;</code>，容器仍是 <code>1em</code>，图标会顶出盒子。正确做法是容器与 svg 同时设 <code>height</code>，宽度取 <code>auto</code>，让 viewBox 比例决定宽。</p>
+<p><strong>2. 老 <code>autoWidth</code> 的 <code>getBBox</code> 测量</strong></p>
+<p>Vue2 时代用运行时改 <code>viewBox</code> / <code>width</code> 适配非正方形图标。Iconify 图标自带真实 viewBox，<code>height + width:auto</code> 已够用。测量逻辑可以拆掉；若业务页仍在传 <code>autoWidth</code>，<strong>保留 prop 声明</strong>，避免它从 <code>$attrs</code> 泄漏成 DOM 上的 <code>autowidth=&quot;true&quot;</code>。</p>
+<p>这两条和 <code>data-v</code> 无关，但常在同一轮「图标看起来不对」里一起出现，容易把锅扣错地方。</p>
+<h2 id="一句话结论"><a href="#一句话结论" class="headerlink" title="一句话结论"></a>一句话结论</h2><p>Vue 的 scoped 样式依赖「单根 subTree 链」把父 scope id 传到子组件根 DOM；Element Plus 的 Tooltip 根是 Fragment，会打断这条链，而 Element UI 当年是直接返回 slot vnode，所以旧代码无感。修法不是 <code>:deep()</code>，也不是默认关掉 tip，而是让 tooltip <strong>离开根链</strong>——<code>virtual-triggering</code> + <code>virtual-ref</code> 正是为此准备的公开 API。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://simon-lee-520.github.io">Simon</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://simon-lee-520.github.io/posts/a7f3c1e2/">https://simon-lee-520.github.io/posts/a7f3c1e2/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://simon-lee-520.github.io" target="_blank">Simon</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Vue3/">Vue3</a><a class="post-meta__tags" href="/tags/%E5%89%8D%E7%AB%AF%E8%B8%A9%E5%9D%91/">前端踩坑</a><a class="post-meta__tags" href="/tags/Scoped-CSS/">Scoped CSS</a><a class="post-meta__tags" href="/tags/Element-Plus/">Element Plus</a><a class="post-meta__tags" href="/tags/Tooltip/">Tooltip</a></div><div class="post-share"><div class="social-share" data-image="/img/Conan.jpeg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/posts/e8a4b2c1/" title="Vue3 + Element Plus：ElSelect Maximum recursive updates 的一次排障"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Vue3 + Element Plus：ElSelect Maximum recursive updates 的一次排障</div></div><div class="info-2"><div class="info-item-1"> 2026-09-03 修正：本文初版把根因定在「大码表 × 多实例首屏全挂，把 Vue3 递归护栏顶穿」，解法是页侧懒挂 option。后来在真实浏览器里做逐层对照复现，发现那个结论不成立——数量本身不是原因，真正的扳机是全局把 wg-option 注册成了异步组件。初版的页侧懒挂之所以「看起来修好了」，只是把 option 数压到了护栏阈值以下。下文按新证据重写，初版推断保留在「第一轮结论错在哪」一节。  把一套老 HIS 页面从 Vue2 + Element UI 迁到 Vue3 + Element Plus 时，大下拉进页就炸： 1Maximum recursive updates exceeded in component &lt;ElSelect&gt; 表面像是 wg-select 门面或 checkbox 写坏了，实际是三件事叠出来的：EP 的 option 挂载会改父 Select 的响应式状态、Vue3 有一条数 update 次数的护栏，而把 option 注册成异步组件，会让每个 option 各自触发一次父级更新。 现象组件调试场里放了四个 500 条 ...</div></div></div></a><a class="pagination-related" href="/posts/d34c62e9/" title="Vue2 到 Vue3 表格上下移失效：从 $set 到 VXE 回写的一次排障"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Vue2 到 Vue3 表格上下移失效：从 $set 到 VXE 回写的一次排障</div></div><div class="info-2"><div class="info-item-1">最近把一套老 HIS 页面从 Vue2 + VXE3 迁到 Vue3 + VXE4，遇到一个很「迷惑」的问题：上移 / 下移在旧页能用，迁过去没反应；再回头看旧页，新增或删除一行之后，上下移也会突然失灵，保存刷新后又好了。 表面像是迁移适配漏了 API，深挖下去其实是两件事叠在一起：  Vue2 对数组 mutation 的依赖收集，比很多人记忆中的「无 deep 就不触发」更激进。 页面自己的 tableData 和表格内部数据，经常在增删后被悄悄拆成两份。  这篇记录完整推理链，以及 Vue3 / VXE4 下更稳妥的写法。 现象对照    场景 旧页（Vue2.7 + VXE3） 迁移页（Vue3 + VXE4）     刚查询完，点上下移 有反应 最初无反应（只改了页面数组）   新增 / 删除后再上下移 也没反应，要保存刷新 若只 $set / 只改页面副本，同样挂   保存后重新拉表 又好了 取决于你有没有把顺序写回表格     旧页「能用」并不是实现正确，而是碰巧还共享同一份数组引用时，Vue2 的响应式帮你把表格刷了。 旧页原来怎么写的业务页大致是这样： 1234...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/posts/e8a4b2c1/" title="Vue3 + Element Plus：ElSelect Maximum recursive updates 的一次排障"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-31</div><div class="info-item-2">Vue3 + Element Plus：ElSelect Maximum recursive updates 的一次排障</div></div><div class="info-2"><div class="info-item-1"> 2026-09-03 修正：本文初版把根因定在「大码表 × 多实例首屏全挂，把 Vue3 递归护栏顶穿」，解法是页侧懒挂 option。后来在真实浏览器里做逐层对照复现，发现那个结论不成立——数量本身不是原因，真正的扳机是全局把 wg-option 注册成了异步组件。初版的页侧懒挂之所以「看起来修好了」，只是把 option 数压到了护栏阈值以下。下文按新证据重写，初版推断保留在「第一轮结论错在哪」一节。  把一套老 HIS 页面从 Vue2 + Element UI 迁到 Vue3 + Element Plus 时，大下拉进页就炸： 1Maximum recursive updates exceeded in component &lt;ElSelect&gt; 表面像是 wg-select 门面或 checkbox 写坏了，实际是三件事叠出来的：EP 的 option 挂载会改父 Select 的响应式状态、Vue3 有一条数 update 次数的护栏，而把 option 注册成异步组件，会让每个 option 各自触发一次父级更新。 现象组件调试场里放了四个 500 条 ...</div></div></div></a><a class="pagination-related" href="/posts/d34c62e9/" title="Vue2 到 Vue3 表格上下移失效：从 $set 到 VXE 回写的一次排障"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-26</div><div class="info-item-2">Vue2 到 Vue3 表格上下移失效：从 $set 到 VXE 回写的一次排障</div></div><div class="info-2"><div class="info-item-1">最近把一套老 HIS 页面从 Vue2 + VXE3 迁到 Vue3 + VXE4，遇到一个很「迷惑」的问题：上移 / 下移在旧页能用，迁过去没反应；再回头看旧页，新增或删除一行之后，上下移也会突然失灵，保存刷新后又好了。 表面像是迁移适配漏了 API，深挖下去其实是两件事叠在一起：  Vue2 对数组 mutation 的依赖收集，比很多人记忆中的「无 deep 就不触发」更激进。 页面自己的 tableData 和表格内部数据，经常在增删后被悄悄拆成两份。  这篇记录完整推理链，以及 Vue3 / VXE4 下更稳妥的写法。 现象对照    场景 旧页（Vue2.7 + VXE3） 迁移页（Vue3 + VXE4）     刚查询完，点上下移 有反应 最初无反应（只改了页面数组）   新增 / 删除后再上下移 也没反应，要保存刷新 若只 $set / 只改页面副本，同样挂   保存后重新拉表 又好了 取决于你有没有把顺序写回表格     旧页「能用」并不是实现正确，而是碰巧还共享同一份数组引用时，Vue2 的响应式帮你把表格刷了。 旧页原来怎么写的业务页大致是这样： 1234...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/Conan.jpeg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Simon</div><div class="author-info-description">To be or not to be, that is a question.</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">23</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">55</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/simon-lee-520"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/simon-lee-520" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:simon520ljc@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%B0%E8%B1%A1"><span class="toc-number">1.</span> <span class="toc-text">现象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%BA%E5%88%B6%EF%BC%9Adata-v-%E4%B8%8D%E6%98%AF%E8%B0%81%E3%80%8C%E8%B4%B4%E3%80%8D%E4%B8%8A%E5%8E%BB%E7%9A%84"><span class="toc-number">2.</span> <span class="toc-text">机制：data-v-* 不是谁「贴」上去的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8A%A0%E4%BA%86-Tooltip%EF%BC%8C%E9%93%BE%E5%B0%B1%E6%96%AD%E4%BA%86"><span class="toc-number">3.</span> <span class="toc-text">为什么加了 Tooltip，链就断了</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-DOM-%E4%B8%8A%E7%9C%8B%E4%B8%8D%E5%87%BA%E5%8F%98%E5%8C%96%EF%BC%9F"><span class="toc-number">3.1.</span> <span class="toc-text">为什么 DOM 上看不出变化？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AF%E5%8C%BA%E4%B8%80%EF%BC%9A-deep-%E8%83%BD%E6%B2%BB%E5%90%97%EF%BC%9F"><span class="toc-number">4.</span> <span class="toc-text">误区一：:deep() 能治吗？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AF%E5%8C%BA%E4%BA%8C%EF%BC%9A%E9%BB%98%E8%AE%A4%E5%85%B3%E6%8E%89-tooltip-%E7%AE%97%E6%A0%B9%E6%B2%BB%E5%90%97%EF%BC%9F"><span class="toc-number">5.</span> <span class="toc-text">误区二：默认关掉 tooltip 算根治吗？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%99%E6%98%AF-Vue2%E2%86%923-%E7%9A%84%E8%A7%84%E5%88%99%E5%8F%98%E4%BA%86%EF%BC%8C%E8%BF%98%E6%98%AF-EU%E2%86%92EP-%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8F%98%E4%BA%86%EF%BC%9F"><span class="toc-number">6.</span> <span class="toc-text">这是 Vue2→3 的规则变了，还是 EU→EP 的实现变了？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9C%9F%E6%AD%A3%E4%B8%8D%E5%8F%97-disabled-%E5%BD%B1%E5%93%8D%E7%9A%84%E4%BF%AE%E6%B3%95"><span class="toc-number">7.</span> <span class="toc-text">真正不受 disabled 影响的修法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8D%E6%AD%A2%E8%BF%99%E4%B8%80%E4%B8%AA%E7%BB%84%E4%BB%B6"><span class="toc-number">8.</span> <span class="toc-text">不止这一个组件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%BA%E5%B8%A6%E8%B8%A9%E5%88%B0%E7%9A%84%E7%9B%B8%E9%82%BB%E5%9D%91%EF%BC%88%E5%90%8C%E4%B8%80%E8%BD%AE%E6%B8%85%E7%90%86%EF%BC%89"><span class="toc-number">9.</span> <span class="toc-text">顺带踩到的相邻坑（同一轮清理）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E5%8F%A5%E8%AF%9D%E7%BB%93%E8%AE%BA"><span class="toc-number">10.</span> <span class="toc-text">一句话结论</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/e8a4b2c1/" title="Vue3 + Element Plus：ElSelect Maximum recursive updates 的一次排障">Vue3 + Element Plus：ElSelect Maximum recursive updates 的一次排障</a><div class="aside-post-meta"><span class="copyright-badge copyright-badge--original">原创</span><time datetime="2026-08-31T13:40:00.000Z" title="发表于 2026-08-31 21:40:00">2026-08-31</time></div></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/a7f3c1e2/" title="Vue3 scoped 样式失效：Tooltip 打断 data-v 根链的一次排障">Vue3 scoped 样式失效：Tooltip 打断 data-v 根链的一次排障</a><div class="aside-post-meta"><span class="copyright-badge copyright-badge--original">原创</span><time datetime="2026-08-27T13:10:00.000Z" title="发表于 2026-08-27 21:10:00">2026-08-27</time></div></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/d34c62e9/" title="Vue2 到 Vue3 表格上下移失效：从 $set 到 VXE 回写的一次排障">Vue2 到 Vue3 表格上下移失效：从 $set 到 VXE 回写的一次排障</a><div class="aside-post-meta"><span class="copyright-badge copyright-badge--original">原创</span><time datetime="2026-08-26T12:00:00.000Z" title="发表于 2026-08-26 20:00:00">2026-08-26</time></div></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/ce080db8/" title="我把前端开发 SOP 写进 Skill，Codex 终于不乱发挥了">我把前端开发 SOP 写进 Skill，Codex 终于不乱发挥了</a><div class="aside-post-meta"><span class="copyright-badge copyright-badge--repost">转载</span><time datetime="2026-04-22T01:55:00.000Z" title="发表于 2026-04-22 09:55:00">2026-04-22</time></div></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/d28b0bf0/" title="AI 编程工作流选型：Spec-Kit、OpenSpec、Superpowers 深度对比">AI 编程工作流选型：Spec-Kit、OpenSpec、Superpowers 深度对比</a><div class="aside-post-meta"><span class="copyright-badge copyright-badge--repost">转载</span><time datetime="2026-04-01T12:03:05.000Z" title="发表于 2026-04-01 20:03:05">2026-04-01</time></div></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2022 - 2026 By Simon</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async src="/js/diytitle.js"></script><script async src="/js/grayscale.js"></script><script src="/js/custom-sync.js"></script><script async src="/js/custom-async.js"></script><div class="aplayer no-destroy" data-id="17949662811" data-server="netease" data-type="playlist" data-fixed="true" data-mini="true" data-autoplay="true" data-theme="#ad7a86"></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-nest.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/click-show-text.min.js" data-mobile="false" data-text="I,LOVE,YOU" data-fontsize="15px" data-random="false" async="async"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/metingjs/dist/Meting.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章..." type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.4"></script></div></div></body></html>

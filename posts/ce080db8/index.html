@@ -1,0 +1,542 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>我把前端开发 SOP 写进 Skill，Codex 终于不乱发挥了 | Simon</title><meta name="author" content="Simon"><meta name="copyright" content="Simon"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="本文转载自 Kryon 微信公众号，原标题《我把前端开发 SOP 写进 Skill，Codex 终于不乱发挥了》。 我以前让 Codex 改前端页面，最常说的一句话是： 按我们项目的习惯改，别乱发挥。   这句话听起来很合理，实际等于没说。 因为 Codex 不知道“我们项目的习惯”到底是什么。 它不知道你们页面开发前要先看哪几个目录，不知道组件能不能拆，不知道接口字段能不能动，也不知道你说的“完">
+<meta property="og:type" content="article">
+<meta property="og:title" content="我把前端开发 SOP 写进 Skill，Codex 终于不乱发挥了">
+<meta property="og:url" content="https://simon-lee-520.github.io/posts/ce080db8/index.html">
+<meta property="og:site_name" content="Simon">
+<meta property="og:description" content="本文转载自 Kryon 微信公众号，原标题《我把前端开发 SOP 写进 Skill，Codex 终于不乱发挥了》。 我以前让 Codex 改前端页面，最常说的一句话是： 按我们项目的习惯改，别乱发挥。   这句话听起来很合理，实际等于没说。 因为 Codex 不知道“我们项目的习惯”到底是什么。 它不知道你们页面开发前要先看哪几个目录，不知道组件能不能拆，不知道接口字段能不能动，也不知道你说的“完">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://simon-lee-520.github.io/img/Conan.jpeg">
+<meta property="article:published_time" content="2026-04-22T01:55:00.000Z">
+<meta property="article:modified_time" content="2026-04-22T01:55:00.000Z">
+<meta property="article:author" content="Simon">
+<meta property="article:tag" content="Agent Skills">
+<meta property="article:tag" content="Codex">
+<meta property="article:tag" content="前端工程化">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://simon-lee-520.github.io/img/Conan.jpeg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "我把前端开发 SOP 写进 Skill，Codex 终于不乱发挥了",
+  "url": "https://simon-lee-520.github.io/posts/ce080db8/",
+  "image": "https://simon-lee-520.github.io/img/Conan.jpeg",
+  "datePublished": "2026-04-22T01:55:00.000Z",
+  "dateModified": "2026-04-22T01:55:00.000Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Simon",
+      "url": "https://simon-lee-520.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://simon-lee-520.github.io/posts/ce080db8/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":150,"languages":{"author":"作者: Simon","link":"链接: ","source":"来源: Simon","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '我把前端开发 SOP 写进 Skill，Codex 终于不乱发挥了',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"  media="defer" onload="this.media='all'"><meta name="generator" content="Hexo 8.1.2"></head><body><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+btf.addGlobalFn('pjaxSend', () => {
+  Pace.restart()
+}, 'pace_restart')
+
+</script><link rel="stylesheet" href="/css/pace/flash.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/Conan.jpeg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">23</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">55</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-user"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/blog/"><i class="fa-fw fas fa-home"></i><span> 博客</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img fixed" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/logo_wangye.jpg" alt="Logo"><span class="site-name">Simon</span></a><a class="nav-page-title" href="/"><span class="site-name">我把前端开发 SOP 写进 Skill，Codex 终于不乱发挥了</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-user"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/blog/"><i class="fa-fw fas fa-home"></i><span> 博客</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">我把前端开发 SOP 写进 Skill，Codex 终于不乱发挥了</h1><div id="post-meta"><div class="meta-firstline"><span class="copyright-badge copyright-badge--repost">转载</span><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-04-22T01:55:00.000Z" title="发表于 2026-04-22 09:55:00">2026-04-22</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-04-22T01:55:00.000Z" title="更新于 2026-04-22 09:55:00">2026-04-22</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/AI/">AI</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="container post-content" id="article-container"><p>本文转载自 <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/1ogkc_tYA1PzS7uVXuwxtQ">Kryon</a> 微信公众号，原标题《我把前端开发 SOP 写进 Skill，Codex 终于不乱发挥了》。</p>
+<p>我以前让 Codex 改前端页面，最常说的一句话是：</p>
+<pre><code>按我们项目的习惯改，别乱发挥。  
+</code></pre><p>这句话听起来很合理，实际等于没说。</p>
+<p>因为 Codex 不知道“我们项目的习惯”到底是什么。</p>
+<p>它不知道你们页面开发前要先看哪几个目录，不知道组件能不能拆，不知道接口字段能不能动，也不知道你说的“完成”到底是代码能跑、页面能看，还是已经跑过检查命令。</p>
+<p>所以它会按自己的理解来。</p>
+<p>第一轮能写出来。</p>
+<p>第二轮开始顺手抽组件。</p>
+<p>第三轮把样式规范也一起重做。</p>
+<p>最后你不是在验收代码，而是在把 AI 拉回正轨。</p>
+<p>后来我发现，前端用 Codex 最需要的不是一句更厉害的 Prompt，而是一份更清楚的开发 SOP。</p>
+<p>把 SOP 写进 Skill 之后，Codex 才开始像一个“知道流程的新同事”。</p>
+<h2 id="为什么-Codex-会乱发挥"><a href="#为什么-Codex-会乱发挥" class="headerlink" title="为什么 Codex 会乱发挥"></a>为什么 Codex 会乱发挥</h2><p>很多前端任务从表面看很简单。</p>
+<p>比如：</p>
+<pre><code>把用户列表页优化一下。  
+</code></pre><p>但这句话背后有一堆隐含规则：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>隐含规则</th>
+<th>如果没说清楚，Codex 可能怎么做  </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>复用现有组件库</td>
+<td>自己写一套按钮、弹窗、表格  </td>
+</tr>
+<tr>
+<td>不改业务语义</td>
+<td>顺手调整接口字段、状态结构  </td>
+</tr>
+<tr>
+<td>保持页面风格一致</td>
+<td>做出一个和全站不一样的新 UI  </td>
+</tr>
+<tr>
+<td>小步修改</td>
+<td>把页面拆成好几个新文件  </td>
+</tr>
+<tr>
+<td>改完要验证</td>
+<td>只说“已完成”，不跑命令  </td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>这些规则不是某次需求的细节。</p>
+<p>它们是团队开发方式。</p>
+<p>如果每次都靠一句 Prompt 补充，迟早会漏。</p>
+<p>所以真正应该做的是：把这些隐含规则显性化，写成 Codex 每次都能读懂的流程。</p>
+<p>OpenAI Academy 的 Skills 说明里有一个关键点：Skill 不是单句提示词，而是可复用、可分享的工作流。它可以用 <code>SKILL.md</code> 记录任务说明、操作步骤、资源和输出格式。OpenAI Help Center 也提到 Codex App 支持 skills 和 automations。</p>
+<p>换到前端开发里，Skill 最适合承载的不是“帮我写一个按钮”，而是：</p>
+<pre><code>做一个前端任务时，你应该按什么顺序理解、修改、验证和交付。  
+</code></pre><p>也就是 SOP。</p>
+<h2 id="前端开发-SOP-应该管什么"><a href="#前端开发-SOP-应该管什么" class="headerlink" title="前端开发 SOP 应该管什么"></a>前端开发 SOP 应该管什么</h2><p>别把 SOP 写成公司制度。</p>
+<p>那种文档写得越厚，Codex 越难抓重点。</p>
+<p>前端开发 SOP 最好只管 5 件事：</p>
+<ol>
+<li>1. 输入：开始前需要哪些信息。</li>
+<li>2. 边界：哪些文件、行为、依赖不能随便改。</li>
+<li>3. 步骤：先读什么，再改什么，最后查什么。</li>
+<li>4. 验收：功能、样式、状态、响应式、命令怎么检查。</li>
+<li>5. 回复：最后必须把改动、验证和风险说清楚。</li>
+</ol>
+<p>这五件事写清楚，就能减少大部分跑偏。</p>
+<p>前端开发 SOP 的 5 个固定节点</p>
+<h2 id="一份可以直接复制的-SKILL-md"><a href="#一份可以直接复制的-SKILL-md" class="headerlink" title="一份可以直接复制的 SKILL.md"></a>一份可以直接复制的 SKILL.md</h2><p>下面这份可以直接当起点。</p>
+<p>建议文件放在类似这样的目录：</p>
+<pre><code>skills/frontend-dev-sop/SKILL.md  
+</code></pre><p>正文可以用中文，<code>name</code> 用英文短标识就行。</p>
+<pre><code>---  
+name: frontend-dev-sop  
+description: 当前端开发任务需要按团队 SOP 完成时使用，包括需求理解、改动边界、页面实现、状态补齐、响应式检查和交付说明。  
+---  
+
+# 前端开发 SOP  
+
+## 使用场景  
+
+当用户要求开发、修改、优化、重构一个前端页面或组件时，先按这个流程执行。  
+
+适合任务：  
+
+- 新增业务页面  
+- 修改已有页面  
+- 优化 UI 和交互状态  
+- 拆分组件但不改变行为  
+- 修复前端缺陷  
+- 做合并前自查  
+
+## 开始前先读  
+
+不要立刻改代码。先阅读这些信息：  
+
+1. 用户给出的需求、截图、设计稿或链接。  
+2. 相关路由、页面组件和子组件。  
+3. 项目已有 UI 组件、样式变量、布局模式。  
+4. 接口类型、Mock 数据、状态管理和错误处理方式。  
+5.`package.json` 里的脚本命令。  
+6.`AGENTS.md`、README 或附近目录里的项目规则。  
+
+如果信息缺失，但可以从代码里推断，就先推断并说明依据。  
+
+如果缺失信息会影响行为判断，再向用户确认。  
+
+## 改动边界  
+
+默认遵守这些边界：  
+
+- 不引入新的 UI 库。  
+- 不新增生产依赖，除非用户明确要求。  
+- 不重写无关页面和共享组件。  
+- 不改变接口字段语义。  
+- 不删除已有交互状态。  
+- 不把局部样式问题扩大成架构重构。  
+- 不为了通过类型检查随便使用 `any`。  
+- 不在未确认的情况下修改鉴权、支付、权限、埋点等高风险逻辑。  
+
+## 开发步骤  
+
+1. 复述你理解的任务目标。  
+2. 列出需要修改的文件范围。  
+3. 找到最小可行改动路径。  
+4. 优先复用现有组件和工具函数。  
+5. 小步修改，不做无关重构。  
+6. 补齐加载态、空状态、错误态、禁用态、长文本和移动端布局。  
+7. 修改后运行项目中最接近的检查命令。  
+8. 如果命令不能运行，说明原因和替代验证方式。  
+
+## 验收清单  
+
+交付前检查：  
+
+- 需求目标是否完成  
+- 用户可见行为是否符合预期  
+- 桌面端和移动端是否没有明显溢出  
+- 长文本、空数据、接口失败是否有处理  
+- TypeScript 类型是否没有被绕过  
+- 样式是否复用现有设计系统  
+- 是否运行了 lint、typecheck、test 或 build  
+- 是否说明了未覆盖风险  
+
+## 最终回复格式  
+
+请按下面结构回复：  
+
+### 改动  
+
+- 修改了哪些文件  
+- 每个文件解决什么问题  
+
+### 验证  
+
+- 运行了哪些命令  
+- 命令结果如何  
+- 页面或交互检查了什么  
+
+### 风险  
+
+- 哪些地方没验证  
+- 哪些地方需要用户确认  
+</code></pre><p>这份 Skill 的核心不是“让 Codex 更听话”。</p>
+<p>它真正解决的是：让 Codex 知道什么叫“按前端开发流程完成”。</p>
+<h2 id="SOP-里最重要的是边界"><a href="#SOP-里最重要的是边界" class="headerlink" title="SOP 里最重要的是边界"></a>SOP 里最重要的是边界</h2><p>很多人写 Skill，只写“你要做什么”。</p>
+<p>但前端开发里，更重要的是“你不要做什么”。</p>
+<p>因为 Codex 的问题往往不是不会改，而是改太多。</p>
+<p>比如你让它优化一个表单页，它可能顺手：</p>
+<ul>
+<li>• 把表单库换掉。</li>
+<li>• 把字段命名重写。</li>
+<li>• 把校验逻辑移到新文件。</li>
+<li>• 把 UI 样式改成另一套风格。</li>
+<li>• 把没有问题的状态管理也一起调整。</li>
+</ul>
+<p>这些动作单看都像“优化”。</p>
+<p>但放到真实项目里，都是风险。</p>
+<p>所以 SOP 里一定要写边界：</p>
+<pre><code>## 改动边界  
+
+- 只改和当前任务直接相关的文件。  
+- 优先修局部问题，不主动扩大重构范围。  
+- 不改变接口字段含义。  
+- 不新增依赖。  
+- 不替换设计系统组件。  
+- 不修改无关测试快照。  
+</code></pre><p>这几行比“请写出高质量代码”有用得多。</p>
+<p>因为它们会直接限制 Codex 的行动范围。</p>
+<h2 id="把“完成”定义清楚"><a href="#把“完成”定义清楚" class="headerlink" title="把“完成”定义清楚"></a>把“完成”定义清楚</h2><p>另一个容易跑偏的地方，是“完成”的定义。</p>
+<p>在 Codex 看来，代码写完可能就是完成。</p>
+<p>在前端工程师看来，至少还要过几关：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>验收项</th>
+<th>要看什么  </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>功能</td>
+<td>用户路径是否能走通  </td>
+</tr>
+<tr>
+<td>状态</td>
+<td>loading、empty、error、disabled 是否合理  </td>
+</tr>
+<tr>
+<td>样式</td>
+<td>响应式、长文本、间距、层级是否稳定  </td>
+</tr>
+<tr>
+<td>类型</td>
+<td>是否绕过 TypeScript  </td>
+</tr>
+<tr>
+<td>命令</td>
+<td>是否跑了项目里最接近的检查  </td>
+</tr>
+<tr>
+<td>风险</td>
+<td>没验证的地方有没有说清楚  </td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>这些东西也要写进 Skill。</p>
+<p>否则 Codex 很容易在最后只回一句：</p>
+<pre><code>已完成优化。  
+</code></pre><p>这对工程协作没什么帮助。</p>
+<p>更好的输出应该是：</p>
+<pre><code>改动：  
+- 调整 UserList.tsx 的筛选区布局，复用现有 Button 和 Select。  
+- 补齐空状态文案和接口失败提示。  
+
+验证：  
+- 已运行 pnpm astro check，0 errors。  
+- 已在本地页面确认移动端不会横向溢出。  
+
+风险：  
+- 未连接真实接口，只基于现有 Mock 数据检查。  
+</code></pre><p>这才像一次可以交接的前端任务。</p>
+<h2 id="AGENTS-md-和-SOP-Skill-怎么分工"><a href="#AGENTS-md-和-SOP-Skill-怎么分工" class="headerlink" title="AGENTS.md 和 SOP Skill 怎么分工"></a>AGENTS.md 和 SOP Skill 怎么分工</h2><p>如果你已经有 <code>AGENTS.md</code>，还需要这个 Skill 吗？</p>
+<p>需要。</p>
+<p>两者负责的东西不一样。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>负责什么</th>
+<th>示例  </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AGENTS.md</code></td>
+<td>项目长期规则</td>
+<td>用 pnpm、目录结构、测试命令、禁改文件  </td>
+</tr>
+<tr>
+<td><code>frontend-dev-sop</code> Skill</td>
+<td>某类任务怎么执行</td>
+<td>开发页面时先读什么、怎么改、怎么验收  </td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>简单说：</p>
+<p><code>AGENTS.md</code> 是项目说明书。</p>
+<p>Skill 是任务执行手册。</p>
+<p>一个前端项目里，比较舒服的搭配是：</p>
+<pre><code>AGENTS.md  
+  记录项目事实：技术栈、命令、目录、规范  
+
+frontend-dev-sop/SKILL.md  
+  记录页面开发流程：输入、边界、步骤、验收  
+
+frontend-code-review/SKILL.md  
+  记录代码审查流程：风险、行为、类型、测试  
+</code></pre><p>这样 Codex 既知道项目怎么跑，也知道某类任务应该怎么干。</p>
+<h2 id="调用方式也要具体"><a href="#调用方式也要具体" class="headerlink" title="调用方式也要具体"></a>调用方式也要具体</h2><p>有了 Skill，不代表 Prompt 可以随便写。</p>
+<p>更推荐这种格式：</p>
+<pre><code>使用 $frontend-dev-sop 完成这个需求。  
+
+需求：  
+订单列表页筛选区太松散，需要改得更紧凑。  
+
+约束：  
+- 不改接口字段  
+- 不换表格组件  
+- 移动端不能横向溢出  
+
+验收：  
+- 空数据时显示明确提示  
+- 跑项目检查命令  
+</code></pre><p>这段 Prompt 只描述“本次任务”。</p>
+<p>通用流程交给 Skill。</p>
+<p>这就是最理想的分工：SOP 固定，需求变化。</p>
+<h2 id="怎么迭代这份-Skill"><a href="#怎么迭代这份-Skill" class="headerlink" title="怎么迭代这份 Skill"></a>怎么迭代这份 Skill</h2><p>不要指望第一版 Skill 就完美。</p>
+<p>更实际的做法是，把它当成团队协作文件来迭代。</p>
+<p>每次 Codex 跑偏，就问一句：</p>
+<pre><code>这次跑偏，是不是有一条规则应该写进 SOP？  
+</code></pre><p>比如：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>跑偏现象</th>
+<th>应该补进 Skill 的规则  </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>总是重写组件</td>
+<td>不把局部问题扩大成组件重构  </td>
+</tr>
+<tr>
+<td>总是忘记空状态</td>
+<td>验收清单加入 empty/error/loading  </td>
+</tr>
+<tr>
+<td>总是新增依赖</td>
+<td>新增依赖前必须说明必要性  </td>
+</tr>
+<tr>
+<td>总是不跑命令</td>
+<td>最终回复必须列出验证命令  </td>
+</tr>
+<tr>
+<td>总是改无关文件</td>
+<td>先列改动范围，只改直接相关文件  </td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Skill 不需要一开始就写得很复杂。</p>
+<p>它应该像代码一样，根据真实问题慢慢长出来。</p>
+<h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><p><strong>1. 这是不是把提示词换了个地方？</strong></p>
+<p>不是。Prompt 是一次性指令，Skill 是可复用流程。你可以把 Skill 理解成“长期有效的任务说明书”。</p>
+<p><strong>2. SOP 写得越细越好吗？</strong></p>
+<p>不是。太细会让 Codex 抓不住重点。先写输入、边界、步骤、验收、输出这五块就够了。</p>
+<p><strong>3. 一个 Skill 能不能覆盖所有前端任务？</strong></p>
+<p>不建议。<code>frontend-dev-sop</code> 适合页面和组件开发。Code Review、样式排查、性能优化最好拆成单独 Skill。</p>
+<p><strong>4. 中文  SKILL.md 会不会影响效果？</strong></p>
+<p>不会。团队规则本来就是中文表达更自然。建议 <code>name</code> 用英文，<code>description</code> 和正文用中文。</p>
+<p><strong>5. 什么时候需要问用户确认？</strong></p>
+<p>当缺失信息会影响业务行为、接口语义、权限、支付、数据写入或生产依赖时，应该确认。普通样式和局部组件实现，可以先基于代码上下文判断。</p>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>Codex 乱发挥，很多时候不是它“不听话”。</p>
+<p>是你没有告诉它：什么叫按流程做事。</p>
+<p>前端工程里最值钱的经验，往往不是“这个按钮怎么写”，而是：</p>
+<ul>
+<li>• 改之前先看什么。</li>
+<li>• 哪些边界不能碰。</li>
+<li>• 怎么判断任务做完。</li>
+<li>• 怎么把风险说清楚。</li>
+</ul>
+<p>这些东西如果只存在你脑子里，Codex 每次都要猜。</p>
+<p>把它们写进 <code>SKILL.md</code>，它才有机会稳定复用。</p>
+<p>所以，别再只说：</p>
+<pre><code>按我们项目习惯改。  
+</code></pre><p>把“项目习惯”写下来。</p>
+<p>然后让 Codex 按 SOP 干活。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://simon-lee-520.github.io">Simon</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://simon-lee-520.github.io/posts/ce080db8/">https://simon-lee-520.github.io/posts/ce080db8/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://simon-lee-520.github.io" target="_blank">Simon</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Codex/">Codex</a><a class="post-meta__tags" href="/tags/Agent-Skills/">Agent Skills</a><a class="post-meta__tags" href="/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96/">前端工程化</a></div><div class="post-share"><div class="social-share" data-image="/img/Conan.jpeg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/posts/d34c62e9/" title="Vue2 到 Vue3 表格上下移失效：从 $set 到 VXE 回写的一次排障"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Vue2 到 Vue3 表格上下移失效：从 $set 到 VXE 回写的一次排障</div></div><div class="info-2"><div class="info-item-1">最近把一套老 HIS 页面从 Vue2 + VXE3 迁到 Vue3 + VXE4，遇到一个很「迷惑」的问题：上移 / 下移在旧页能用，迁过去没反应；再回头看旧页，新增或删除一行之后，上下移也会突然失灵，保存刷新后又好了。 表面像是迁移适配漏了 API，深挖下去其实是两件事叠在一起：  Vue2 对数组 mutation 的依赖收集，比很多人记忆中的「无 deep 就不触发」更激进。 页面自己的 tableData 和表格内部数据，经常在增删后被悄悄拆成两份。  这篇记录完整推理链，以及 Vue3 / VXE4 下更稳妥的写法。 现象对照    场景 旧页（Vue2.7 + VXE3） 迁移页（Vue3 + VXE4）     刚查询完，点上下移 有反应 最初无反应（只改了页面数组）   新增 / 删除后再上下移 也没反应，要保存刷新 若只 $set / 只改页面副本，同样挂   保存后重新拉表 又好了 取决于你有没有把顺序写回表格     旧页「能用」并不是实现正确，而是碰巧还共享同一份数组引用时，Vue2 的响应式帮你把表格刷了。 旧页原来怎么写的业务页大致是这样： 1234...</div></div></div></a><a class="pagination-related" href="/posts/d28b0bf0/" title="AI 编程工作流选型：Spec-Kit、OpenSpec、Superpowers 深度对比"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">AI 编程工作流选型：Spec-Kit、OpenSpec、Superpowers 深度对比</div></div><div class="info-2"><div class="info-item-1">本文转载自 运维有术（腾讯云开发者社区），原标题《AI 编程工作流选型：Spec-Kit、OpenSpec、Superpowers 深度对比》，作者：运维有术，发布时间：2026-04-01。  🚩 2026 年「术哥无界」系列实战文档 X 篇原创计划 第 64 篇，AI 编程最佳实战「2026」系列第 8 篇大家好，欢迎来到 术哥无界 | ShugeX ｜ 运维有术。我是术哥，一名专注于 AI 编程、AI 智能体、Agent Skills、MCP、云原生、AIOps、Milvus 向量数据库的技术实践者与开源布道者！Talk is cheap, let’s explore。无界探索，有术而行。   图 1：Spec-Kit、OpenSpec、Superpowers 三款 AI 编程工作流工具对比 用 AI 编程代理写代码，你有没有遇到过这些问题：  代理写出的代码风格飘忽不定，每次都要重新解释项目规范 多人协作时代理理解不一致，同样的需求给出完全不同的实现 想让代理遵循测试驱动开发，但它总爱跳过测试直接写代码  这些问题背后是同一个核心矛盾：AI 代理缺乏结构化的工作流约束。...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/Conan.jpeg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Simon</div><div class="author-info-description">To be or not to be, that is a question.</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">23</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">55</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/simon-lee-520"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/simon-lee-520" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:simon520ljc@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-Codex-%E4%BC%9A%E4%B9%B1%E5%8F%91%E6%8C%A5"><span class="toc-number">1.</span> <span class="toc-text">为什么 Codex 会乱发挥</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91-SOP-%E5%BA%94%E8%AF%A5%E7%AE%A1%E4%BB%80%E4%B9%88"><span class="toc-number">2.</span> <span class="toc-text">前端开发 SOP 应该管什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%BB%BD%E5%8F%AF%E4%BB%A5%E7%9B%B4%E6%8E%A5%E5%A4%8D%E5%88%B6%E7%9A%84-SKILL-md"><span class="toc-number">3.</span> <span class="toc-text">一份可以直接复制的 SKILL.md</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SOP-%E9%87%8C%E6%9C%80%E9%87%8D%E8%A6%81%E7%9A%84%E6%98%AF%E8%BE%B9%E7%95%8C"><span class="toc-number">4.</span> <span class="toc-text">SOP 里最重要的是边界</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8A%8A%E2%80%9C%E5%AE%8C%E6%88%90%E2%80%9D%E5%AE%9A%E4%B9%89%E6%B8%85%E6%A5%9A"><span class="toc-number">5.</span> <span class="toc-text">把“完成”定义清楚</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AGENTS-md-%E5%92%8C-SOP-Skill-%E6%80%8E%E4%B9%88%E5%88%86%E5%B7%A5"><span class="toc-number">6.</span> <span class="toc-text">AGENTS.md 和 SOP Skill 怎么分工</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E6%96%B9%E5%BC%8F%E4%B9%9F%E8%A6%81%E5%85%B7%E4%BD%93"><span class="toc-number">7.</span> <span class="toc-text">调用方式也要具体</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%8E%E4%B9%88%E8%BF%AD%E4%BB%A3%E8%BF%99%E4%BB%BD-Skill"><span class="toc-number">8.</span> <span class="toc-text">怎么迭代这份 Skill</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="toc-number">9.</span> <span class="toc-text">常见问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%90%8E"><span class="toc-number">10.</span> <span class="toc-text">最后</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/e8a4b2c1/" title="Vue3 + Element Plus：ElSelect Maximum recursive updates 的一次排障">Vue3 + Element Plus：ElSelect Maximum recursive updates 的一次排障</a><div class="aside-post-meta"><span class="copyright-badge copyright-badge--original">原创</span><time datetime="2026-08-31T13:40:00.000Z" title="发表于 2026-08-31 21:40:00">2026-08-31</time></div></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/a7f3c1e2/" title="Vue3 scoped 样式失效：Tooltip 打断 data-v 根链的一次排障">Vue3 scoped 样式失效：Tooltip 打断 data-v 根链的一次排障</a><div class="aside-post-meta"><span class="copyright-badge copyright-badge--original">原创</span><time datetime="2026-08-27T13:10:00.000Z" title="发表于 2026-08-27 21:10:00">2026-08-27</time></div></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/d34c62e9/" title="Vue2 到 Vue3 表格上下移失效：从 $set 到 VXE 回写的一次排障">Vue2 到 Vue3 表格上下移失效：从 $set 到 VXE 回写的一次排障</a><div class="aside-post-meta"><span class="copyright-badge copyright-badge--original">原创</span><time datetime="2026-08-26T12:00:00.000Z" title="发表于 2026-08-26 20:00:00">2026-08-26</time></div></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/ce080db8/" title="我把前端开发 SOP 写进 Skill，Codex 终于不乱发挥了">我把前端开发 SOP 写进 Skill，Codex 终于不乱发挥了</a><div class="aside-post-meta"><span class="copyright-badge copyright-badge--repost">转载</span><time datetime="2026-04-22T01:55:00.000Z" title="发表于 2026-04-22 09:55:00">2026-04-22</time></div></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/d28b0bf0/" title="AI 编程工作流选型：Spec-Kit、OpenSpec、Superpowers 深度对比">AI 编程工作流选型：Spec-Kit、OpenSpec、Superpowers 深度对比</a><div class="aside-post-meta"><span class="copyright-badge copyright-badge--repost">转载</span><time datetime="2026-04-01T12:03:05.000Z" title="发表于 2026-04-01 20:03:05">2026-04-01</time></div></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2022 - 2026 By Simon</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async src="/js/diytitle.js"></script><script async src="/js/grayscale.js"></script><script src="/js/custom-sync.js"></script><script async src="/js/custom-async.js"></script><div class="aplayer no-destroy" data-id="17949662811" data-server="netease" data-type="playlist" data-fixed="true" data-mini="true" data-autoplay="true" data-theme="#ad7a86"></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-nest.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/click-show-text.min.js" data-mobile="false" data-text="I,LOVE,YOU" data-fontsize="15px" data-random="false" async="async"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/metingjs/dist/Meting.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章..." type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.4"></script></div></div></body></html>

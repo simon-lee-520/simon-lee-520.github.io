@@ -1,0 +1,218 @@
+<!DOCTYPE html><html class="hide-aside" lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Simon | Simon</title><meta name="author" content="Simon"><meta name="copyright" content="Simon"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="关于我前端开发工程师，主要做 Web 应用与工程化相关开发。这个站点用来记录学习笔记、踩坑与总结。 技能栈 语言：JavaScript &#x2F; TypeScript、HTML、CSS 框架：Vue、React 工程化：Vite、Webpack、Git、单元测试（Jest） 其他：算法练习、Cocos &#x2F; 小游戏相关探索  项目与展示在此补充你的开源项目、作品集链接或简要说明。支持 Markdown，可">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Simon">
+<meta property="og:url" content="https://simon-lee-520.github.io/index.html">
+<meta property="og:site_name" content="Simon">
+<meta property="og:description" content="关于我前端开发工程师，主要做 Web 应用与工程化相关开发。这个站点用来记录学习笔记、踩坑与总结。 技能栈 语言：JavaScript &#x2F; TypeScript、HTML、CSS 框架：Vue、React 工程化：Vite、Webpack、Git、单元测试（Jest） 其他：算法练习、Cocos &#x2F; 小游戏相关探索  项目与展示在此补充你的开源项目、作品集链接或简要说明。支持 Markdown，可">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://simon-lee-520.github.io/img/Conan.jpeg">
+<meta property="article:published_time" content="2024-12-31T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-12-31T16:00:00.000Z">
+<meta property="article:author" content="Simon">
+<meta property="article:tag" content="算法 C C++ Java 前端 JavaScript TypeScript Vue React">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://simon-lee-520.github.io/img/Conan.jpeg"><script type="application/ld+json"></script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://simon-lee-520.github.io/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":150,"languages":{"author":"作者: Simon","link":"链接: ","source":"来源: Simon","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Simon',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'landing'
+}</script><link rel="stylesheet" href="/css/custom.css"  media="defer" onload="this.media='all'"><link rel="stylesheet" href="/css/landing.css" media="all"><script type="importmap">{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.172.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.172.0/examples/jsm/",
+    "@pixiv/three-vrm": "https://cdn.jsdelivr.net/npm/@pixiv/three-vrm@3.3.6/lib/three-vrm.module.js"
+  }
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body class="page-landing"><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+btf.addGlobalFn('pjaxSend', () => {
+  Pace.restart()
+}, 'pace_restart')
+
+</script><link rel="stylesheet" href="/css/pace/flash.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><div id="landing"><div id="landing-foreground"><section class="act-1 landing-hero" id="landing-hero"><div class="landing-hero-inner"><img class="landing-avatar" src="/img/Conan.jpeg" alt="Simon"><h1 class="landing-name">Welcome To Simon's Home</h1><div id="landing-subtitle"><span id="subtitle"></span></div><a class="landing-cta" href="/blog/" target="_blank" rel="noopener noreferrer" data-pjax="false"><span>進入博客</span><i class="fas fa-arrow-right"></i></a><a class="landing-scroll-hint" href="#landing-content" aria-label="向下滚动"><i class="fas fa-chevron-down"></i></a></div></section><section class="act-2 act-spacer" id="landing-act-2" aria-hidden="true"></section><section class="act-3 landing-content" id="landing-content"><div class="landing-content-inner"><h2 id="关于我"><a href="#关于我" class="headerlink" title="关于我"></a>关于我</h2><p>前端开发工程师，主要做 Web 应用与工程化相关开发。这个站点用来记录学习笔记、踩坑与总结。</p>
+<h2 id="技能栈"><a href="#技能栈" class="headerlink" title="技能栈"></a>技能栈</h2><ul>
+<li><strong>语言</strong>：JavaScript / TypeScript、HTML、CSS</li>
+<li><strong>框架</strong>：Vue、React</li>
+<li><strong>工程化</strong>：Vite、Webpack、Git、单元测试（Jest）</li>
+<li><strong>其他</strong>：算法练习、Cocos / 小游戏相关探索</li>
+</ul>
+<h2 id="项目与展示"><a href="#项目与展示" class="headerlink" title="项目与展示"></a>项目与展示</h2><p>在此补充你的开源项目、作品集链接或简要说明。支持 Markdown，可按需增删章节。</p>
+<blockquote>
+<p>示例：<a target="_blank" rel="noopener" href="https://github.com/simon7520">个人 GitHub</a> · 博客技术栈：Hexo + Butterfly + Three.js</p>
+</blockquote>
+</div></section></div><footer class="landing-footer"><span>© 2026 Simon</span><span class="landing-footer-sep">·</span><a href="/blog/" target="_blank" rel="noopener noreferrer" data-pjax="false">技术博客</a></footer></div><script src="/js/utils.js?v=5.5.4"></script><script>window.typedJSFn = {
+  init: str => {
+    window.typed = new Typed('#subtitle', Object.assign({
+      strings: str,
+      startDelay: 300,
+      typeSpeed: 150,
+      loop: true,
+      backSpeed: 50,
+    }, 3))
+  },
+  run: subtitleType => {
+    if (true) {
+      if (typeof Typed === 'function') {
+        subtitleType()
+      } else {
+        btf.getScript('https://cdn.jsdelivr.net/npm/typed.js@3.0.0/dist/typed.umd.min.js').then(subtitleType)
+      }
+    } else {
+      subtitleType()
+    }
+  },
+  processSubtitle: (content, extraContents = []) => {
+    if (true) {
+      const sub = ["To be or not to be, that is a question.","Life is a journey, not a destination.","Never put off till tomorrow what you can do today."].slice()
+
+      if (extraContents.length > 0) {
+        sub.unshift(...extraContents)
+      }
+
+      if (typeof content === 'string') {
+        sub.unshift(content)
+      } else if (Array.isArray(content)) {
+        sub.unshift(...content)
+      }
+
+      sub.length > 0 && typedJSFn.init(sub)
+    } else {
+      document.getElementById('subtitle').textContent = typeof content === 'string' ? content :
+        (Array.isArray(content) && content.length > 0 ? content[0] : '')
+    }
+  }
+}
+btf.addGlobalFn('pjaxSendOnce', () => { typed.destroy() }, 'typedDestroy')
+</script><script>function subtitleType () {
+  typedJSFn.processSubtitle(["To be or not to be, that is a question.","Life is a journey, not a destination.","Never put off till tomorrow what you can do today."])
+}
+typedJSFn.run(subtitleType)</script><script type="module" src="/js/bg-tech.js"></script><script>document.documentElement.setAttribute('data-theme', 'dark')</script></body></html>

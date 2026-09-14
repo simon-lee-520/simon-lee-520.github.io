@@ -1,0 +1,317 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Vue2 到 Vue3 表格上下移失效：从 $set 到 VXE 回写的一次排障 | Simon</title><meta name="author" content="Simon"><meta name="copyright" content="Simon"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="最近把一套老 HIS 页面从 Vue2 + VXE3 迁到 Vue3 + VXE4，遇到一个很「迷惑」的问题：上移 &#x2F; 下移在旧页能用，迁过去没反应；再回头看旧页，新增或删除一行之后，上下移也会突然失灵，保存刷新后又好了。 表面像是迁移适配漏了 API，深挖下去其实是两件事叠在一起：  Vue2 对数组 mutation 的依赖收集，比很多人记忆中的「无 deep 就不触发」更激进。 页面自己的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue2 到 Vue3 表格上下移失效：从 $set 到 VXE 回写的一次排障">
+<meta property="og:url" content="https://simon-lee-520.github.io/posts/d34c62e9/index.html">
+<meta property="og:site_name" content="Simon">
+<meta property="og:description" content="最近把一套老 HIS 页面从 Vue2 + VXE3 迁到 Vue3 + VXE4，遇到一个很「迷惑」的问题：上移 &#x2F; 下移在旧页能用，迁过去没反应；再回头看旧页，新增或删除一行之后，上下移也会突然失灵，保存刷新后又好了。 表面像是迁移适配漏了 API，深挖下去其实是两件事叠在一起：  Vue2 对数组 mutation 的依赖收集，比很多人记忆中的「无 deep 就不触发」更激进。 页面自己的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://simon-lee-520.github.io/img/Conan.jpeg">
+<meta property="article:published_time" content="2026-08-26T12:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-26T12:00:00.000Z">
+<meta property="article:author" content="Simon">
+<meta property="article:tag" content="VXE-Table">
+<meta property="article:tag" content="Vue2">
+<meta property="article:tag" content="Vue3">
+<meta property="article:tag" content="前端踩坑">
+<meta property="article:tag" content="响应式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://simon-lee-520.github.io/img/Conan.jpeg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Vue2 到 Vue3 表格上下移失效：从 $set 到 VXE 回写的一次排障",
+  "url": "https://simon-lee-520.github.io/posts/d34c62e9/",
+  "image": "https://simon-lee-520.github.io/img/Conan.jpeg",
+  "datePublished": "2026-08-26T12:00:00.000Z",
+  "dateModified": "2026-08-26T12:00:00.000Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Simon",
+      "url": "https://simon-lee-520.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://simon-lee-520.github.io/posts/d34c62e9/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":150,"languages":{"author":"作者: Simon","link":"链接: ","source":"来源: Simon","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Vue2 到 Vue3 表格上下移失效：从 $set 到 VXE 回写的一次排障',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"  media="defer" onload="this.media='all'"><meta name="generator" content="Hexo 8.1.2"></head><body><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+btf.addGlobalFn('pjaxSend', () => {
+  Pace.restart()
+}, 'pace_restart')
+
+</script><link rel="stylesheet" href="/css/pace/flash.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/Conan.jpeg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">23</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">55</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-user"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/blog/"><i class="fa-fw fas fa-home"></i><span> 博客</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img fixed" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/logo_wangye.jpg" alt="Logo"><span class="site-name">Simon</span></a><a class="nav-page-title" href="/"><span class="site-name">Vue2 到 Vue3 表格上下移失效：从 $set 到 VXE 回写的一次排障</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-user"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/blog/"><i class="fa-fw fas fa-home"></i><span> 博客</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">Vue2 到 Vue3 表格上下移失效：从 $set 到 VXE 回写的一次排障</h1><div id="post-meta"><div class="meta-firstline"><span class="copyright-badge copyright-badge--original">原创</span><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-08-26T12:00:00.000Z" title="发表于 2026-08-26 20:00:00">2026-08-26</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-08-26T12:00:00.000Z" title="更新于 2026-08-26 20:00:00">2026-08-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/note/">前端踩坑笔记</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="container post-content" id="article-container"><p>最近把一套老 HIS 页面从 Vue2 + VXE3 迁到 Vue3 + VXE4，遇到一个很「迷惑」的问题：<strong>上移 / 下移在旧页能用，迁过去没反应；再回头看旧页，新增或删除一行之后，上下移也会突然失灵，保存刷新后又好了。</strong></p>
+<p>表面像是迁移适配漏了 API，深挖下去其实是两件事叠在一起：</p>
+<ol>
+<li>Vue2 对数组 mutation 的依赖收集，比很多人记忆中的「无 deep 就不触发」更激进。</li>
+<li>页面自己的 <code>tableData</code> 和表格内部数据，经常在增删后被悄悄拆成两份。</li>
+</ol>
+<p>这篇记录完整推理链，以及 Vue3 / VXE4 下更稳妥的写法。</p>
+<h2 id="现象对照"><a href="#现象对照" class="headerlink" title="现象对照"></a>现象对照</h2><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>旧页（Vue2.7 + VXE3）</th>
+<th>迁移页（Vue3 + VXE4）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>刚查询完，点上下移</td>
+<td>有反应</td>
+<td>最初无反应（只改了页面数组）</td>
+</tr>
+<tr>
+<td>新增 / 删除后再上下移</td>
+<td><strong>也没反应</strong>，要保存刷新</td>
+<td>若只 <code>$set</code> / 只改页面副本，同样挂</td>
+</tr>
+<tr>
+<td>保存后重新拉表</td>
+<td>又好了</td>
+<td>取决于你有没有把顺序写回表格</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>旧页「能用」并不是实现正确，而是<strong>碰巧还共享同一份数组引用</strong>时，Vue2 的响应式帮你把表格刷了。</p>
+<h2 id="旧页原来怎么写的"><a href="#旧页原来怎么写的" class="headerlink" title="旧页原来怎么写的"></a>旧页原来怎么写的</h2><p>业务页大致是这样：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// 查询后：页面 tableData 与 blendPage.dataSource 同一引用</span><br><span class="hljs-title function_">requestAfter</span>(<span class="hljs-params">tableData</span>) &#123;<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">tableData</span> = tableData<br>  <span class="hljs-keyword">return</span> tableData<br>&#125;<br><br><span class="hljs-title function_">moveDown</span>(<span class="hljs-params">&#123; rowIndex &#125;</span>) &#123;<br>  <span class="hljs-keyword">const</span> temp = <span class="hljs-variable language_">this</span>.<span class="hljs-property">tableData</span>[rowIndex]<br>  <span class="hljs-keyword">const</span> next = rowIndex + <span class="hljs-number">1</span><br>  <span class="hljs-keyword">const</span> nextTemp = <span class="hljs-variable language_">this</span>.<span class="hljs-property">tableData</span>[next]<br>  <span class="hljs-variable language_">this</span>.$set(<span class="hljs-variable language_">this</span>.<span class="hljs-property">tableData</span>, rowIndex, nextTemp)<br>  <span class="hljs-variable language_">this</span>.$set(<span class="hljs-variable language_">this</span>.<span class="hljs-property">tableData</span>, next, temp)<br>  <span class="hljs-comment">// 没有 setTableData</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>表格组件这边会 watch <code>dataSource</code>（<strong>没有 <code>deep: true</code></strong>），把值 <code>filter</code> 成自己的 <code>tableData</code>，再交给 VXE 的 <code>data</code>。</p>
+<p>于是一个很自然的误判出现了：</p>
+<blockquote>
+<p>无 deep 的 watch 只在引用变了才跑；<code>$set</code> 只是改下标，引用没变，按理不该触发。那旧页为什么能动？</p>
+</blockquote>
+<p>这个误判，正是这次排障的起点。</p>
+<h2 id="Vue-2-7-源码：为什么无-deep-也会触发"><a href="#Vue-2-7-源码：为什么无-deep-也会触发" class="headerlink" title="Vue 2.7 源码：为什么无 deep 也会触发"></a>Vue 2.7 源码：为什么无 deep 也会触发</h2><p>项目用的是 <strong>Vue 2.7.16</strong>。结论可以拆成三步。</p>
+<h3 id="1-对数组的-set，本质是-splice"><a href="#1-对数组的-set，本质是-splice" class="headerlink" title="1. 对数组的 $set，本质是 splice"></a>1. 对数组的 <code>$set</code>，本质是 <code>splice</code></h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// vue.runtime.esm.js — set()</span><br><span class="hljs-keyword">if</span> (<span class="hljs-title function_">isArray</span>(target) &amp;&amp; <span class="hljs-title function_">isValidArrayIndex</span>(key)) &#123;<br>  target.<span class="hljs-property">length</span> = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">max</span>(target.<span class="hljs-property">length</span>, key)<br>  target.<span class="hljs-title function_">splice</span>(key, <span class="hljs-number">1</span>, val) <span class="hljs-comment">// ← 关键</span><br>  <span class="hljs-keyword">return</span> val<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>不是静默改下标，而是走被劫持的数组方法。</p>
+<h3 id="2-splice-会通知数组自己的-Dep"><a href="#2-splice-会通知数组自己的-Dep" class="headerlink" title="2. splice 会通知数组自己的 Dep"></a>2. <code>splice</code> 会通知数组自己的 Dep</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// arrayMethods 里的 mutator</span><br>ob.<span class="hljs-property">dep</span>.<span class="hljs-title function_">notify</span>()<br></code></pre></td></tr></table></figure>
+<p>谁订过这个数组的 <code>__ob__.dep</code>，谁就会 <code>update</code>。</p>
+<h3 id="3-读属性时，无-deep-也会订上「子对象-数组」的-Dep"><a href="#3-读属性时，无-deep-也会订上「子对象-数组」的-Dep" class="headerlink" title="3. 读属性时，无 deep 也会订上「子对象 / 数组」的 Dep"></a>3. 读属性时，无 deep 也会订上「子对象 / 数组」的 Dep</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// defineReactive 的 getter</span><br><span class="hljs-attr">get</span>: <span class="hljs-keyword">function</span> <span class="hljs-title function_">reactiveGetter</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">var</span> value = <span class="hljs-comment">/* ... */</span><br>  <span class="hljs-keyword">if</span> (<span class="hljs-title class_">Dep</span>.<span class="hljs-property">target</span>) &#123;<br>    dep.<span class="hljs-title function_">depend</span>()              <span class="hljs-comment">// 属性本身</span><br>    <span class="hljs-keyword">if</span> (childOb) &#123;<br>      childOb.<span class="hljs-property">dep</span>.<span class="hljs-title function_">depend</span>()    <span class="hljs-comment">// 数组 / 对象自己的 Observer.dep</span><br>      <span class="hljs-keyword">if</span> (<span class="hljs-title function_">isArray</span>(value)) &#123;<br>        <span class="hljs-title function_">dependArray</span>(value)<br>      &#125;<br>    &#125;<br>  &#125;<br>  <span class="hljs-keyword">return</span> value<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><code>watch: { dataSource(val) { ... } }</code> 求值时只要读到这个数组，就会订上数组 mutation。<br><code>deep: true</code> 只是再 <code>traverse</code> 一遍嵌套字段；<strong>数组 mutation 这条线本来就通。</strong></p>
+<p>再看 <code>Watcher.run</code>：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">if</span> (value !== <span class="hljs-variable language_">this</span>.<span class="hljs-property">value</span> || <span class="hljs-title function_">isObject</span>(value) || <span class="hljs-variable language_">this</span>.<span class="hljs-property">deep</span>) &#123;<br>  <span class="hljs-comment">// Object / Array：引用没变也会执行 callback</span><br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">cb</span>.<span class="hljs-title function_">call</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">vm</span>, value, oldValue)<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>所以链路是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs text">$set(arr, i, x)<br>  → splice<br>  → arr.__ob__.dep.notify()<br>  → dataSource watch 回调<br>  → this.tableData = val.filter(...)<br>  → 新数组交给 VXE<br>  → 画面换序<br></code></pre></td></tr></table></figure>
+<p>文档里常说的「不 deep 听不到内部变化」，更准确是：</p>
+<ul>
+<li><strong>对象字段赋值</strong> <code>obj.a = 1</code>：非 deep 通常收不到。</li>
+<li><strong>数组 mutation</strong>（含 <code>$set(arr, i, v)</code>）：非 deep 也常能收到。</li>
+</ul>
+<p>旧页「只 <code>$set</code> 就能动」，靠的是这条 Vue2 特供链，不是业务代码显式刷新了表格。</p>
+<h2 id="那为什么新增-删除后又不行了？"><a href="#那为什么新增-删除后又不行了？" class="headerlink" title="那为什么新增 / 删除后又不行了？"></a>那为什么新增 / 删除后又不行了？</h2><p>因为业务里还有一个很常见的同步方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-title function_">getTableData</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">const</span> &#123; tableData &#125; = <span class="hljs-variable language_">this</span>.<span class="hljs-property">$refs</span>.<span class="hljs-property">wgBlendPage</span>.<span class="hljs-property">$refs</span>.<span class="hljs-property">blendPage</span>.<span class="hljs-title function_">getTableData</span>()<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">tableData</span> = tableData.<span class="hljs-title function_">map</span>(<span class="hljs-function">(<span class="hljs-params">item, index</span>) =&gt;</span> (&#123;<br>    ...item,<br>    <span class="hljs-attr">sortNo</span>: item.<span class="hljs-property">commonDiagId</span> ? index : <span class="hljs-literal">null</span>,<br>  &#125;))<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>新增后会调它，删除后也会 <code>setTableData</code> 再 <code>getTableData</code>。</p>
+<p><code>.map({ ...item })</code> 的后果是：</p>
+<ul>
+<li>页面 <code>this.tableData</code> 变成<strong>新数组、新行对象</strong></li>
+<li>blend / VXE 仍挂着<strong>原来的 dataSource / 内部数据</strong></li>
+<li>之后上下移继续 <code>$set</code> 页面这份「私有副本」</li>
+<li>表格订阅的还是另一份数组 → <strong>画面不动</strong></li>
+</ul>
+<p>保存再查一遍，<code>requestAfter</code> 重新把同一引用赋回去，上下移又「好了」。</p>
+<p>所以旧页其实一直有隐患：<strong>上下移依赖「页面数组 === 表格数据源」这个偶然条件。</strong> 增删一打断就坏。不是保存有魔法，是引用重新对齐了。</p>
+<p>用日志也能验证：</p>
+<ol>
+<li><code>$set</code> 同步结束后：只有页面数组顺序变了，<code>vxeTableCom.tableData</code> / grid 还是旧序。</li>
+<li>紧接着 <code>dataSource</code> watch 打出来：<code>incoming</code> 新序，<code>currentTableData</code> 旧序。</li>
+<li><code>nextTick</code> 后：grid 才跟上来。</li>
+</ol>
+<p>共享引用在时，watch 能救你；引用断了，<code>$set</code> 只是在改幽灵数组。</p>
+<h2 id="迁到-Vue3-VXE4-后，为什么「照抄」会失效"><a href="#迁到-Vue3-VXE4-后，为什么「照抄」会失效" class="headerlink" title="迁到 Vue3 + VXE4 后，为什么「照抄」会失效"></a>迁到 Vue3 + VXE4 后，为什么「照抄」会失效</h2><p>Vue3 的依赖收集和 VXE4 的数据流都更「显式」：</p>
+<ul>
+<li>页面改自己的 <code>tableData</code>，不再自动等价于改 grid。</li>
+<li>VXE 内部有自己的 <code>fullData</code>；换序要靠 <code>loadData</code> / 封装好的 <code>setTableData</code> 写回去。</li>
+<li>迁移时如果还先 <code>getTableData().map(...)</code>，会把行对象再摊一层，和表格内部引用彻底脱钩，更不能指望原地 mutation。</li>
+</ul>
+<p>所以迁移页最初「只改页面数组」时上下移没反应，是预期行为；旧页能用，是 Vue2 + 共享引用帮你瞒过去了。</p>
+<h2 id="推荐写法"><a href="#推荐写法" class="headerlink" title="推荐写法"></a>推荐写法</h2><p>原则就三条：</p>
+<ol>
+<li><strong>画面真相在 VXE</strong>，不要只改页面 <code>tableData</code> 指望表格跟着动。</li>
+<li><strong>改序 / 增删后的展示</strong>一律 <code>setTableData</code>（或项目封装的等价 API）。</li>
+<li><strong>页面 <code>tableData</code> 只作业务副本</strong>（保存、校验、<code>sortNo</code>），需要时从 <code>fullData</code> 同步。</li>
+</ol>
+<p>上下移推荐这样写：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-title function_">moveDown</span>(<span class="hljs-params">value</span>) &#123;<br>  <span class="hljs-keyword">const</span> &#123; row, rowIndex, $rowIndex &#125; = value || &#123;&#125;<br>  <span class="hljs-keyword">const</span> &#123; fullData &#125; = <span class="hljs-variable language_">this</span>.<span class="hljs-property">$refs</span>.<span class="hljs-property">wgBlendPage</span>.<span class="hljs-property">$refs</span>.<span class="hljs-property">blendPage</span>.<span class="hljs-title function_">getTableData</span>()<br>  <span class="hljs-keyword">const</span> data = (fullData || []).<span class="hljs-title function_">slice</span>() <span class="hljs-comment">// 只换数组壳，尽量保留行对象引用</span><br><br>  <span class="hljs-keyword">let</span> index = <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">findTableRowIndex</span>(data, row)<br>  <span class="hljs-keyword">if</span> (index &lt; <span class="hljs-number">0</span>) index = $rowIndex ?? rowIndex<br>  <span class="hljs-keyword">if</span> (index == <span class="hljs-literal">null</span> || index &lt; <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span><br>  <span class="hljs-keyword">if</span> (index === data.<span class="hljs-property">length</span> - <span class="hljs-number">1</span>) &#123;<br>    <span class="hljs-comment">// tip: 已经是最后一行</span><br>    <span class="hljs-keyword">return</span><br>  &#125;<br><br>  <span class="hljs-keyword">const</span> temp = data[index]<br>  data[index] = data[index + <span class="hljs-number">1</span>]<br>  data[index + <span class="hljs-number">1</span>] = temp<br><br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">tableData</span> = data                 <span class="hljs-comment">// 给保存 / setSortNo</span><br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">$refs</span>.<span class="hljs-property">wgBlendPage</span>.<span class="hljs-title function_">setTableData</span>(data) <span class="hljs-comment">// 给画面</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>上移同理。</p>
+<p>注意：带 <code>.map</code> 整理 <code>sortNo</code> 的 <code>getTableData()</code>，更适合<strong>保存前</strong>；不适合当作每次上下移的第一步。上下移先 <code>map</code> 一遍，等于主动切断行引用，然后再硬回写，多做了一次无意义的摊平。</p>
+<h2 id="排障时可以怎么验证"><a href="#排障时可以怎么验证" class="headerlink" title="排障时可以怎么验证"></a>排障时可以怎么验证</h2><p>如果你也怀疑「页面动了、表格没动」，不要猜，直接对引用和顺序打点：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">const</span> blend = <span class="hljs-variable language_">this</span>.<span class="hljs-property">$refs</span>.<span class="hljs-property">wgBlendPage</span>.<span class="hljs-property">$refs</span>.<span class="hljs-property">blendPage</span><br><span class="hljs-keyword">const</span> vxe = blend.<span class="hljs-property">$refs</span>.<span class="hljs-property">vxeTableCom</span><br><span class="hljs-keyword">const</span> grid = vxe.<span class="hljs-property">$refs</span>.<span class="hljs-property">xEditGrid</span><br><br><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(&#123;<br>  <span class="hljs-attr">pageEqualsDataSource</span>: <span class="hljs-variable language_">this</span>.<span class="hljs-property">tableData</span> === blend.<span class="hljs-property">dataSource</span>,<br>  <span class="hljs-attr">pageEqualsVxeTableData</span>: <span class="hljs-variable language_">this</span>.<span class="hljs-property">tableData</span> === vxe.<span class="hljs-property">tableData</span>,<br>  <span class="hljs-attr">pageOrder</span>: <span class="hljs-variable language_">this</span>.<span class="hljs-property">tableData</span>.<span class="hljs-title function_">map</span>(<span class="hljs-function"><span class="hljs-params">r</span> =&gt;</span> r.<span class="hljs-property">id</span>),<br>  <span class="hljs-attr">gridOrder</span>: grid.<span class="hljs-title function_">getTableData</span>().<span class="hljs-property">fullData</span>.<span class="hljs-title function_">map</span>(<span class="hljs-function"><span class="hljs-params">r</span> =&gt;</span> r.<span class="hljs-property">id</span>),<br>&#125;)<br></code></pre></td></tr></table></figure>
+<p>看三件事就够：</p>
+<ol>
+<li>引用是否还相等。</li>
+<li><code>$set</code> / 换序之后，页面顺序有没有先变。</li>
+<li>有没有 watch / <code>setTableData</code> 把 grid 拉齐。</li>
+</ol>
+<p>验证完记得删日志。临时探针很管用，留在业务里只会污染下次排障。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>认知</th>
+<th>更准确的说法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>「无 deep 就听不到数组变化」</td>
+<td>Vue2 读持有数组的属性时，会订数组自身 Dep；mutation 常能触发</td>
+</tr>
+<tr>
+<td>「旧页 <code>$set</code> 就能换序，说明写法对」</td>
+<td>只是共享引用 + Vue2 数组通知在帮你；增删后经常失效</td>
+</tr>
+<tr>
+<td>「迁移后要先 <code>getTableData</code> 再换序」</td>
+<td>应对齐的是 <code>fullData</code>；带 <code>.map</code> 的整理更适合保存，不适合每次上下移</td>
+</tr>
+<tr>
+<td>「Vue3 表格换序怎么写」</td>
+<td><code>fullData.slice()</code> → 交换 → <code>setTableData</code> + 同步页面副本</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>这次最大的收获不是某个 API 叫什么，而是：</p>
+<blockquote>
+<p><strong>表格场景里，不要把「页面 data 碰巧能驱动 UI」当成契约；把「读表格真相 → 改完显式回写」写成契约。</strong></p>
+</blockquote>
+<p>旧框架的隐式同步，迁版本时最容易变成幽灵 bug。能用日志证明引用断点，再用源码钉死触发条件，比反复改 <code>$set</code> / <code>deep</code> 省事得多。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://simon-lee-520.github.io">Simon</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://simon-lee-520.github.io/posts/d34c62e9/">https://simon-lee-520.github.io/posts/d34c62e9/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://simon-lee-520.github.io" target="_blank">Simon</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Vue2/">Vue2</a><a class="post-meta__tags" href="/tags/Vue3/">Vue3</a><a class="post-meta__tags" href="/tags/VXE-Table/">VXE-Table</a><a class="post-meta__tags" href="/tags/%E5%93%8D%E5%BA%94%E5%BC%8F/">响应式</a><a class="post-meta__tags" href="/tags/%E5%89%8D%E7%AB%AF%E8%B8%A9%E5%9D%91/">前端踩坑</a></div><div class="post-share"><div class="social-share" data-image="/img/Conan.jpeg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/posts/a7f3c1e2/" title="Vue3 scoped 样式失效：Tooltip 打断 data-v 根链的一次排障"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Vue3 scoped 样式失效：Tooltip 打断 data-v 根链的一次排障</div></div><div class="info-2"><div class="info-item-1">迁移一套 HIS 公共图标组件时，遇到一个很「迷惑」的现象：去掉内部的 WgTooltip，根节点 &lt;i&gt; 上有调用方的 data-v-*；加上之后，根节点还是 &lt;i&gt;，但 data-v-* 没了，调用方的 scoped 样式全部失效。 表面像属性丢了，深挖下去其实是 Vue scoped CSS 的「单根作用域继承」被 Element Plus Tooltip 的 Fragment 根打断了。这篇记录完整推理链、Element UI / Plus 的实现差异，以及真正不受 disabled 影响的修法。 现象调用方大致是这样： 12345678910&lt;template&gt;  &lt;wg-icon v-if=&quot;iconName&quot; class=&quot;order-type-icon f40&quot; :name=&quot;iconName&quot; /&gt;&lt;/template&gt;&lt;style scoped&gt;.order-type-icon.f40 &#123;  font-size: 40p...</div></div></div></a><a class="pagination-related" href="/posts/ce080db8/" title="我把前端开发 SOP 写进 Skill，Codex 终于不乱发挥了"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">我把前端开发 SOP 写进 Skill，Codex 终于不乱发挥了</div></div><div class="info-2"><div class="info-item-1">本文转载自 Kryon 微信公众号，原标题《我把前端开发 SOP 写进 Skill，Codex 终于不乱发挥了》。 我以前让 Codex 改前端页面，最常说的一句话是： 按我们项目的习惯改，别乱发挥。   这句话听起来很合理，实际等于没说。 因为 Codex 不知道“我们项目的习惯”到底是什么。 它不知道你们页面开发前要先看哪几个目录，不知道组件能不能拆，不知道接口字段能不能动，也不知道你说的“完成”到底是代码能跑、页面能看，还是已经跑过检查命令。 所以它会按自己的理解来。 第一轮能写出来。 第二轮开始顺手抽组件。 第三轮把样式规范也一起重做。 最后你不是在验收代码，而是在把 AI 拉回正轨。 后来我发现，前端用 Codex 最需要的不是一句更厉害的 Prompt，而是一份更清楚的开发 SOP。 把 SOP 写进 Skill 之后，Codex 才开始像一个“知道流程的新同事”。 为什么 Codex 会乱发挥很多前端任务从表面看很简单。 比如： 把用户列表页优化一下。   但这句话背后有一堆隐含规则：     隐含规则 如果没说清楚，Codex 可能怎么做       复用现有组件...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/posts/e8a4b2c1/" title="Vue3 + Element Plus：ElSelect Maximum recursive updates 的一次排障"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-31</div><div class="info-item-2">Vue3 + Element Plus：ElSelect Maximum recursive updates 的一次排障</div></div><div class="info-2"><div class="info-item-1"> 2026-09-03 修正：本文初版把根因定在「大码表 × 多实例首屏全挂，把 Vue3 递归护栏顶穿」，解法是页侧懒挂 option。后来在真实浏览器里做逐层对照复现，发现那个结论不成立——数量本身不是原因，真正的扳机是全局把 wg-option 注册成了异步组件。初版的页侧懒挂之所以「看起来修好了」，只是把 option 数压到了护栏阈值以下。下文按新证据重写，初版推断保留在「第一轮结论错在哪」一节。  把一套老 HIS 页面从 Vue2 + Element UI 迁到 Vue3 + Element Plus 时，大下拉进页就炸： 1Maximum recursive updates exceeded in component &lt;ElSelect&gt; 表面像是 wg-select 门面或 checkbox 写坏了，实际是三件事叠出来的：EP 的 option 挂载会改父 Select 的响应式状态、Vue3 有一条数 update 次数的护栏，而把 option 注册成异步组件，会让每个 option 各自触发一次父级更新。 现象组件调试场里放了四个 500 条 ...</div></div></div></a><a class="pagination-related" href="/posts/a7f3c1e2/" title="Vue3 scoped 样式失效：Tooltip 打断 data-v 根链的一次排障"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-27</div><div class="info-item-2">Vue3 scoped 样式失效：Tooltip 打断 data-v 根链的一次排障</div></div><div class="info-2"><div class="info-item-1">迁移一套 HIS 公共图标组件时，遇到一个很「迷惑」的现象：去掉内部的 WgTooltip，根节点 &lt;i&gt; 上有调用方的 data-v-*；加上之后，根节点还是 &lt;i&gt;，但 data-v-* 没了，调用方的 scoped 样式全部失效。 表面像属性丢了，深挖下去其实是 Vue scoped CSS 的「单根作用域继承」被 Element Plus Tooltip 的 Fragment 根打断了。这篇记录完整推理链、Element UI / Plus 的实现差异，以及真正不受 disabled 影响的修法。 现象调用方大致是这样： 12345678910&lt;template&gt;  &lt;wg-icon v-if=&quot;iconName&quot; class=&quot;order-type-icon f40&quot; :name=&quot;iconName&quot; /&gt;&lt;/template&gt;&lt;style scoped&gt;.order-type-icon.f40 &#123;  font-size: 40p...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/Conan.jpeg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Simon</div><div class="author-info-description">To be or not to be, that is a question.</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">23</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">55</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/simon-lee-520"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/simon-lee-520" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:simon520ljc@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%B0%E8%B1%A1%E5%AF%B9%E7%85%A7"><span class="toc-number">1.</span> <span class="toc-text">现象对照</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A7%E9%A1%B5%E5%8E%9F%E6%9D%A5%E6%80%8E%E4%B9%88%E5%86%99%E7%9A%84"><span class="toc-number">2.</span> <span class="toc-text">旧页原来怎么写的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Vue-2-7-%E6%BA%90%E7%A0%81%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E6%97%A0-deep-%E4%B9%9F%E4%BC%9A%E8%A7%A6%E5%8F%91"><span class="toc-number">3.</span> <span class="toc-text">Vue 2.7 源码：为什么无 deep 也会触发</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AF%B9%E6%95%B0%E7%BB%84%E7%9A%84-set%EF%BC%8C%E6%9C%AC%E8%B4%A8%E6%98%AF-splice"><span class="toc-number">3.1.</span> <span class="toc-text">1. 对数组的 $set，本质是 splice</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-splice-%E4%BC%9A%E9%80%9A%E7%9F%A5%E6%95%B0%E7%BB%84%E8%87%AA%E5%B7%B1%E7%9A%84-Dep"><span class="toc-number">3.2.</span> <span class="toc-text">2. splice 会通知数组自己的 Dep</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%AF%BB%E5%B1%9E%E6%80%A7%E6%97%B6%EF%BC%8C%E6%97%A0-deep-%E4%B9%9F%E4%BC%9A%E8%AE%A2%E4%B8%8A%E3%80%8C%E5%AD%90%E5%AF%B9%E8%B1%A1-%E6%95%B0%E7%BB%84%E3%80%8D%E7%9A%84-Dep"><span class="toc-number">3.3.</span> <span class="toc-text">3. 读属性时，无 deep 也会订上「子对象 &#x2F; 数组」的 Dep</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%82%A3%E4%B8%BA%E4%BB%80%E4%B9%88%E6%96%B0%E5%A2%9E-%E5%88%A0%E9%99%A4%E5%90%8E%E5%8F%88%E4%B8%8D%E8%A1%8C%E4%BA%86%EF%BC%9F"><span class="toc-number">4.</span> <span class="toc-text">那为什么新增 &#x2F; 删除后又不行了？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%81%E5%88%B0-Vue3-VXE4-%E5%90%8E%EF%BC%8C%E4%B8%BA%E4%BB%80%E4%B9%88%E3%80%8C%E7%85%A7%E6%8A%84%E3%80%8D%E4%BC%9A%E5%A4%B1%E6%95%88"><span class="toc-number">5.</span> <span class="toc-text">迁到 Vue3 + VXE4 后，为什么「照抄」会失效</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A8%E8%8D%90%E5%86%99%E6%B3%95"><span class="toc-number">6.</span> <span class="toc-text">推荐写法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%92%E9%9A%9C%E6%97%B6%E5%8F%AF%E4%BB%A5%E6%80%8E%E4%B9%88%E9%AA%8C%E8%AF%81"><span class="toc-number">7.</span> <span class="toc-text">排障时可以怎么验证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">8.</span> <span class="toc-text">小结</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/e8a4b2c1/" title="Vue3 + Element Plus：ElSelect Maximum recursive updates 的一次排障">Vue3 + Element Plus：ElSelect Maximum recursive updates 的一次排障</a><div class="aside-post-meta"><span class="copyright-badge copyright-badge--original">原创</span><time datetime="2026-08-31T13:40:00.000Z" title="发表于 2026-08-31 21:40:00">2026-08-31</time></div></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/a7f3c1e2/" title="Vue3 scoped 样式失效：Tooltip 打断 data-v 根链的一次排障">Vue3 scoped 样式失效：Tooltip 打断 data-v 根链的一次排障</a><div class="aside-post-meta"><span class="copyright-badge copyright-badge--original">原创</span><time datetime="2026-08-27T13:10:00.000Z" title="发表于 2026-08-27 21:10:00">2026-08-27</time></div></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/d34c62e9/" title="Vue2 到 Vue3 表格上下移失效：从 $set 到 VXE 回写的一次排障">Vue2 到 Vue3 表格上下移失效：从 $set 到 VXE 回写的一次排障</a><div class="aside-post-meta"><span class="copyright-badge copyright-badge--original">原创</span><time datetime="2026-08-26T12:00:00.000Z" title="发表于 2026-08-26 20:00:00">2026-08-26</time></div></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/ce080db8/" title="我把前端开发 SOP 写进 Skill，Codex 终于不乱发挥了">我把前端开发 SOP 写进 Skill，Codex 终于不乱发挥了</a><div class="aside-post-meta"><span class="copyright-badge copyright-badge--repost">转载</span><time datetime="2026-04-22T01:55:00.000Z" title="发表于 2026-04-22 09:55:00">2026-04-22</time></div></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/d28b0bf0/" title="AI 编程工作流选型：Spec-Kit、OpenSpec、Superpowers 深度对比">AI 编程工作流选型：Spec-Kit、OpenSpec、Superpowers 深度对比</a><div class="aside-post-meta"><span class="copyright-badge copyright-badge--repost">转载</span><time datetime="2026-04-01T12:03:05.000Z" title="发表于 2026-04-01 20:03:05">2026-04-01</time></div></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2022 - 2026 By Simon</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async src="/js/diytitle.js"></script><script async src="/js/grayscale.js"></script><script src="/js/custom-sync.js"></script><script async src="/js/custom-async.js"></script><div class="aplayer no-destroy" data-id="17949662811" data-server="netease" data-type="playlist" data-fixed="true" data-mini="true" data-autoplay="true" data-theme="#ad7a86"></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-nest.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/click-show-text.min.js" data-mobile="false" data-text="I,LOVE,YOU" data-fontsize="15px" data-random="false" async="async"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/metingjs/dist/Meting.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章..." type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.4"></script></div></div></body></html>
