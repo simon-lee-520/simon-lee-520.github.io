@@ -6,6 +6,9 @@ node_modules/
 public/
 .deploy*/
 .cache/
+tools/.cache/
+source/models/landing/swordsman.vrm
+source/models/landing/jellyfish.glb
 
 # Editor directories and files
 .idea/

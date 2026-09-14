@@ -13,7 +13,7 @@ timezone: Asia/Shanghai
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
-url: https://simon7520.github.io
+url: https://simon-lee-520.github.io
 permalink: posts/:abbrlink
 abbrlink:
   alg: crc32 # 算法：crc16(default) and crc32
@@ -34,7 +34,7 @@ i18n_dir: :lang
 skip_render:
 
 # Writing
-new_post_name: :title.md # File name of new posts
+new_post_name: :year/:title.md # File name of new posts (grouped by year)
 default_layout: post
 titlecase: false # Transform title into titlecase
 external_link:
@@ -79,6 +79,7 @@ category_map:
   React: React
   前端踩坑笔记: note
   Cocos2d-x: Cocos2d-x
+  AI: AI
 
 tag_map:
 
@@ -133,7 +134,7 @@ search:
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: git
-  repository: git@github.com:Simon7520/simon7520.github.io.git # 设置repository对应的链接
+  repository: git@github.com:simon-lee-520/simon-lee-520.github.io.git # 设置repository对应的链接
   branch: master # 设置提交到的分支
   message: Site updated at {{ now("YYYY-MM-DD HH:mm:ss") }} # 设置我们提交的信息
 

@@ -1,0 +1,6 @@
+# 项目运行时版本（与 package.json 的 engines / packageManager 对齐）
+# 文档：https://mise.jdx.dev/
+
+[tools]
+node = "24"
+pnpm = "9.0.0"

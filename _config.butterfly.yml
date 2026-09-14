@@ -48,8 +48,8 @@ code_blocks:
 # Formal:
 #   icon: link || the description || color
 social:
-  fab fa-github: https://github.com/simon7520 || Github || '#24292e'
-  fas fa-envelope: mailto:simon.520@qq.com || Email || '#4a7dbe'
+  fab fa-github: https://github.com/simon-lee-520 || Github || '#24292e'
+  fas fa-envelope: mailto:simon520ljc@gmail.com || Email || '#4a7dbe'
 
 # --------------------------------------
 # Image Settings
@@ -295,7 +295,7 @@ aside:
       enable: true
       icon: fab fa-github
       text: Follow Me
-      link: https://github.com/simon7520
+      link: https://github.com/simon-lee-520
   card_announcement:
     enable: true
     content: This is my Blog
@@ -829,7 +829,7 @@ beautify:
 font:
   global_font_size:
   code_font_size:
-  font_family: HanchanKT
+  font_family: HarmonyKT
   code_font_family:
 
 # Font settings for the site title and site subtitle
@@ -847,7 +847,7 @@ hr_icon:
 # Typewriter Effect
 # https://github.com/disjukr/activate-power-mode
 activate_power_mode:
-  enable: false
+  enable: true
   colorful: true
   shake: true
   mobile: false
@@ -875,7 +875,7 @@ canvas_fluttering_ribbon:
 # canvas_nest
 # https://github.com/hustcc/canvas-nest.js
 canvas_nest:
-  enable: false
+  enable: true
   # Color of lines, default: '0,0,0'; RGB values: (R,G,B).(note: use ',' to separate.)
   color: '0,0,255'
   # The opacity of line (0~1)
@@ -899,11 +899,11 @@ click_heart:
 
 # Mouse click effects: words
 clickShowText:
-  enable: false
+  enable: true
   text:
-    # - I
-    # - LOVE
-    # - YOU
+    - I
+    - LOVE
+    - YOU
   fontSize: 15px
   random: false
   mobile: false
