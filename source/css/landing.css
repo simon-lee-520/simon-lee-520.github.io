@@ -4,6 +4,19 @@
   margin: 0;
   overflow-x: hidden;
   color: #e8f4f8;
+  background: #050810;
+}
+
+/* WebGL 已加载：三幕区域透明，让固定 canvas 动画透出 */
+body.page-landing.landing-bg-ready .act-1.landing-hero,
+body.page-landing.landing-bg-ready .act-2.act-spacer,
+body.page-landing.landing-bg-ready .act-3.landing-content {
+  background: transparent;
+}
+
+body.page-landing.landing-bg-ready #landing,
+body.page-landing.landing-bg-ready #landing-foreground {
+  background: transparent;
 }
 
 .page-landing #loading-box,
@@ -14,43 +27,110 @@
 #landing {
   position: relative;
   z-index: 1;
-  min-height: 100vh;
+  min-height: 510vh;
+}
+
+#landing-foreground {
+  pointer-events: none;
+}
+
+#landing-foreground a,
+#landing-foreground button {
+  pointer-events: auto;
+}
+
+body.page-landing.act-ocean {
+  cursor: none;
 }
 
 /* ---------- 首屏 ---------- */
+.act-1.landing-hero {
+  min-height: 200vh;
+}
+
+.act-2.act-spacer {
+  min-height: 160vh;
+}
+
+.act-3.landing-content {
+  /* 锁定幕 3 高度，保证滚到底时与 scroll-director 510vh 对齐 */
+  min-height: 150vh;
+  height: 150vh;
+  box-sizing: border-box;
+}
+
 .landing-hero {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
   padding: 2rem 1.5rem 4rem;
   text-align: center;
 }
 
 .landing-hero-inner {
-  max-width: 36rem;
+  width: 100%;
+  max-width: 100%;
 }
 
-.landing-theme-btn {
-  position: fixed;
-  top: 1.25rem;
-  right: 1.25rem;
-  z-index: 10;
-  width: 2.5rem;
-  height: 2.5rem;
-  border: 1px solid rgba(0, 245, 255, 0.35);
-  border-radius: 50%;
-  background: rgba(8, 12, 20, 0.55);
-  color: #00f5ff;
-  cursor: pointer;
-  backdrop-filter: blur(8px);
-  transition: border-color 0.2s, box-shadow 0.2s;
+@media (prefers-reduced-motion: no-preference) {
+  .landing-hero-reveal > * {
+    opacity: 0;
+    transform: translateY(14px);
+    animation: landing-hero-reveal 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .landing-hero-reveal .landing-avatar {
+    animation-delay: 0.08s;
+  }
+
+  .landing-hero-reveal .landing-name {
+    animation-delay: 0.18s;
+  }
+
+  .landing-hero-reveal #landing-subtitle {
+    animation-delay: 0.32s;
+  }
+
+  .landing-hero-reveal .landing-cta {
+    animation-delay: 0.46s;
+  }
+
+  @keyframes landing-hero-reveal {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* 仅淡入，勿改 transform（会冲掉底部居中偏移） */
+  .landing-content-reveal {
+    opacity: 0;
+    animation: landing-content-in 1s ease 0.15s forwards;
+  }
+
+  @keyframes landing-content-in {
+    to {
+      opacity: 1;
+    }
+  }
 }
 
-.landing-theme-btn:hover {
-  border-color: rgba(255, 0, 170, 0.6);
-  box-shadow: 0 0 12px rgba(0, 245, 255, 0.25);
+@media (prefers-reduced-motion: reduce) {
+  .landing-hero-reveal > * {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  .landing-content-reveal {
+    opacity: 1;
+    animation: none;
+  }
+
+  body.page-landing #landing-foreground {
+    transform: none !important;
+  }
 }
 
 .landing-avatar {
@@ -65,10 +145,13 @@
 
 .landing-name {
   margin: 0 0 0.75rem;
-  font-size: clamp(1.5rem, 5vw, 2.35rem);
+  font-size: clamp(1rem, 5vw, 2.35rem);
   font-weight: 700;
-  letter-spacing: 0.06em;
+  line-height: 1.15;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
   text-shadow: 0 0 20px rgba(0, 245, 255, 0.35);
+  font-family: 'XiangcuiZeroHei', sans-serif;
 }
 
 #landing-subtitle {
@@ -81,7 +164,7 @@
 }
 
 #landing-subtitle #subtitle {
-  font-family: 'YanShiXiaXingKai', sans-serif;
+  font-family: 'YanShiXiaXK', sans-serif;
 }
 
 #landing-subtitle .typed-cursor {
@@ -94,16 +177,20 @@
   align-items: center;
   gap: 0.6rem;
   margin-top: 2rem;
-  padding: 0.85rem 2rem;
+  padding: 0.65rem 1.5rem;
   border: 1px solid rgba(0, 245, 255, 0.55);
-  border-radius: 2px;
+  border-radius: 24px;
   background: linear-gradient(135deg, rgba(0, 245, 255, 0.12), rgba(255, 0, 170, 0.08));
   color: #e8f4f8;
-  font-size: 1.05rem;
+  font-family: '851DianJi', sans-serif;
+  font-size: 1.2rem;
   letter-spacing: 0.08em;
   text-decoration: none;
   backdrop-filter: blur(6px);
-  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s,
+    border-color 0.2s;
 }
 
 .landing-cta:hover {
@@ -134,21 +221,55 @@
   }
 }
 
-/* ---------- 内容区 ---------- */
+/* ---------- 内容区 (act-3) ---------- */
+.page-landing {
+  /**
+   * 让“滚动到底”时卡片处在视口中心：
+   * act-3 高度为 150vh，则在该段底部时需要将卡片下移 (150-100)/2 = 25vh。
+   */
+  --landing-act3-height-vh: 150;
+  --landing-act3-bottom-center-offset: calc((var(--landing-act3-height-vh) - 100) * 0.5 * 1vh);
+}
+
 .landing-content {
   position: relative;
-  padding: 4rem 1.5rem 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
 }
 
 .landing-content-inner {
   max-width: 42rem;
+  width: 100%;
   margin: 0 auto;
-  padding: 2rem 2.25rem;
-  border: 1px solid rgba(0, 245, 255, 0.2);
+  /* 幕 3 几何中心在 75vh；滚到底时视口中心在 100vh → 下移 25vh */
+  transform: translateY(var(--landing-act3-bottom-center-offset));
+  will-change: transform;
+  padding: 2.25rem 2.5rem;
+  border: 1px solid rgba(0, 245, 255, 0.35);
   border-radius: 4px;
-  background: rgba(8, 12, 20, 0.72);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  background: rgba(6, 10, 18, 0.88);
+  backdrop-filter: blur(16px);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.45),
+    0 0 24px rgba(0, 245, 255, 0.08);
+}
+
+/* WebGL 海底透出：关于我卡片半透明，避免滚入幕 3 后挡住 canvas */
+body.page-landing.landing-bg-ready .act-3 .landing-content-inner {
+  background: rgba(4, 14, 24, 0.42);
+  border-color: rgba(0, 245, 255, 0.42);
+  backdrop-filter: blur(14px);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    0 0 28px rgba(0, 245, 255, 0.1);
+}
+
+body.page-landing.landing-bg-ready .landing-footer {
+  background: transparent;
 }
 
 .landing-content-inner h2 {
@@ -166,7 +287,7 @@
 .landing-content-inner p,
 .landing-content-inner li {
   line-height: 1.75;
-  color: rgba(232, 244, 248, 0.88);
+  color: rgba(232, 244, 248, 0.92);
 }
 
 .landing-content-inner a {
@@ -189,6 +310,11 @@
 
 /* ---------- 页脚 ---------- */
 .landing-footer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
   padding: 1.5rem;
   text-align: center;
   font-size: 0.875rem;
@@ -208,7 +334,7 @@
   margin: 0 0.35rem;
 }
 
-/* 浅色主题 */
+/* 浅色主题 — 落地页锁定 dark，规则已禁用
 [data-theme='light'] .page-landing {
   color: #1a2332;
 }
@@ -237,19 +363,48 @@
   color: #37474f;
 }
 
-[data-theme='light'] .landing-theme-btn {
-  background: rgba(255, 255, 255, 0.75);
-  color: #006978;
-  border-color: rgba(0, 131, 143, 0.35);
-}
-
 [data-theme='light'] .landing-cta {
   color: #0d1b2a;
   border-color: rgba(0, 131, 143, 0.45);
   background: linear-gradient(135deg, rgba(0, 131, 143, 0.1), rgba(94, 53, 177, 0.08));
 }
+*/
 
+/* ---------- 静态背景（移动端 M1 / WebGL fallback） ---------- */
 @media (max-width: 768px) {
+  .page-landing .act-1.landing-hero {
+    background:
+      radial-gradient(ellipse 90% 55% at 50% 15%, rgba(88, 28, 135, 0.35) 0%, transparent 55%),
+      radial-gradient(ellipse 50% 35% at 20% 80%, rgba(59, 7, 100, 0.25) 0%, transparent 50%),
+      linear-gradient(180deg, #050810 0%, #12082a 45%, #0a0618 100%);
+  }
+
+  .page-landing .act-2.act-spacer {
+    background:
+      radial-gradient(ellipse 70% 45% at 50% 25%, rgba(0, 245, 255, 0.14) 0%, transparent 50%),
+      radial-gradient(ellipse 55% 40% at 85% 65%, rgba(255, 42, 109, 0.12) 0%, transparent 45%),
+      linear-gradient(180deg, #060510 0%, #0c0820 50%, #081018 100%);
+  }
+
+  .page-landing .act-3.landing-content {
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 30%, rgba(0, 180, 220, 0.12) 0%, transparent 55%),
+      linear-gradient(180deg, #041018 0%, #062838 45%, #0a3048 75%, #041820 100%);
+  }
+
+  .page-landing .landing-content-inner {
+    background: rgba(4, 8, 16, 0.95);
+    border-color: rgba(0, 245, 255, 0.5);
+    backdrop-filter: blur(12px);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.65),
+      0 0 28px rgba(0, 245, 255, 0.12);
+  }
+
+  .landing-content {
+    padding: 0 1.25rem;
+  }
+
   .landing-content-inner {
     padding: 1.5rem 1.25rem;
   }
@@ -258,4 +413,67 @@
     width: 5.5rem;
     height: 5.5rem;
   }
+
+  .landing-name {
+    font-size: clamp(0.875rem, 4.2vw, 1.85rem);
+    letter-spacing: 0.02em;
+  }
+}
+
+/* 移动端静帧：WebP 优先，无资源时仍由下方渐变兜底 */
+@media (max-width: 767px) {
+  body.landing-fallback-static.page-landing .act-1.landing-hero {
+    background-image:
+      url('/img/landing/mobile/act1.webp'),
+      radial-gradient(ellipse 70% 45% at 50% 12%, rgba(30, 40, 60, 0.2) 0%, transparent 55%),
+      linear-gradient(180deg, #020308 0%, #060810 50%, #04060c 100%);
+    background-size: cover, auto, auto;
+    background-position: center, center, center;
+  }
+
+  body.landing-fallback-static.page-landing .act-2.act-spacer {
+    background-image:
+      url('/img/landing/mobile/act2.webp'),
+      radial-gradient(ellipse 80% 40% at 50% 20%, rgba(40, 48, 64, 0.25) 0%, transparent 55%),
+      linear-gradient(180deg, #030408 0%, #060810 55%, #05070c 100%);
+    background-size: cover, auto, auto;
+  }
+
+  body.landing-fallback-static.page-landing .act-3.landing-content {
+    background-image:
+      url('/img/landing/mobile/act3.webp'),
+      radial-gradient(ellipse 80% 50% at 50% 30%, rgba(0, 180, 220, 0.12) 0%, transparent 55%),
+      linear-gradient(180deg, #041018 0%, #062838 45%, #0a3048 75%, #041820 100%);
+    background-size: cover, auto, auto;
+  }
+}
+
+/* WebGL fallback — desktop 复用 M1 静态背景 */
+body.landing-fallback-static.page-landing .act-1.landing-hero {
+  background:
+    radial-gradient(ellipse 70% 45% at 50% 12%, rgba(30, 40, 60, 0.2) 0%, transparent 55%),
+    radial-gradient(ellipse 45% 30% at 75% 70%, rgba(20, 24, 36, 0.15) 0%, transparent 50%),
+    linear-gradient(180deg, #020308 0%, #060810 50%, #04060c 100%);
+}
+
+body.landing-fallback-static.page-landing .act-2.act-spacer {
+  background:
+    radial-gradient(ellipse 80% 40% at 50% 20%, rgba(40, 48, 64, 0.25) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 35% at 15% 75%, rgba(24, 28, 40, 0.2) 0%, transparent 50%),
+    linear-gradient(180deg, #030408 0%, #060810 55%, #05070c 100%);
+}
+
+body.landing-fallback-static.page-landing .act-3.landing-content {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 30%, rgba(0, 180, 220, 0.12) 0%, transparent 55%),
+    linear-gradient(180deg, #041018 0%, #062838 45%, #0a3048 75%, #041820 100%);
+}
+
+body.landing-fallback-static.page-landing .landing-content-inner {
+  background: rgba(4, 8, 16, 0.95);
+  border-color: rgba(0, 245, 255, 0.5);
+  backdrop-filter: blur(12px);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.65),
+    0 0 28px rgba(0, 245, 255, 0.12);
 }

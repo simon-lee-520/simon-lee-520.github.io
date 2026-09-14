@@ -95,8 +95,14 @@ i:hover {
   inset: 0;
   width: 100%;
   height: 100%;
-  z-index: -1;
+  z-index: 0;
   pointer-events: none;
+}
+
+body.page-landing.landing-bg-ready #landing {
+  position: relative;
+  z-index: 1;
+  background: transparent;
 }
 
 /* 轻微扫描线叠层（仅个人主页） */
@@ -104,7 +110,8 @@ body.page-landing::before {
   content: '';
   position: fixed;
   inset: 0;
-  z-index: -1;
+  z-index: 1;
+  pointer-events: none;
   pointer-events: none;
   opacity: 0.04;
   background: repeating-linear-gradient(
