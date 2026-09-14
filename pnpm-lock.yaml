@@ -66,8 +66,8 @@ importers:
         specifier: ^1.8.0
         version: 1.9.0
       three:
-        specifier: ^0.172.0
-        version: 0.172.0
+        specifier: ^0.186.0
+        version: 0.186.0
 
 packages:
 
@@ -1093,8 +1093,8 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  three@0.172.0:
-    resolution: {integrity: sha512-6HMgMlzU97MsV7D/tY8Va38b83kz8YJX+BefKjspMNAv0Vx6dxMogHOrnRl/sbMIs3BPUKijPqDqJ/+UwJbIow==}
+  three@0.186.0:
+    resolution: {integrity: sha512-cr/fIM2ddMSVbYVgkfD4jLJv7Fh/8ZTjvo+7gQeSVGUZHxpx9FDwoL5iC7hUz/LiRA8wMbqfnb90xKfm1/HHkQ==}
 
   through2@4.0.2:
     resolution: {integrity: sha512-iOqSav00cVxEEICeD7TjLB1sueEL+81Wpzp2bY17uZjZN0pWZPuo4suZ/61VujxmqSGFfgOcNuTZ85QJwNZQpw==}
@@ -2312,7 +2312,7 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  three@0.172.0: {}
+  three@0.186.0: {}
 
   through2@4.0.2:
     dependencies:
