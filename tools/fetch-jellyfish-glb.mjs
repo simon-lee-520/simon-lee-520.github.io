@@ -10,7 +10,7 @@ const CANDIDATES = [
   'blue_jellyfish.glb',
   'jellyfish.glb'
 ].map((name) => path.join(__dirname, '../source/models/landing', name))
-const README = path.join(__dirname, '../source/models/landing/README.md')
+const README = path.join(__dirname, '../docs/landing/models.md')
 
 for (const file of CANDIDATES) {
   if (fs.existsSync(file)) {

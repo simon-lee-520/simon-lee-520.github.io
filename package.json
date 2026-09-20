@@ -35,9 +35,11 @@
   "scripts": {
     "start": "pnpm run server",
     "server": "pnpm run models && hexo server",
-    "models": "pnpm run models:swordsman && pnpm run models:jellyfish",
+    "models": "pnpm run models:swordsman && pnpm run models:jellyfish && pnpm run models:fish && pnpm run models:city",
     "models:swordsman": "node tools/fetch-swordsman-vrm.mjs",
     "models:jellyfish": "node tools/fetch-jellyfish-glb.mjs",
+    "models:fish": "node tools/fetch-fish-glb.mjs",
+    "models:city": "node tools/fetch-city-glb.mjs",
     "build": "pnpm run models && hexo generate",
     "clean": "hexo clean",
     "deploy": "hexo generate && hexo deploy",

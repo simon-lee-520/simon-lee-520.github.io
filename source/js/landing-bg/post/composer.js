@@ -43,6 +43,7 @@ const GradeShader = {
     u_tint: { value: new THREE.Vector3(1, 1, 1) },
     u_topFade: { value: 0 },
     u_bottomFade: { value: 1 },
+    u_cityGrain: { value: 0 },
     u_resolution: { value: new THREE.Vector2(1, 1) }
   },
   vertexShader: `
@@ -58,6 +59,7 @@ const GradeShader = {
     uniform vec3 u_tint;
     uniform float u_topFade;
     uniform float u_bottomFade;
+    uniform float u_cityGrain;
     uniform vec2 u_resolution;
     varying vec2 vUv;
 
@@ -82,6 +84,9 @@ const GradeShader = {
       if (u_bottomFade < 0.999) edge *= smoothstep(1.0, u_bottomFade, vUv.y);
 
       col = dither(col, gl_FragCoord.xy);
+      if (u_cityGrain > 0.001) {
+        col += (hash(gl_FragCoord.xy + 0.37) - 0.5) * u_cityGrain;
+      }
       gl_FragColor = vec4(col, c.a * edge);
     }
   `
@@ -122,7 +127,8 @@ export function createPostPipeline (renderer, scene, camera) {
   finalComposer.addPass(gradePass)
   finalComposer.addPass(new OutputPass())
 
-  const bloomCity = { strength: 0.95, threshold: 0.2, radius: 0.55 }
+  // 城市幕 bloom：只抬霓虹/日，threshold 偏高避免整屏雾
+  const bloomCity = { strength: 0.7, threshold: 0.3, radius: 0.48 }
   const bloomOcean = { strength: 1.12, threshold: 0.05, radius: 0.72 }
 
   camera.layers.enable(0)
@@ -177,7 +183,9 @@ export function createPostPipeline (renderer, scene, camera) {
       const neonWeight = cityOpacity + oceanOpacity
       /** featured usePostprocessing: false — 海底交互全程禁用 bloom */
       const oceanFull = oceanInteractive || oceanOpacity >= 0.92
-      useBloom = neonWeight >= 0.04 && !oceanFull
+      // 城市幕原模型直出：关 bloom
+      const cityRaw = cityOpacity > 0.45 && oceanOpacity < 0.2
+      useBloom = neonWeight >= 0.04 && !oceanFull && !cityRaw
       compositeUniforms.u_bloomEnabled.value = useBloom ? 1 : 0
       if (!useBloom) {
         gradeUniforms.u_greyRatio.value = Math.max(0, blend12 * 0.35 - oceanOpacity * 0.1)
@@ -197,10 +205,20 @@ export function createPostPipeline (renderer, scene, camera) {
         gradeUniforms.u_greyRatio.value = 0
         gradeUniforms.u_topFade.value = 0
         gradeUniforms.u_bottomFade.value = 1
+        gradeUniforms.u_cityGrain.value = 0
+        return
+      }
+      // 城市幕原模型直出：无滤镜 / 暗角 / grain
+      if (cityOpacity > 0.45 && oceanOpacity < 0.2) {
+        gradeUniforms.u_tint.value.set(1, 1, 1)
+        gradeUniforms.u_greyRatio.value = 0
+        gradeUniforms.u_topFade.value = 0
+        gradeUniforms.u_bottomFade.value = 1
+        gradeUniforms.u_cityGrain.value = 0
         return
       }
       const space = new THREE.Color(0.92, 0.98, 1.05)
-      const city = new THREE.Color(1.05, 0.92, 1.02)
+      const city = new THREE.Color(1, 1, 1)
       /** 海底以 #041113 为基准，调色略偏中性，避免整屏发青 */
       const ocean = new THREE.Color(0.98, 1.0, 1.0)
       const tint = new THREE.Color()
@@ -212,6 +230,7 @@ export function createPostPipeline (renderer, scene, camera) {
       const edge = Math.max(blend12, oceanOpacity) * 0.12 + 0.02
       gradeUniforms.u_topFade.value = edge
       gradeUniforms.u_bottomFade.value = 1 - edge
+      gradeUniforms.u_cityGrain.value = 0
     },
     pulseBloom (amount = 0.15, durationMs = 280) {
       const base = bloomPass.strength

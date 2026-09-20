@@ -40,9 +40,21 @@ export const SWORDSMAN_MODEL_URL = '/models/landing/swordsman.vrm'
  */
 export const JELLYFISH_MODEL_URL = '/models/landing/blue_jellyfish.glb'
 
+/**
+ * 鱼群 glTF（带动画优先）
+ * 默认：fish.glb（单鱼 + ArmatureAction）
+ * 回退：shiny_fish.glb 仅作静态资源时需改加载逻辑；当前动画路径使用 FISH_MODEL_URL
+ */
+export const FISH_MODEL_URL = '/models/landing/fish.glb'
+
+/**
+ * 城市街区 glTF（Draco）；缺失时城市幕仅用 2D matte
+ */
+export const CITY_MODEL_URL = '/models/landing/city.glb'
+
 export const PALETTE = {
   fogSpace: 0x04060e,
-  fogCity: 0x060810,
+  fogCity: 0x060510,
   /** featured 第 2 幕青色海水 #07313A */
   fogOcean: 0x07313a,
   oceanWater: 0x07313a,
