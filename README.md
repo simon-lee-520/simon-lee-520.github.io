@@ -2,7 +2,7 @@
 
 我的个人 IT 技术博客源码仓库，基于 `Hexo 8.1.1` 搭建，主题为 `Butterfly 5.5.4`。
 
-线上地址：<https://simon7520.github.io/>
+线上地址：<https://simon-lee-520.github.io/>
 
 ## 项目简介
 
@@ -62,8 +62,8 @@
 如果你是首次拉取项目，推荐使用：
 
 ```bash
-git clone --recurse-submodules git@github.com:Simon7520/simon7520.github.io.git
-cd simon7520.github.io
+git clone --recurse-submodules git@github.com:simon-lee-520/simon-lee-520.github.io.git
+cd simon-lee-520.github.io
 git checkout hexo-source
 ```
 
@@ -169,7 +169,7 @@ public/
 当前 `_config.yml` 中已配置：
 
 - 部署类型：`git`
-- 部署仓库：`git@github.com:Simon7520/simon7520.github.io.git`
+- 部署仓库：`git@github.com:simon-lee-520/simon-lee-520.github.io.git`
 - 部署分支：`master`
 
 执行以下命令即可生成并部署：
@@ -230,7 +230,7 @@ pnpm run deploy
 
 从当前配置来看，站点的几个关键点如下：
 
-- 站点地址：`https://simon7520.github.io`
+- 站点地址：`https://simon-lee-520.github.io`
 - 主题：`butterfly`
 - 永久链接：`posts/:abbrlink`
 - 搜索索引：`search.xml`

@@ -20,4 +20,4 @@ comments: false
 
 在此补充你的开源项目、作品集链接或简要说明。支持 Markdown，可按需增删章节。
 
-> 示例：[个人 GitHub](https://github.com/simon7520) · 博客技术栈：Hexo + Butterfly + Three.js
+> 示例：[个人 GitHub](https://github.com/simon-lee-520) · 博客技术栈：Hexo + Butterfly + Three.js
