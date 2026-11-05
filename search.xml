@@ -24,147 +24,130 @@
       </tags>
   </entry>
   <entry>
-    <title>Vue props传入function时的this指向问题</title>
-    <url>/posts/ffe0b7c/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h3 id="Vue-props传入function时的this指向问题"><a href="#Vue-props传入function时的this指向问题" class="headerlink" title="Vue props传入function时的this指向问题"></a>Vue props传入function时的this指向问题</h3><p><strong>Parent.vue</strong></p>
-<pre><code>&lt;template&gt;
-  &lt;div&gt;
-    &lt;Child :func=&quot;parentFunc&quot;&gt;&lt;/Child&gt;
-  &lt;/div&gt;
-&lt;/template&gt;
-
-&lt;script&gt;
-import Child from &#39;./Child&#39;
-export default {
-  data () {
-    return {
-      msg: &#39;this is parent.&#39;
-    }
-  },
-  components: {
-    Child
-  },
-  methods: {
-    parentFunc () {
-      console.log(this.msg)
-    }
-  }
-}
-&lt;/script&gt;
-</code></pre><p><strong>Child.vue</strong></p>
-<pre><code>&lt;template&gt;
-  &lt;div&gt;
-    &lt;button @click=&quot;childFunc&quot;&gt;click&lt;/button&gt;
-  &lt;/div&gt;
-&lt;/template&gt;
-
-&lt;script&gt;
-export default {
-  props: {
-    func: {
-      require: false,
-      type: Function,
-      default: () =&gt; {
-        return () =&gt; {
-          console.log(this.msg)
-        }
-      }
-    }
-  },
-  data () {
-    return {
-      msg: &#39;this is child.&#39;
-    }
-  },
-  methods: {
-    childFunc () {
-      this.func()
-    }
-  }
-}
-&lt;/script&gt;
-</code></pre><h3 id="踩坑笔记"><a href="#踩坑笔记" class="headerlink" title="踩坑笔记"></a>踩坑笔记</h3><ul>
-<li>props传入function时，函数中this自动绑定Vue实例；</li>
-<li>在H5的Vue中项目中，console将输出 “this is parent.”；<br>但在uni-app小程序中使用Vue时，console将输出“this is child”；</li>
-<li>我的解决方案：<br>将父组件msg作为参数传给子组件，子组件props接收msg，然后在父组件的parantFunc中，无论this 指向父组件还是子组件，this.msg总能取得正确的值；</li>
-<li>为什么不使用v-on监听子组件事件并用$emit触发事件？ <ol>
-<li>Vue中不推荐向子组件传递Function的方式，因为Vue有更好的事件父子组件通信机制；</li>
-<li>我的原因：项目中的子组件是一个公共组件，原本的代码是使用props+Function的方式，且存在默认值，默认调用函数default默认值；如果改为事件$emit的方式，则涉及修改的地方较多；</li>
-<li>因此，在尽量不影响原来的业务代码的原则下，采用上述解决方案解决该问题；</li>
-</ol>
-</li>
-</ul>
+    <title>新 MacBook Pro（M1 Pro）开箱记</title>
+    <url>/posts/0f0c1d65/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><p>快下班了，拆机 <strong>16 英寸 MacBook M1 Pro，深空灰</strong>。</p>
+<p>快递是送到公司的，先不回家了，就在办公室完成第一次开机：按下电源键，屏幕亮起，首次体验Macbook的丝滑金属大触摸板。</p>
+<p><img src="macbook-m1pro-first-boot.png" alt="MacBook Pro M1 Pro 第一次开机"></p>
+<p>初始设置走完后，我换了一张城市剪影的壁纸。工位上还是熟悉的木桌、水瓶和鼠标，只是中间多了一台新机器。</p>
+<p><img src="macbook-m1pro-desk.png" alt="MacBook Pro M1 Pro 换壁纸后"></p>
+<h2 id="为什么自己买"><a href="#为什么自己买" class="headerlink" title="为什么自己买"></a>为什么自己买</h2><p>公司配了 <strong>Windows</strong> 电脑，日常开发能用，没什么大问题。但我想把硬件配置提一提：上班写代码更顺畅，下班和周末自己学东西、捣鼓项目，也别太将就。</p>
+<p>全款教育优惠购入，上班带着用，晚上带回家，兼顾工作和自学。</p>
+<h2 id="第一天"><a href="#第一天" class="headerlink" title="第一天"></a>第一天</h2><p>今天没装多少软件，主要是走完系统设置、换壁纸、熟悉键盘和触控板。新电脑到手，心情挺好，记一篇开箱，先继续用公司电脑开发，明天来给新电脑装开发环境。</p>
 ]]></content>
       <categories>
-        <category>Vue</category>
+        <category>生活</category>
       </categories>
       <tags>
-        <tag>vue</tag>
-        <tag>uni-app</tag>
+        <tag>MacBook</tag>
+        <tag>M1 Pro</tag>
+        <tag>开箱</tag>
       </tags>
   </entry>
   <entry>
-    <title>JS四则运算重新封装，解决精度丢失问题</title>
-    <url>/posts/4f53ca67/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h2 id="math-js"><a href="#math-js" class="headerlink" title="math.js"></a>math.js</h2><pre><code>/* eslint-disable one-var */
-/* eslint-disable no-extend-native */
-/*
- * @Author: Simon
- * @Date: 2021-07-14 16:32:43
- * @LastEditors: Simon
- * @LastEditTime: 2022-04-11 18:49:53
- * @Description: 四则运算重新封装，解决精度丢失问题
+    <title>单元测试框架Jest搭配TypeScript的安装与配置</title>
+    <url>/posts/7984b310/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><p>为项目安装并配置Jest单元测试环境</p>
+<h2 id="分步指南"><a href="#分步指南" class="headerlink" title="分步指南"></a>分步指南</h2><p>传送门：<a href="https://jestjs.io/docs/getting-started">Jest - 快速入门</a></p>
+<h3 id="1-安装jest："><a href="#1-安装jest：" class="headerlink" title="1. 安装jest："></a>1. 安装jest：</h3><pre><code>npm i jest ts-jest @types/jest -D
+</code></pre><h3 id="2-初始化："><a href="#2-初始化：" class="headerlink" title="2. 初始化："></a>2. 初始化：</h3><p>npx jest —init<br>按照图中所示选择<br><img src="17bfdf2a1d318676.png" alt="jest --init"><br>tip:<br>- <em>no;不使用ts，使用jest.config.js作为jest的配置文件；</em><br>- <em>jsdom;使用jsdom作为测试环境（jsdom:一个类似浏览器的环境，项目是运行在浏览器的，需要在浏览器dom环境下测试）；</em><br>- <em>yes;是否添加测试报告；</em><br>- <em>babel;使用babel提供的测试报告（官网说明v8仍处于试验阶段，需node14以上使用，效果未知，不稳定，因此选用babel）；</em></p>
+<h3 id="3-安装jsdom环境："><a href="#3-安装jsdom环境：" class="headerlink" title="3. 安装jsdom环境："></a>3. 安装jsdom环境：</h3><ul>
+<li><em>jest 28及以上版本不再内置jsdom插件，需要单独安装</em></li>
+<li><em>安装官方eslint插件：</em></li>
+</ul>
+<pre><code>npm i jest-environment-jsdom eslint-plugin-jest eslint-import-resolver-typescript jest-canvas-mock -D
+</code></pre><h3 id="4-创建test目录"><a href="#4-创建test目录" class="headerlink" title="4. 创建test目录"></a>4. 创建test目录</h3><p>在项目根目录下创建test目录，然后在test下创建<strong>mocks和</strong>tests__目录，创建.eslintrc.js和tsconfig.json文件<br><img src="ba1c1f056d6d290b.png" alt="在这里插入图片描述"></p>
+<blockquote>
+<p>附：配置示例</p>
+</blockquote>
+<p><em><code>jest.config.js</code></em></p>
+<pre><code>/*
+ * For a detailed explanation regarding each configuration property, visit:
+ * https://jestjs.io/docs/configuration
  */
 
-// 加法
-Number.prototype.add = function (arg) {
-  let r1, r2, m
-  try { r1 = this.toString().split(&#39;.&#39;)[1].length } catch (e) { r1 = 0 }
-  try { r2 = arg.toString().split(&#39;.&#39;)[1].length } catch (e) { r2 = 0 }
-  m = Math.pow(10, Math.max(r1, r2))
-  return (this * m + arg * m) / m
-}
-// 减法
-Number.prototype.sub = function (arg) {
-  let r1, r2, m, n
-  try { r1 = this.toString().split(&#39;.&#39;)[1].length } catch (e) { r1 = 0 }
-  try { r2 = arg.toString().split(&#39;.&#39;)[1].length } catch (e) { r2 = 0 }
-  m = Math.pow(10, Math.max(r1, r2))
-  // 动态控制精度长度
-  n = (r1 &gt;= r2) ? r1 : r2
-  return Number(((this * m - arg * m) / m).toFixed(n))
-}
-// 乘法
-Number.prototype.mul = function (arg) {
-  let m = 0, s1 = this.toString(), s2 = arg.toString()
-  try { m += s1.split(&#39;.&#39;)[1].length } catch (e) { }
-  try { m += s2.split(&#39;.&#39;)[1].length } catch (e) { }
-  return Number(s1.replace(&#39;.&#39;, &#39;&#39;)) * Number(s2.replace(&#39;.&#39;, &#39;&#39;)) / Math.pow(10, m)
-}
-// 除法
-Number.prototype.div = function (arg) {
-  let t1 = 0, t2 = 0, r1, r2
-  try { t1 = this.toString().split(&#39;.&#39;)[1].length } catch (e) { }
-  try { t2 = arg.toString().split(&#39;.&#39;)[1].length } catch (e) { }
-  r1 = Number(this.toString().replace(&#39;.&#39;, &#39;&#39;))
-  r2 = Number(arg.toString().replace(&#39;.&#39;, &#39;&#39;))
-  return (r1 / r2) * Math.pow(10, t2 - t1)
-}
+const { pathsToModuleNameMapper } = require(&#39;ts-jest&#39;);
+const { compilerOptions } = require(&#39;./tsconfig.json&#39;);
 
-// 三位分节法（千分位加逗号）
-Number.prototype.toThousandsString = function () {
-  let str = this.toString()
-  let reg = ~str.indexOf(&#39;.&#39;) ? /(\d)(?=(\d{3})+\.)/g : /(\d)(?=(?:\d{3})+$)/g
-  return str.replace(reg, &#39;$1,&#39;)
-}
-</code></pre>]]></content>
+module.exports = {
+  // A preset that is used as a base for Jest&#39;s configuration
+  preset: &#39;ts-jest&#39;,
+  // The test environment that will be used for testing
+  testEnvironment: &#39;jsdom&#39;,
+  // The paths to modules that run some code to configure or set up the testing environment before each test
+  setupFiles: [&#39;jest-canvas-mock&#39;],
+  // Automatically clear mock calls, instances, contexts and results before every test
+  clearMocks: true,
+  // Indicates whether the coverage information should be collected while executing the test
+  collectCoverage: true,
+  // The directory where Jest should output its coverage files
+  coverageDirectory: &#39;test/coverage&#39;,
+  // The root directory that Jest should scan for tests and modules within
+  // rootDir: undefined,
+  // rootDir: __dirname,
+  // An array of file extensions your modules use
+  moduleFileExtensions: [&#39;ts&#39;, &#39;js&#39;],
+  // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
+  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
+    prefix: &#39;&lt;rootDir&gt;/&#39;,
+  }),
+  // The glob patterns Jest uses to detect test files
+  testMatch: [&#39;&lt;rootDir&gt;/test/__tests__/**/*.test.ts&#39;],
+  // A map from regular expressions to paths to transformers
+  transform: {
+    &#39;^.+\\.ts$&#39;: &#39;ts-jest&#39;,
+  },
+};
+</code></pre><p><em>配置测试用例的eslint规则<code>/test/.eslintrc.js</code></em></p>
+<pre><code>module.exports = {
+  extends: [&#39;../.eslintrc.js&#39;],
+  settings: {
+    &#39;import/resolver&#39;: {
+      typescript: {
+        alwaysTryTypes: true, // always try to resolve types under `&lt;root&gt;@types` directory even it doesn&#39;t contain any source code, like `@types/unist`
+
+        // Choose from one of the &quot;project&quot; configs below or omit to use &lt;root&gt;/tsconfig.json by default
+        // use &lt;root&gt;/path/to/folder/tsconfig.json
+        project: &#39;tsconfig.json&#39;,
+      },
+    },
+  },
+  plugins: [&#39;jest&#39;],
+  overrides: [
+    // unit-tests
+    {
+      files: [&#39;**/__tests__/**&#39;],
+      rules: {
+        &#39;jest/no-disabled-tests&#39;: &#39;warn&#39;,
+        &#39;jest/no-focused-tests&#39;: &#39;error&#39;,
+        &#39;jest/no-identical-title&#39;: &#39;error&#39;,
+        &#39;jest/prefer-to-have-length&#39;: &#39;warn&#39;,
+        &#39;jest/valid-expect&#39;: &#39;error&#39;,
+      },
+    },
+  ],
+};
+</code></pre><p><em>代码覆盖率报告无需加入git版本管理，将<code>test/coverage</code>目录追加至<code>.gitignore</code></em></p>
+<pre><code>...
+
+# Unit test / coverage reports
+test/coverage
+</code></pre><p><em><code>tsconfig.json</code>中配置路径别名</em></p>
+<h3 id="5-愉快地开始单元测试："><a href="#5-愉快地开始单元测试：" class="headerlink" title="5. 愉快地开始单元测试："></a>5. 愉快地开始单元测试：</h3><p>在 <code>test/__test__</code> 目录下新增自己模块的单元测试目录及文件，开始单元测试代码编写<br>文件命名规范： <code>*.test.ts</code></p>
+<h3 id="6-总结-踩坑记录："><a href="#6-总结-踩坑记录：" class="headerlink" title="6. 总结 - 踩坑记录："></a>6. 总结 - 踩坑记录：</h3><ul>
+<li>默认preset为<code>babel-jest</code>，由于 <code>Babel</code> 对 <code>Typescript</code> 的支持是通过代码转换（Transpilation）实现的，而 Jest 在运行时并不会对你的测试用例做类型检查。 因此建议安装ts-jest来开启此功能</li>
+<li>主要是在配置<code>tsconfig.json</code>路径别名时花费了大量时间，处理ts的报错以及eslint的报错问题；</li>
+<li>以上配置的路径别名只需在<code>tsconfig.json</code>一处配置，随处可用，包括ts、eslint、jest都能读取同一个别名配置；</li>
+<li>另外对于webpack的别名配置，网上也有读取tsconfig配置的方案；</li>
+</ul>
+]]></content>
       <categories>
         <category>前端踩坑笔记</category>
       </categories>
       <tags>
+        <tag>typescript</tag>
+        <tag>单元测试</tag>
         <tag>javascript</tag>
-        <tag>原型模式</tag>
-        <tag>前端</tag>
       </tags>
   </entry>
   <entry>
@@ -331,6 +314,61 @@ int main(){
       </tags>
   </entry>
   <entry>
+    <title>HDU-1159-CommonSubsequence（LCS最长公共子序列）</title>
+    <url>/posts/4d4e6c90/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h2 id="Common-Subsequence"><a href="#Common-Subsequence" class="headerlink" title="Common Subsequence"></a>Common Subsequence</h2><p><strong>Time Limit: 2000/1000 MS (Java/Others) Memory Limit: 65536/32768 K (Java/Others)<br>Total Submission(s): 34353 Accepted Submission(s): 15683  
+</strong>   </p>
+<p>Problem Description </p>
+<p>A subsequence of a given sequence is the given sequence with some elements (possible none) left out. Given a sequence X = <x1, x2, ..., xm> another sequence Z = <z1, z2, ..., zk> is a subsequence of X if there exists a strictly increasing sequence <i1, i2, ..., ik> of indices of X such that for all j = 1,2,…,k, xij = zj. For example, Z = <a, b, f, c> is a subsequence of X = <a, b, c, f, b, c> with index sequence <1, 2, 4, 6>. Given two sequences X and Y the problem is to find the length of the maximum-length common subsequence of X and Y.<br>The program input is from a text file. Each data set in the file contains two strings representing the given sequences. The sequences are separated by any number of white spaces. The input data are correct. For each set of data the program prints on the standard output the length of the maximum-length common subsequence from the beginning of a separate line.   </p>
+<p>Sample Input </p>
+<pre><code>   abcfbc abfcab
+programming contest 
+abcd mnp
+</code></pre><p>Sample Output </p>
+<pre><code>   4
+2
+0
+</code></pre><p>Source </p>
+<p><a href="http://acm.split.hdu.edu.cn/search.php?field=problem&amp;key=Southeastern+Europe+2003&amp;source=1&amp;searchmode=source">Southeastern Europe 2003</a></p>
+<p>LCS-最长公共子序列  </p>
+<pre><code>#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+
+int a[1010][1010];
+int LCS(char *s1,char *s2){
+    int m=strlen(s1),n=strlen(s2);
+    int i,j;
+    a[0][0]=0;
+    for(i=1;i&lt;=m;i++) a[i][0]=0;
+    for(i=1;i&lt;=n;i++) a[0][i]=0;
+    for(i=1;i&lt;=m;i++){
+        for(j=1;j&lt;=n;j++){
+            if(s1[i-1]==s2[j-1]) a[i][j] = a[i-1][j-1]+1;
+            else if(a[i-1][j]&gt;a[i][j-1]) a[i][j]=a[i-1][j];
+            else a[i][j]=a[i][j-1];
+        }
+    }
+    return a[m][n];
+}
+char s1[1010],s2[1010];
+int main(){
+    //freopen(&quot;in.txt&quot;,&quot;r&quot;,stdin);
+    while(~scanf(&quot;%s%s&quot;,s1,s2)){
+        printf(&quot;%d\n&quot;,LCS(s1,s2));
+    }
+    return 0;
+}
+</code></pre>]]></content>
+      <categories>
+        <category>ACM</category>
+      </categories>
+      <tags>
+        <tag>hdu</tag>
+        <tag>LCS</tag>
+        <tag>最长公共子序列</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>HDU-2036-改革春风吹满地（多边形面积模板）</title>
     <url>/posts/d299d9b/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h2 id="改革春风吹满地"><a href="#改革春风吹满地" class="headerlink" title="改革春风吹满地"></a>改革春风吹满地</h2><p><strong>Time Limit: 2000/1000 MS (Java/Others) Memory Limit: 65536/32768 K (Java/Others)<br>Total Submission(s): 30103 Accepted Submission(s): 15517  
@@ -386,61 +424,6 @@ int main(){
       <tags>
         <tag>hdu</tag>
         <tag>多边形面积</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>HDU-1159-CommonSubsequence（LCS最长公共子序列）</title>
-    <url>/posts/4d4e6c90/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h2 id="Common-Subsequence"><a href="#Common-Subsequence" class="headerlink" title="Common Subsequence"></a>Common Subsequence</h2><p><strong>Time Limit: 2000/1000 MS (Java/Others) Memory Limit: 65536/32768 K (Java/Others)<br>Total Submission(s): 34353 Accepted Submission(s): 15683  
-</strong>   </p>
-<p>Problem Description </p>
-<p>A subsequence of a given sequence is the given sequence with some elements (possible none) left out. Given a sequence X = <x1, x2, ..., xm> another sequence Z = <z1, z2, ..., zk> is a subsequence of X if there exists a strictly increasing sequence <i1, i2, ..., ik> of indices of X such that for all j = 1,2,…,k, xij = zj. For example, Z = <a, b, f, c> is a subsequence of X = <a, b, c, f, b, c> with index sequence <1, 2, 4, 6>. Given two sequences X and Y the problem is to find the length of the maximum-length common subsequence of X and Y.<br>The program input is from a text file. Each data set in the file contains two strings representing the given sequences. The sequences are separated by any number of white spaces. The input data are correct. For each set of data the program prints on the standard output the length of the maximum-length common subsequence from the beginning of a separate line.   </p>
-<p>Sample Input </p>
-<pre><code>   abcfbc abfcab
-programming contest 
-abcd mnp
-</code></pre><p>Sample Output </p>
-<pre><code>   4
-2
-0
-</code></pre><p>Source </p>
-<p><a href="http://acm.split.hdu.edu.cn/search.php?field=problem&amp;key=Southeastern+Europe+2003&amp;source=1&amp;searchmode=source">Southeastern Europe 2003</a></p>
-<p>LCS-最长公共子序列  </p>
-<pre><code>#include &lt;cstdio&gt;
-#include &lt;cstring&gt;
-
-int a[1010][1010];
-int LCS(char *s1,char *s2){
-    int m=strlen(s1),n=strlen(s2);
-    int i,j;
-    a[0][0]=0;
-    for(i=1;i&lt;=m;i++) a[i][0]=0;
-    for(i=1;i&lt;=n;i++) a[0][i]=0;
-    for(i=1;i&lt;=m;i++){
-        for(j=1;j&lt;=n;j++){
-            if(s1[i-1]==s2[j-1]) a[i][j] = a[i-1][j-1]+1;
-            else if(a[i-1][j]&gt;a[i][j-1]) a[i][j]=a[i-1][j];
-            else a[i][j]=a[i][j-1];
-        }
-    }
-    return a[m][n];
-}
-char s1[1010],s2[1010];
-int main(){
-    //freopen(&quot;in.txt&quot;,&quot;r&quot;,stdin);
-    while(~scanf(&quot;%s%s&quot;,s1,s2)){
-        printf(&quot;%d\n&quot;,LCS(s1,s2));
-    }
-    return 0;
-}
-</code></pre>]]></content>
-      <categories>
-        <category>ACM</category>
-      </categories>
-      <tags>
-        <tag>hdu</tag>
-        <tag>LCS</tag>
-        <tag>最长公共子序列</tag>
       </tags>
   </entry>
   <entry>
@@ -535,161 +518,6 @@ int main () {
       </categories>
       <tags>
         <tag>hdu</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>HDU-5783 Divide the Sequence（贪心水题）</title>
-    <url>/posts/2ca30c2/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h2 id="Divide-the-Sequence"><a href="#Divide-the-Sequence" class="headerlink" title="Divide the Sequence"></a>Divide the Sequence</h2><p><strong>Time Limit: 5000/2500 MS (Java/Others) Memory Limit: 65536/65536 K (Java/Others)<br>Total Submission(s): 1175 Accepted Submission(s): 563  
-</strong>   </p>
-<p>Problem Description </p>
-<p>Alice has a sequence A, She wants to split A into as much as possible continuous subsequences, satisfying that for each subsequence, every its prefix sum is not small than 0. </p>
-<p>Input </p>
-<p>The input consists of multiple test cases.<br>Each test case begin with an integer n in a single line.<br>The next line contains n integers A<em>{1},A</em>{2}\cdots A_{n}.<br>1 \leq n \leq 1e6<br>-10000 \leq A[i] \leq 10000<br>You can assume that there is at least one solution. </p>
-<p>Output </p>
-<p>For each test case, output an integer indicates the maximum number of sequence division. </p>
-<p>Sample Input </p>
-<pre><code>   6
-1 2 3 4 5 6
-4
-1 2 -3 0
-5
-0 0 0 0 0
-</code></pre><p>Sample Output </p>
-<pre><code>   6
-2
-5
-</code></pre><p>Author </p>
-<p>ZSTU </p>
-<p>Source </p>
-<p><a href="http://acm.split.hdu.edu.cn/search.php?field=problem&amp;key=2016+Multi-University+Training+Contest+5&amp;source=1&amp;searchmode=source">2016 Multi-University Training Contest 5</a></p>
-<p>题意：给你一个序列，让你尽可能分成更多的子序列。使得每个子序列的前缀和<br>都大于或等于0 。输出这个的子序列的总个数。   </p>
-<p>题解：倒序遍历序列。如果遇到的是正数，那它就是一个符合条件的子序列，如果<br>是负数，那就继续往前遍历，直到前缀和大于等于0，就是又一个符合条件的子序列。   </p>
-<pre><code>/**
-* @Author: Simon
-* @Date:   2016-07-26 09-25-15
-* @Project: ACM
-* @Last modified by:   Simon
-* @Last modified time: 2016-08-20 01-36-50
-*/
-/*
-        ┆ ┏┓　　　┏┓ ┆
-        ┆┏┛┻━━━━━━┛┻┓  ┆
-        ┆┃　　　　　 ┃ ┆
-        ┆┃　    ━　　┃ ┆
-        ┆┃　┳┛　┗┳  ┃ ┆
-        ┆┃　　　　　 ┃ ┆
-        ┆┃　　　┻　　┃ ┆
-        ┆┗━┓　  　┏━┛ ┆
-        ┆　┃　  　┃　　┆　　　　　　
-        ┆　┃　  　┗━━━┓ ┆
-        ┆　┃　 AC代马  ┣┓┆
-        ┆　┃　        ┏┛┆
-        ┆　┗┓┓ ┏━┳┓ ┏┛ ┆
-        ┆　　┃┫┫　┃┫┫ ┆
-        ┆　　┗┻┛　┗┻┛ ┆
-*/
-
-#include &lt;iostream&gt;
-#include &lt;cstdio&gt;
-#include &lt;cstring&gt;
-#include &lt;string&gt;
-#include &lt;cmath&gt;
-#include &lt;cstdlib&gt;
-#include &lt;stack&gt;
-#include &lt;deque&gt;
-#include &lt;queue&gt;
-#include &lt;map&gt;
-#include &lt;set&gt;
-#include &lt;vector&gt;
-#include &lt;algorithm&gt;
-using namespace std;
-
-#define MAX 1000010
-#define PI (acos(-1.0))
-#define LL long long
-#define Swap(a, b) (a ^= b, b ^= a, a ^= b)
-#define Max(a,b) ((a)&gt;(b)?(a):(b))
-#define Min(a,b) ((a)&lt;(b)?(a):(b))
-#define Abs(a)  ((a)&gt;0?(a):-(a))
-#define Fabs(a) ((a)&gt;0?(a):-(a))
-
-const int INF = 0x3f3f3f3f;
-const LL INFL = 0x3f3f3f3f3f3f3f3fll;
-const LL MOD = 1000000007;
-
-LL gcd(LL a,LL b){return b==0?a:gcd(b,a%b);}
-void exgcd(LL a,LL b,LL &amp;x,LL &amp;y){if(!b){x=1;y=0;return;}exgcd(b,a%b,y,x);y-=x*(a/b);}
-LL ksm(LL a,LL b){
-    LL res=1;
-    a%=MOD;
-    for(;b;b&gt;&gt;=1){
-        if(b&amp;1)res=res*a%MOD;
-        a=a*a%MOD;
-    }
-    return res;
-}
-
-int a[MAX];
-bool flag[MAX];
-int main(){
-    //freopen(&quot;in.txt&quot;,&quot;r&quot;,stdin);
-    int n,i,j;
-    LL sum;
-    while(~scanf(&quot;%d&quot;,&amp;n)){
-        for(i=1;i&lt;=n;i++){
-            scanf(&quot;%d&quot;,a+i);
-        }
-        sum=0;
-        for(i=n;i&gt;=1;i--){
-            if(a[i]&gt;=0) sum++;
-            else{
-                LL tmp=a[i];
-                for(j=i-1;j&gt;=1;j--){
-                    tmp+=a[j];
-                    if(tmp&gt;=0){
-                        sum++;
-                        i=j;
-                        break;
-                    }
-                }
-            }
-        }
-        printf(&quot;%lld\n&quot;,sum);
-    }
-    return 0;
-}
-
-/*
-                   _ooOoo_
-                  o8888888o
-                  88&quot; . &quot;88
-                  (| -_- |)
-                  O\  =  /O
-               ____/`---&#39;\____
-             .&#39;  \\|     |//  `.
-            /  \\|||  :  |||//  \
-           /  _||||| -:- |||||-  \
-           |   | \\\  -  /// |   |
-           | \_|  &#39;&#39;\---/&#39;&#39;  |   |
-           \  .-\__  `-`  ___/-. /
-         ___`. .&#39;  /--.--\  `. . __
-      .&quot;&quot; &#39;&lt;  `.___\_&lt;|&gt;_/___.&#39;  &gt;&#39;&quot;&quot;.
-     | | :  `- \`.;`\ _ /`;.`/ - ` : | |
-     \  \ `-.   \_ __\ /__ _/   .-` /  /
-======`-.____`-.___\_____/___.-`____.-&#39;======
-                   `=---=&#39;
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-            佛祖保佑       BUG全无
-            佛祖镇楼       AC永驻
-*/
-</code></pre>]]></content>
-      <categories>
-        <category>ACM</category>
-      </categories>
-      <tags>
-        <tag>hdu</tag>
-        <tag>贪心</tag>
       </tags>
   </entry>
   <entry>
@@ -1160,6 +988,252 @@ int main(){
       </tags>
   </entry>
   <entry>
+    <title>HDU-5783 Divide the Sequence（贪心水题）</title>
+    <url>/posts/2ca30c2/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h2 id="Divide-the-Sequence"><a href="#Divide-the-Sequence" class="headerlink" title="Divide the Sequence"></a>Divide the Sequence</h2><p><strong>Time Limit: 5000/2500 MS (Java/Others) Memory Limit: 65536/65536 K (Java/Others)<br>Total Submission(s): 1175 Accepted Submission(s): 563  
+</strong>   </p>
+<p>Problem Description </p>
+<p>Alice has a sequence A, She wants to split A into as much as possible continuous subsequences, satisfying that for each subsequence, every its prefix sum is not small than 0. </p>
+<p>Input </p>
+<p>The input consists of multiple test cases.<br>Each test case begin with an integer n in a single line.<br>The next line contains n integers A<em>{1},A</em>{2}\cdots A_{n}.<br>1 \leq n \leq 1e6<br>-10000 \leq A[i] \leq 10000<br>You can assume that there is at least one solution. </p>
+<p>Output </p>
+<p>For each test case, output an integer indicates the maximum number of sequence division. </p>
+<p>Sample Input </p>
+<pre><code>   6
+1 2 3 4 5 6
+4
+1 2 -3 0
+5
+0 0 0 0 0
+</code></pre><p>Sample Output </p>
+<pre><code>   6
+2
+5
+</code></pre><p>Author </p>
+<p>ZSTU </p>
+<p>Source </p>
+<p><a href="http://acm.split.hdu.edu.cn/search.php?field=problem&amp;key=2016+Multi-University+Training+Contest+5&amp;source=1&amp;searchmode=source">2016 Multi-University Training Contest 5</a></p>
+<p>题意：给你一个序列，让你尽可能分成更多的子序列。使得每个子序列的前缀和<br>都大于或等于0 。输出这个的子序列的总个数。   </p>
+<p>题解：倒序遍历序列。如果遇到的是正数，那它就是一个符合条件的子序列，如果<br>是负数，那就继续往前遍历，直到前缀和大于等于0，就是又一个符合条件的子序列。   </p>
+<pre><code>/**
+* @Author: Simon
+* @Date:   2016-07-26 09-25-15
+* @Project: ACM
+* @Last modified by:   Simon
+* @Last modified time: 2016-08-20 01-36-50
+*/
+/*
+        ┆ ┏┓　　　┏┓ ┆
+        ┆┏┛┻━━━━━━┛┻┓  ┆
+        ┆┃　　　　　 ┃ ┆
+        ┆┃　    ━　　┃ ┆
+        ┆┃　┳┛　┗┳  ┃ ┆
+        ┆┃　　　　　 ┃ ┆
+        ┆┃　　　┻　　┃ ┆
+        ┆┗━┓　  　┏━┛ ┆
+        ┆　┃　  　┃　　┆　　　　　　
+        ┆　┃　  　┗━━━┓ ┆
+        ┆　┃　 AC代马  ┣┓┆
+        ┆　┃　        ┏┛┆
+        ┆　┗┓┓ ┏━┳┓ ┏┛ ┆
+        ┆　　┃┫┫　┃┫┫ ┆
+        ┆　　┗┻┛　┗┻┛ ┆
+*/
+
+#include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;string&gt;
+#include &lt;cmath&gt;
+#include &lt;cstdlib&gt;
+#include &lt;stack&gt;
+#include &lt;deque&gt;
+#include &lt;queue&gt;
+#include &lt;map&gt;
+#include &lt;set&gt;
+#include &lt;vector&gt;
+#include &lt;algorithm&gt;
+using namespace std;
+
+#define MAX 1000010
+#define PI (acos(-1.0))
+#define LL long long
+#define Swap(a, b) (a ^= b, b ^= a, a ^= b)
+#define Max(a,b) ((a)&gt;(b)?(a):(b))
+#define Min(a,b) ((a)&lt;(b)?(a):(b))
+#define Abs(a)  ((a)&gt;0?(a):-(a))
+#define Fabs(a) ((a)&gt;0?(a):-(a))
+
+const int INF = 0x3f3f3f3f;
+const LL INFL = 0x3f3f3f3f3f3f3f3fll;
+const LL MOD = 1000000007;
+
+LL gcd(LL a,LL b){return b==0?a:gcd(b,a%b);}
+void exgcd(LL a,LL b,LL &amp;x,LL &amp;y){if(!b){x=1;y=0;return;}exgcd(b,a%b,y,x);y-=x*(a/b);}
+LL ksm(LL a,LL b){
+    LL res=1;
+    a%=MOD;
+    for(;b;b&gt;&gt;=1){
+        if(b&amp;1)res=res*a%MOD;
+        a=a*a%MOD;
+    }
+    return res;
+}
+
+int a[MAX];
+bool flag[MAX];
+int main(){
+    //freopen(&quot;in.txt&quot;,&quot;r&quot;,stdin);
+    int n,i,j;
+    LL sum;
+    while(~scanf(&quot;%d&quot;,&amp;n)){
+        for(i=1;i&lt;=n;i++){
+            scanf(&quot;%d&quot;,a+i);
+        }
+        sum=0;
+        for(i=n;i&gt;=1;i--){
+            if(a[i]&gt;=0) sum++;
+            else{
+                LL tmp=a[i];
+                for(j=i-1;j&gt;=1;j--){
+                    tmp+=a[j];
+                    if(tmp&gt;=0){
+                        sum++;
+                        i=j;
+                        break;
+                    }
+                }
+            }
+        }
+        printf(&quot;%lld\n&quot;,sum);
+    }
+    return 0;
+}
+
+/*
+                   _ooOoo_
+                  o8888888o
+                  88&quot; . &quot;88
+                  (| -_- |)
+                  O\  =  /O
+               ____/`---&#39;\____
+             .&#39;  \\|     |//  `.
+            /  \\|||  :  |||//  \
+           /  _||||| -:- |||||-  \
+           |   | \\\  -  /// |   |
+           | \_|  &#39;&#39;\---/&#39;&#39;  |   |
+           \  .-\__  `-`  ___/-. /
+         ___`. .&#39;  /--.--\  `. . __
+      .&quot;&quot; &#39;&lt;  `.___\_&lt;|&gt;_/___.&#39;  &gt;&#39;&quot;&quot;.
+     | | :  `- \`.;`\ _ /`;.`/ - ` : | |
+     \  \ `-.   \_ __\ /__ _/   .-` /  /
+======`-.____`-.___\_____/___.-`____.-&#39;======
+                   `=---=&#39;
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            佛祖保佑       BUG全无
+            佛祖镇楼       AC永驻
+*/
+</code></pre>]]></content>
+      <categories>
+        <category>ACM</category>
+      </categories>
+      <tags>
+        <tag>hdu</tag>
+        <tag>贪心</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>PKU-2739-Sum of Consecutive Prime Numbers（筛素数法打表）</title>
+    <url>/posts/f8f3071f/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><p>Sum of Consecutive Prime Numbers </p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th><strong>Time Limit:</strong> 1000MS</th>
+<th></th>
+<th><strong>Memory Limit:</strong> 65536K  </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Total Submissions:</strong> 23390</td>
+<td></td>
+<td><strong>Accepted:</strong> 12780  </td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Description</p>
+<p>Some positive integers can be represented by a sum of one or more consecutive prime numbers. How many such representations does a given positive integer have? For example, the integer 53 has two representations 5 + 7 + 11 + 13 + 17 and 53. The integer 41 has three representations 2+3+5+7+11+13, 11+13+17, and 41. The integer 3 has only one representation, which is 3. The integer 20 has no such representations. Note that summands must be consecutive prime<br>numbers, so neither 7 + 13 nor 3 + 5 + 5 + 7 is a valid representation for the integer 20.<br>Your mission is to write a program that reports the number of representations for the given positive integer. </p>
+<p>Input</p>
+<p>The input is a sequence of positive integers each in a separate line. The integers are between 2 and 10 000, inclusive. The end of the input is indicated by a zero. </p>
+<p>Output</p>
+<p>The output should be composed of lines each corresponding to an input line except the last zero. An output line includes the number of representations for the input integer as the sum of one or more consecutive prime numbers. No other characters should be inserted in the output. </p>
+<p>Sample Input</p>
+<pre><code>2
+3
+17
+41
+20
+666
+12
+53
+0
+</code></pre><p>Sample Output</p>
+<pre><code>1
+1
+2
+3
+0
+0
+1
+2
+</code></pre><p>Source</p>
+<p><a href="http://poj.org/searchproblem?field=source&amp;key=Japan+2005">Japan 2005</a></p>
+<pre><code>#include &lt;stdio.h&gt;
+#define MAX 10000
+int a[MAX+10];
+void isPrime(){//一种比较高效的筛素数法
+    int i,j;
+    for(i=2;i*i&lt;=MAX;i++)
+        if(a[i]==0)
+            for(j=i+i;j&lt;=MAX;j += i)
+                a[j]=1;
+}
+int main() {
+    int n,i,j,sum,k;
+    isPrime();
+    while(scanf(&quot;%d&quot;,&amp;n)&amp;&amp;n!=0){
+        k=0;
+        for(i=2;i&lt;=n;i++){
+            sum=0;
+            if(a[i]==0)
+                for(j=i;;j++){
+                    if(a[j]==0)
+                        sum+=j;
+                    if(sum&gt;n)
+                        break;
+                    else if(sum==n){
+                        k++;
+                        break;
+                    }
+                }
+        }
+        printf(&quot;%d\n&quot;,k);
+    }
+    return 0;
+}
+</code></pre>]]></content>
+      <categories>
+        <category>ACM</category>
+      </categories>
+      <tags>
+        <tag>pku</tag>
+        <tag>筛素数法</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>cocos2d-x 学习笔记——瓦片地图TiledMap</title>
     <url>/posts/be37dc98/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><p>本文出自 “<a href="http://shahdza.blog.51cto.com" title="夏天的风">夏天的风</a>” 博客，转载时请务必保留此出处：<a href="http://shahdza.blog.51cto.com/2410787/1613527" title="cocos2dx\[3.4\]\(25\)——瓦片地图TiledMap_51CTO博客_cocos creator 瓦片地图">cocos2dx<a href="25">3.4</a>——瓦片地图TiledMap_51CTO博客_cocos creator 瓦片地图</a></p>
@@ -1519,130 +1593,67 @@ class CC_DLL TMXObjectGroup : public Ref {
       </tags>
   </entry>
   <entry>
-    <title>单元测试框架Jest搭配TypeScript的安装与配置</title>
-    <url>/posts/7984b310/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><p>为项目安装并配置Jest单元测试环境</p>
-<h2 id="分步指南"><a href="#分步指南" class="headerlink" title="分步指南"></a>分步指南</h2><p>传送门：<a href="https://jestjs.io/docs/getting-started">Jest - 快速入门</a></p>
-<h3 id="1-安装jest："><a href="#1-安装jest：" class="headerlink" title="1. 安装jest："></a>1. 安装jest：</h3><pre><code>npm i jest ts-jest @types/jest -D
-</code></pre><h3 id="2-初始化："><a href="#2-初始化：" class="headerlink" title="2. 初始化："></a>2. 初始化：</h3><p>npx jest —init<br>按照图中所示选择<br><img src="17bfdf2a1d318676.png" alt="jest --init"><br>tip:<br>- <em>no;不使用ts，使用jest.config.js作为jest的配置文件；</em><br>- <em>jsdom;使用jsdom作为测试环境（jsdom:一个类似浏览器的环境，项目是运行在浏览器的，需要在浏览器dom环境下测试）；</em><br>- <em>yes;是否添加测试报告；</em><br>- <em>babel;使用babel提供的测试报告（官网说明v8仍处于试验阶段，需node14以上使用，效果未知，不稳定，因此选用babel）；</em></p>
-<h3 id="3-安装jsdom环境："><a href="#3-安装jsdom环境：" class="headerlink" title="3. 安装jsdom环境："></a>3. 安装jsdom环境：</h3><ul>
-<li><em>jest 28及以上版本不再内置jsdom插件，需要单独安装</em></li>
-<li><em>安装官方eslint插件：</em></li>
-</ul>
-<pre><code>npm i jest-environment-jsdom eslint-plugin-jest eslint-import-resolver-typescript jest-canvas-mock -D
-</code></pre><h3 id="4-创建test目录"><a href="#4-创建test目录" class="headerlink" title="4. 创建test目录"></a>4. 创建test目录</h3><p>在项目根目录下创建test目录，然后在test下创建<strong>mocks和</strong>tests__目录，创建.eslintrc.js和tsconfig.json文件<br><img src="ba1c1f056d6d290b.png" alt="在这里插入图片描述"></p>
-<blockquote>
-<p>附：配置示例</p>
-</blockquote>
-<p><em><code>jest.config.js</code></em></p>
-<pre><code>/*
- * For a detailed explanation regarding each configuration property, visit:
- * https://jestjs.io/docs/configuration
+    <title>JS四则运算重新封装，解决精度丢失问题</title>
+    <url>/posts/4f53ca67/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h2 id="math-js"><a href="#math-js" class="headerlink" title="math.js"></a>math.js</h2><pre><code>/* eslint-disable one-var */
+/* eslint-disable no-extend-native */
+/*
+ * @Author: Simon
+ * @Date: 2021-07-14 16:32:43
+ * @LastEditors: Simon
+ * @LastEditTime: 2022-04-11 18:49:53
+ * @Description: 四则运算重新封装，解决精度丢失问题
  */
 
-const { pathsToModuleNameMapper } = require(&#39;ts-jest&#39;);
-const { compilerOptions } = require(&#39;./tsconfig.json&#39;);
+// 加法
+Number.prototype.add = function (arg) {
+  let r1, r2, m
+  try { r1 = this.toString().split(&#39;.&#39;)[1].length } catch (e) { r1 = 0 }
+  try { r2 = arg.toString().split(&#39;.&#39;)[1].length } catch (e) { r2 = 0 }
+  m = Math.pow(10, Math.max(r1, r2))
+  return (this * m + arg * m) / m
+}
+// 减法
+Number.prototype.sub = function (arg) {
+  let r1, r2, m, n
+  try { r1 = this.toString().split(&#39;.&#39;)[1].length } catch (e) { r1 = 0 }
+  try { r2 = arg.toString().split(&#39;.&#39;)[1].length } catch (e) { r2 = 0 }
+  m = Math.pow(10, Math.max(r1, r2))
+  // 动态控制精度长度
+  n = (r1 &gt;= r2) ? r1 : r2
+  return Number(((this * m - arg * m) / m).toFixed(n))
+}
+// 乘法
+Number.prototype.mul = function (arg) {
+  let m = 0, s1 = this.toString(), s2 = arg.toString()
+  try { m += s1.split(&#39;.&#39;)[1].length } catch (e) { }
+  try { m += s2.split(&#39;.&#39;)[1].length } catch (e) { }
+  return Number(s1.replace(&#39;.&#39;, &#39;&#39;)) * Number(s2.replace(&#39;.&#39;, &#39;&#39;)) / Math.pow(10, m)
+}
+// 除法
+Number.prototype.div = function (arg) {
+  let t1 = 0, t2 = 0, r1, r2
+  try { t1 = this.toString().split(&#39;.&#39;)[1].length } catch (e) { }
+  try { t2 = arg.toString().split(&#39;.&#39;)[1].length } catch (e) { }
+  r1 = Number(this.toString().replace(&#39;.&#39;, &#39;&#39;))
+  r2 = Number(arg.toString().replace(&#39;.&#39;, &#39;&#39;))
+  return (r1 / r2) * Math.pow(10, t2 - t1)
+}
 
-module.exports = {
-  // A preset that is used as a base for Jest&#39;s configuration
-  preset: &#39;ts-jest&#39;,
-  // The test environment that will be used for testing
-  testEnvironment: &#39;jsdom&#39;,
-  // The paths to modules that run some code to configure or set up the testing environment before each test
-  setupFiles: [&#39;jest-canvas-mock&#39;],
-  // Automatically clear mock calls, instances, contexts and results before every test
-  clearMocks: true,
-  // Indicates whether the coverage information should be collected while executing the test
-  collectCoverage: true,
-  // The directory where Jest should output its coverage files
-  coverageDirectory: &#39;test/coverage&#39;,
-  // The root directory that Jest should scan for tests and modules within
-  // rootDir: undefined,
-  // rootDir: __dirname,
-  // An array of file extensions your modules use
-  moduleFileExtensions: [&#39;ts&#39;, &#39;js&#39;],
-  // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
-  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
-    prefix: &#39;&lt;rootDir&gt;/&#39;,
-  }),
-  // The glob patterns Jest uses to detect test files
-  testMatch: [&#39;&lt;rootDir&gt;/test/__tests__/**/*.test.ts&#39;],
-  // A map from regular expressions to paths to transformers
-  transform: {
-    &#39;^.+\\.ts$&#39;: &#39;ts-jest&#39;,
-  },
-};
-</code></pre><p><em>配置测试用例的eslint规则<code>/test/.eslintrc.js</code></em></p>
-<pre><code>module.exports = {
-  extends: [&#39;../.eslintrc.js&#39;],
-  settings: {
-    &#39;import/resolver&#39;: {
-      typescript: {
-        alwaysTryTypes: true, // always try to resolve types under `&lt;root&gt;@types` directory even it doesn&#39;t contain any source code, like `@types/unist`
-
-        // Choose from one of the &quot;project&quot; configs below or omit to use &lt;root&gt;/tsconfig.json by default
-        // use &lt;root&gt;/path/to/folder/tsconfig.json
-        project: &#39;tsconfig.json&#39;,
-      },
-    },
-  },
-  plugins: [&#39;jest&#39;],
-  overrides: [
-    // unit-tests
-    {
-      files: [&#39;**/__tests__/**&#39;],
-      rules: {
-        &#39;jest/no-disabled-tests&#39;: &#39;warn&#39;,
-        &#39;jest/no-focused-tests&#39;: &#39;error&#39;,
-        &#39;jest/no-identical-title&#39;: &#39;error&#39;,
-        &#39;jest/prefer-to-have-length&#39;: &#39;warn&#39;,
-        &#39;jest/valid-expect&#39;: &#39;error&#39;,
-      },
-    },
-  ],
-};
-</code></pre><p><em>代码覆盖率报告无需加入git版本管理，将<code>test/coverage</code>目录追加至<code>.gitignore</code></em></p>
-<pre><code>...
-
-# Unit test / coverage reports
-test/coverage
-</code></pre><p><em><code>tsconfig.json</code>中配置路径别名</em></p>
-<h3 id="5-愉快地开始单元测试："><a href="#5-愉快地开始单元测试：" class="headerlink" title="5. 愉快地开始单元测试："></a>5. 愉快地开始单元测试：</h3><p>在 <code>test/__test__</code> 目录下新增自己模块的单元测试目录及文件，开始单元测试代码编写<br>文件命名规范： <code>*.test.ts</code></p>
-<h3 id="6-总结-踩坑记录："><a href="#6-总结-踩坑记录：" class="headerlink" title="6. 总结 - 踩坑记录："></a>6. 总结 - 踩坑记录：</h3><ul>
-<li>默认preset为<code>babel-jest</code>，由于 <code>Babel</code> 对 <code>Typescript</code> 的支持是通过代码转换（Transpilation）实现的，而 Jest 在运行时并不会对你的测试用例做类型检查。 因此建议安装ts-jest来开启此功能</li>
-<li>主要是在配置<code>tsconfig.json</code>路径别名时花费了大量时间，处理ts的报错以及eslint的报错问题；</li>
-<li>以上配置的路径别名只需在<code>tsconfig.json</code>一处配置，随处可用，包括ts、eslint、jest都能读取同一个别名配置；</li>
-<li>另外对于webpack的别名配置，网上也有读取tsconfig配置的方案；</li>
-</ul>
-]]></content>
+// 三位分节法（千分位加逗号）
+Number.prototype.toThousandsString = function () {
+  let str = this.toString()
+  let reg = ~str.indexOf(&#39;.&#39;) ? /(\d)(?=(\d{3})+\.)/g : /(\d)(?=(?:\d{3})+$)/g
+  return str.replace(reg, &#39;$1,&#39;)
+}
+</code></pre>]]></content>
       <categories>
         <category>前端踩坑笔记</category>
       </categories>
       <tags>
         <tag>javascript</tag>
-        <tag>typescript</tag>
-        <tag>单元测试</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>新 MacBook Pro（M1 Pro）开箱记</title>
-    <url>/posts/0f0c1d65/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><p>快下班了，拆机 <strong>16 英寸 MacBook M1 Pro，深空灰</strong>。</p>
-<p>快递是送到公司的，先不回家了，就在办公室完成第一次开机：按下电源键，屏幕亮起，首次体验Macbook的丝滑金属大触摸板。</p>
-<p><img src="macbook-m1pro-first-boot.png" alt="MacBook Pro M1 Pro 第一次开机"></p>
-<p>初始设置走完后，我换了一张城市剪影的壁纸。工位上还是熟悉的木桌、水瓶和鼠标，只是中间多了一台新机器。</p>
-<p><img src="macbook-m1pro-desk.png" alt="MacBook Pro M1 Pro 换壁纸后"></p>
-<h2 id="为什么自己买"><a href="#为什么自己买" class="headerlink" title="为什么自己买"></a>为什么自己买</h2><p>公司配了 <strong>Windows</strong> 电脑，日常开发能用，没什么大问题。但我想把硬件配置提一提：上班写代码更顺畅，下班和周末自己学东西、捣鼓项目，也别太将就。</p>
-<p>全款教育优惠购入，上班带着用，晚上带回家，兼顾工作和自学。</p>
-<h2 id="第一天"><a href="#第一天" class="headerlink" title="第一天"></a>第一天</h2><p>今天没装多少软件，主要是走完系统设置、换壁纸、熟悉键盘和触控板。新电脑到手，心情挺好，记一篇开箱，先继续用公司电脑开发，明天来给新电脑装开发环境。</p>
-]]></content>
-      <categories>
-        <category>生活</category>
-      </categories>
-      <tags>
-        <tag>MacBook</tag>
-        <tag>M1 Pro</tag>
-        <tag>开箱</tag>
+        <tag>原型模式</tag>
+        <tag>前端</tag>
       </tags>
   </entry>
   <entry>
@@ -1698,94 +1709,83 @@ npx husky set .husky/pre-push &quot;npm test&quot;
       </tags>
   </entry>
   <entry>
-    <title>PKU-2739-Sum of Consecutive Prime Numbers（筛素数法打表）</title>
-    <url>/posts/f8f3071f/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><p>Sum of Consecutive Prime Numbers </p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th><strong>Time Limit:</strong> 1000MS</th>
-<th></th>
-<th><strong>Memory Limit:</strong> 65536K  </th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Total Submissions:</strong> 23390</td>
-<td></td>
-<td><strong>Accepted:</strong> 12780  </td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Description</p>
-<p>Some positive integers can be represented by a sum of one or more consecutive prime numbers. How many such representations does a given positive integer have? For example, the integer 53 has two representations 5 + 7 + 11 + 13 + 17 and 53. The integer 41 has three representations 2+3+5+7+11+13, 11+13+17, and 41. The integer 3 has only one representation, which is 3. The integer 20 has no such representations. Note that summands must be consecutive prime<br>numbers, so neither 7 + 13 nor 3 + 5 + 5 + 7 is a valid representation for the integer 20.<br>Your mission is to write a program that reports the number of representations for the given positive integer. </p>
-<p>Input</p>
-<p>The input is a sequence of positive integers each in a separate line. The integers are between 2 and 10 000, inclusive. The end of the input is indicated by a zero. </p>
-<p>Output</p>
-<p>The output should be composed of lines each corresponding to an input line except the last zero. An output line includes the number of representations for the input integer as the sum of one or more consecutive prime numbers. No other characters should be inserted in the output. </p>
-<p>Sample Input</p>
-<pre><code>2
-3
-17
-41
-20
-666
-12
-53
-0
-</code></pre><p>Sample Output</p>
-<pre><code>1
-1
-2
-3
-0
-0
-1
-2
-</code></pre><p>Source</p>
-<p><a href="http://poj.org/searchproblem?field=source&amp;key=Japan+2005">Japan 2005</a></p>
-<pre><code>#include &lt;stdio.h&gt;
-#define MAX 10000
-int a[MAX+10];
-void isPrime(){//一种比较高效的筛素数法
-    int i,j;
-    for(i=2;i*i&lt;=MAX;i++)
-        if(a[i]==0)
-            for(j=i+i;j&lt;=MAX;j += i)
-                a[j]=1;
-}
-int main() {
-    int n,i,j,sum,k;
-    isPrime();
-    while(scanf(&quot;%d&quot;,&amp;n)&amp;&amp;n!=0){
-        k=0;
-        for(i=2;i&lt;=n;i++){
-            sum=0;
-            if(a[i]==0)
-                for(j=i;;j++){
-                    if(a[j]==0)
-                        sum+=j;
-                    if(sum&gt;n)
-                        break;
-                    else if(sum==n){
-                        k++;
-                        break;
-                    }
-                }
-        }
-        printf(&quot;%d\n&quot;,k);
+    <title>Vue props传入function时的this指向问题</title>
+    <url>/posts/ffe0b7c/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><h3 id="Vue-props传入function时的this指向问题"><a href="#Vue-props传入function时的this指向问题" class="headerlink" title="Vue props传入function时的this指向问题"></a>Vue props传入function时的this指向问题</h3><p><strong>Parent.vue</strong></p>
+<pre><code>&lt;template&gt;
+  &lt;div&gt;
+    &lt;Child :func=&quot;parentFunc&quot;&gt;&lt;/Child&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import Child from &#39;./Child&#39;
+export default {
+  data () {
+    return {
+      msg: &#39;this is parent.&#39;
     }
-    return 0;
+  },
+  components: {
+    Child
+  },
+  methods: {
+    parentFunc () {
+      console.log(this.msg)
+    }
+  }
 }
-</code></pre>]]></content>
+&lt;/script&gt;
+</code></pre><p><strong>Child.vue</strong></p>
+<pre><code>&lt;template&gt;
+  &lt;div&gt;
+    &lt;button @click=&quot;childFunc&quot;&gt;click&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+export default {
+  props: {
+    func: {
+      require: false,
+      type: Function,
+      default: () =&gt; {
+        return () =&gt; {
+          console.log(this.msg)
+        }
+      }
+    }
+  },
+  data () {
+    return {
+      msg: &#39;this is child.&#39;
+    }
+  },
+  methods: {
+    childFunc () {
+      this.func()
+    }
+  }
+}
+&lt;/script&gt;
+</code></pre><h3 id="踩坑笔记"><a href="#踩坑笔记" class="headerlink" title="踩坑笔记"></a>踩坑笔记</h3><ul>
+<li>props传入function时，函数中this自动绑定Vue实例；</li>
+<li>在H5的Vue中项目中，console将输出 “this is parent.”；<br>但在uni-app小程序中使用Vue时，console将输出“this is child”；</li>
+<li>我的解决方案：<br>将父组件msg作为参数传给子组件，子组件props接收msg，然后在父组件的parantFunc中，无论this 指向父组件还是子组件，this.msg总能取得正确的值；</li>
+<li>为什么不使用v-on监听子组件事件并用$emit触发事件？ <ol>
+<li>Vue中不推荐向子组件传递Function的方式，因为Vue有更好的事件父子组件通信机制；</li>
+<li>我的原因：项目中的子组件是一个公共组件，原本的代码是使用props+Function的方式，且存在默认值，默认调用函数default默认值；如果改为事件$emit的方式，则涉及修改的地方较多；</li>
+<li>因此，在尽量不影响原来的业务代码的原则下，采用上述解决方案解决该问题；</li>
+</ol>
+</li>
+</ul>
+]]></content>
       <categories>
-        <category>ACM</category>
+        <category>Vue</category>
       </categories>
       <tags>
-        <tag>pku</tag>
-        <tag>筛素数法</tag>
+        <tag>vue</tag>
+        <tag>uni-app</tag>
       </tags>
   </entry>
   <entry>
@@ -1940,6 +1940,419 @@ int main() {
         <tag>VXE-Table</tag>
         <tag>响应式</tag>
         <tag>前端踩坑</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Vue3 + Element Plus：ElSelect Maximum recursive updates 的一次排障</title>
+    <url>/posts/e8a4b2c1/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><blockquote>
+<p><strong>2026-09-03 修正</strong>：本文初版把根因定在「大码表 × 多实例首屏全挂，把 Vue3 递归护栏顶穿」，解法是页侧懒挂 option。后来在真实浏览器里做逐层对照复现，发现那个结论<strong>不成立</strong>——数量本身不是原因，真正的扳机是<strong>全局把 <code>wg-option</code> 注册成了异步组件</strong>。初版的页侧懒挂之所以「看起来修好了」，只是把 option 数压到了护栏阈值以下。下文按新证据重写，初版推断保留在「第一轮结论错在哪」一节。</p>
+</blockquote>
+<p>把一套老 HIS 页面从 <strong>Vue2 + Element UI</strong> 迁到 <strong>Vue3 + Element Plus</strong> 时，大下拉进页就炸：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><code class="hljs text">Maximum recursive updates exceeded in component &lt;ElSelect&gt;<br></code></pre></td></tr></table></figure>
+<p>表面像是 <code>wg-select</code> 门面或 checkbox 写坏了，实际是三件事叠出来的：<strong>EP 的 option 挂载会改父 Select 的响应式状态</strong>、<strong>Vue3 有一条数 update 次数的护栏</strong>，而<strong>把 option 注册成异步组件，会让每个 option 各自触发一次父级更新</strong>。</p>
+<h2 id="现象"><a href="#现象" class="headerlink" title="现象"></a>现象</h2><p>组件调试场里放了四个 500 条 option 的 <code>wg-select</code> 示例，表现很有辨识度：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>从别的菜单切进来</td>
+<td>不报错</td>
+</tr>
+<tr>
+<td><strong>在本页直接刷新</strong></td>
+<td>报 <code>Maximum recursive updates</code>，组件是 <code>&lt;ElSelect&gt;</code></td>
+</tr>
+<tr>
+<td>示例① 单选（slot 写法）</td>
+<td>下拉里只剩 <strong>102</strong> 条</td>
+</tr>
+<tr>
+<td>示例②③ 多选（slot 写法）</td>
+<td>下拉<strong>完全没数据</strong></td>
+</tr>
+<tr>
+<td>示例④ <code>:options</code> 配置式（无子节点）</td>
+<td><strong>完全正常</strong></td>
+</tr>
+<tr>
+<td>同样写法但只有 30 条</td>
+<td>不报错</td>
+</tr>
+<tr>
+<td>旁边放一个原生 <code>el-select</code> + <code>el-option</code> 对照，500 条</td>
+<td><strong>不报错</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>两个关键信号：</p>
+<ol>
+<li><strong>示例④正常</strong>——它走 <code>:options</code> 属性，没有 option 子组件。说明问题出在「option 作为子节点」这条路径上。</li>
+<li><strong>原生 EP 对照不炸，过了门面就炸</strong>——但门面代码本身后来被证明是无辜的，见下文二分。</li>
+</ol>
+<p>还有个数字巧合值得记下：报错后只渲染出 <strong>102</strong> 条，和 Vue 的护栏阈值 <strong>100</strong> 贴得很近。这不是巧合，是本案的关键线索。</p>
+<h2 id="第一轮结论错在哪"><a href="#第一轮结论错在哪" class="headerlink" title="第一轮结论错在哪"></a>第一轮结论错在哪</h2><p>初版的推理链是这样的：</p>
+<blockquote>
+<p>首屏多张卡同时挂大码表（约 150 条 × 多实例）→ 每个 option 向父 Select <code>onOptionCreate</code> → 同一轮 flush 里 Select 的 update 转了 100 多圈 → 护栏抛错。</p>
+</blockquote>
+<p>于是解法做在业务页：关闭时只挂已选项，展开才挂全量。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// 初版的止血方案：现在可以回退了</span><br><span class="hljs-title function_">pickSelectOptions</span>(<span class="hljs-params">list, modelValue, openKey</span>) &#123;<br>  <span class="hljs-keyword">const</span> source = <span class="hljs-title class_">Array</span>.<span class="hljs-title function_">isArray</span>(list) ? list : []<br>  <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">selectOpenKeys</span>[openKey]) <span class="hljs-keyword">return</span> source<br>  <span class="hljs-keyword">if</span> (modelValue == <span class="hljs-literal">null</span> || modelValue === <span class="hljs-string">&#x27;&#x27;</span>) <span class="hljs-keyword">return</span> []<br>  <span class="hljs-comment">// …只返回已选项</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p><strong>它确实让报错消失了</strong>，所以当时就收工了。但它骗过我的原因是：懒挂把首屏 option 数从 150 压到了 0～1，自然低于护栏阈值。<strong>症状消失 ≠ 根因找到</strong>。</p>
+<p>真正的破绽是那条「切换进来不报错、刷新才报错」。如果根因只是数量，切换和刷新挂的 option 一样多，不该有差别。</p>
+<h2 id="二分复现"><a href="#二分复现" class="headerlink" title="二分复现"></a>二分复现</h2><p>这次没有再靠推理，而是起了一个独立的 dev server，用 Playwright 把每一层拆开单独渲染，逐个跑（每页只放一个用例，避免互相干扰）：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>组合（500 条，除非注明）</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EP select + EP option</td>
+<td>正常</td>
+</tr>
+<tr>
+<td>EP select + 全局 <code>wg-option</code></td>
+<td><strong>报错</strong></td>
+</tr>
+<tr>
+<td>EP select + 全局 <code>wg-option</code>（<strong>150 条</strong>）</td>
+<td><strong>报错</strong></td>
+</tr>
+<tr>
+<td><code>wg-select</code> + EP option</td>
+<td>正常</td>
+</tr>
+<tr>
+<td><code>wg-select</code> + 全局 <code>wg-option</code>（30 条）</td>
+<td>正常</td>
+</tr>
+<tr>
+<td>EP select + 手写同构 wrapper（含 inject、onMounted 注册、两层嵌套）</td>
+<td>正常</td>
+</tr>
+<tr>
+<td>EP select + wg-ui 原生 <code>WgOption</code></td>
+<td>正常</td>
+</tr>
+<tr>
+<td><strong>EP select + <code>defineAsyncComponent(原生 ElOption)</code></strong></td>
+<td><strong>报错</strong></td>
+</tr>
+<tr>
+<td><strong>EP select + 直接 <code>import</code> 的 HIS <code>wg-option</code></strong></td>
+<td><strong>正常</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>最后两行是决定性的：</p>
+<ul>
+<li>把<strong>原生 <code>ElOption</code></strong>（跟业务门面完全无关）包一层 <code>defineAsyncComponent</code>，一样炸；</li>
+<li>把 <strong>HIS <code>wg-option</code> 直接 import</strong>、绕开全局注册，500 条完全正常。</li>
+</ul>
+<p>门面实现无辜，扳机是<strong>异步注册</strong>。顺带也否掉了「多实例」这个条件——单个 select 挂 150 个异步 option 就已经炸了。</p>
+<h2 id="根因：异步注册-×-子节点契约-×-递归护栏"><a href="#根因：异步注册-×-子节点契约-×-递归护栏" class="headerlink" title="根因：异步注册 × 子节点契约 × 递归护栏"></a>根因：异步注册 × 子节点契约 × 递归护栏</h2><h3 id="1-EP-的-option-挂载会改父-Select-的响应式状态"><a href="#1-EP-的-option-挂载会改父-Select-的响应式状态" class="headerlink" title="1. EP 的 option 挂载会改父 Select 的响应式状态"></a>1. EP 的 option 挂载会改父 Select 的响应式状态</h3><p><strong>Element UI（Vue2）</strong>在 <code>created</code> 里 <code>push</code> 普通数组：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><code class="hljs js"><span class="hljs-variable language_">this</span>.<span class="hljs-property">select</span>.<span class="hljs-property">options</span>.<span class="hljs-title function_">push</span>(<span class="hljs-variable language_">this</span>)<br><span class="hljs-variable language_">this</span>.<span class="hljs-property">select</span>.<span class="hljs-property">cachedOptions</span>.<span class="hljs-title function_">push</span>(<span class="hljs-variable language_">this</span>)<br></code></pre></td></tr></table></figure>
+<p><strong>Element Plus</strong> 写的是响应式 <code>Map</code>，而且父级还 watch 着它：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">const</span> <span class="hljs-title function_">onOptionCreate</span> = (<span class="hljs-params">vm</span>) =&gt; &#123;<br>  states.<span class="hljs-property">options</span>.<span class="hljs-title function_">set</span>(vm.<span class="hljs-property">value</span>, vm)<br>  states.<span class="hljs-property">cachedOptions</span>.<span class="hljs-title function_">set</span>(vm.<span class="hljs-property">value</span>, vm)<br>&#125;<br><br><span class="hljs-title function_">watch</span>(<span class="hljs-function">() =&gt;</span> states.<span class="hljs-property">options</span>.<span class="hljs-title function_">entries</span>(), <span class="hljs-function">() =&gt;</span> &#123;<br>  <span class="hljs-title function_">setSelected</span>()<br>  <span class="hljs-comment">// ...</span><br>&#125;, &#123; <span class="hljs-attr">flush</span>: <span class="hljs-string">&#x27;post&#x27;</span> &#125;)<br></code></pre></td></tr></table></figure>
+<p>也就是说，<strong>每挂一个 option，父 Select 就会被重新调度一次更新</strong>。这是「可能出问题」的前提，但只要所有 option 在同一次渲染里一起挂完，父 Select 只需要更新一次，什么事都没有——原生 500 条不炸就是这个道理。</p>
+<h3 id="2-Vue3-数的是「同一个-job-转了多少圈」"><a href="#2-Vue3-数的是「同一个-job-转了多少圈」" class="headerlink" title="2. Vue3 数的是「同一个 job 转了多少圈」"></a>2. Vue3 数的是「同一个 job 转了多少圈」</h3><p><code>vue@3.5.x</code> 里写死：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">const</span> <span class="hljs-variable constant_">RECURSION_LIMIT</span> = <span class="hljs-number">100</span><br><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">checkRecursiveUpdates</span>(<span class="hljs-params">seen, fn</span>) &#123;<br>  <span class="hljs-keyword">const</span> count = seen.<span class="hljs-title function_">get</span>(fn) || <span class="hljs-number">0</span><br>  <span class="hljs-keyword">if</span> (count &gt; <span class="hljs-variable constant_">RECURSION_LIMIT</span>) &#123;<br>    <span class="hljs-comment">// throw: Maximum recursive updates exceeded in component &lt;XXX&gt;</span><br>  &#125;<br>  seen.<span class="hljs-title function_">set</span>(fn, count + <span class="hljs-number">1</span>)<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>注意它数的是<strong>同一个 update job 在一轮 flush 里被执行的次数</strong>，不是 option 个数。这是防无限更新的护栏，不是性能打分。所以「option 超过 100 条就炸」这个流传很广的说法是错的——同步挂 2000 个 option 一样没事。</p>
+<p>相关 issue：</p>
+<ul>
+<li><a href="https://github.com/vuejs/core/issues/11712">vuejs/core#11712</a></li>
+<li><a href="https://github.com/element-plus/element-plus/issues/18166">element-plus#18166</a></li>
+<li><a href="https://github.com/element-plus/element-plus/issues/15323">element-plus#15323</a></li>
+</ul>
+<h3 id="3-异步组件把「一次更新」拆成了「N-次更新」"><a href="#3-异步组件把「一次更新」拆成了「N-次更新」" class="headerlink" title="3. 异步组件把「一次更新」拆成了「N 次更新」"></a>3. 异步组件把「一次更新」拆成了「N 次更新」</h3><p>项目里全局注册组件时图省事，一律走了 <code>defineAsyncComponent</code>：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">const</span> component = <span class="hljs-title function_">defineAsyncComponent</span>(<span class="hljs-function">() =&gt;</span> <span class="hljs-title function_">loader</span>().<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">m</span>) =&gt;</span> m.<span class="hljs-property">default</span> || m))<br></code></pre></td></tr></table></figure>
+<p>关键在于 <code>defineAsyncComponent</code> 的 <code>setup</code> 是<strong>每实例</strong>的：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><code class="hljs js"><span class="hljs-title function_">setup</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">const</span> instance = currentInstance<br>  <span class="hljs-keyword">if</span> (resolvedComp) &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-function">() =&gt;</span> <span class="hljs-title function_">createInnerComp</span>(resolvedComp, instance)  <span class="hljs-comment">// 已缓存：当场同步返回</span><br>  &#125;<br>  <span class="hljs-comment">// 未缓存：每个实例各自持有一个 loaded</span><br>  <span class="hljs-keyword">const</span> loaded = <span class="hljs-title function_">ref</span>(<span class="hljs-literal">false</span>)<br>  <span class="hljs-comment">// …promise resolve 后 loaded.value = true，触发本实例的更新</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>于是首次加载时：500 个 <code>wg-option</code> 首帧全是占位，promise 落地后<strong>每个实例各自把自己的 <code>loaded</code> 翻成 true，各自排一个更新 job</strong>，各自挂载，各自调一次 <code>onOptionCreate</code> → 各自把父 <code>ElSelect</code> 重新推进队列。同一轮 flush 里 ElSelect 的 job 被执行了 100 多次，护栏抛错并中断本次 flush——所以画面停在 <strong>102 条</strong>，多选那两个更是一条都没渲染出来。</p>
+<h3 id="4-这也解释了「刷新炸、切换不炸」"><a href="#4-这也解释了「刷新炸、切换不炸」" class="headerlink" title="4. 这也解释了「刷新炸、切换不炸」"></a>4. 这也解释了「刷新炸、切换不炸」</h3><p><code>resolvedComp</code> 是<strong>闭包里共享的缓存</strong>。chunk 已经加载过之后，后续实例的 <code>setup</code> 直接命中 <code>if (resolvedComp)</code> 分支同步返回，所有 option 在同一次渲染里挂完，父 Select 只更新一次。</p>
+<p>所以：</p>
+<ul>
+<li><strong>硬刷新</strong>（chunk 未加载）→ 逐个解析、逐拍补挂 → 炸；</li>
+<li><strong>从别的菜单切过来</strong>（chunk 已缓存）→ 一拍挂完 → 不炸。</li>
+</ul>
+<p>初版那条「修好后单独打开一个 150 项的下拉也不报错」，同理——那时候组件早就缓存好了。</p>
+<p><strong>一句话概括三者关系</strong>：EP 让父级对子节点敏感，Vue3 提供了护栏，而异步注册把本该一拍完成的挂载摊成了上百拍。</p>
+<h2 id="真正的修法：子节点契约件必须同步注册"><a href="#真正的修法：子节点契约件必须同步注册" class="headerlink" title="真正的修法：子节点契约件必须同步注册"></a>真正的修法：子节点契约件必须同步注册</h2><p>判定标准不是体积，也不是目录，而是：<strong>这个组件是否必须被父组件在同一渲染帧内枚举到</strong>。异步注册破坏的正是这个契约。按这个标准筛，全局异步注册里命中的只有三个：<code>wgOption</code>、<code>wgTableColumn</code>、<code>wgTabPane</code>——分别对应 <code>ElSelect</code>、<code>ElTable</code>、<code>ElTabs</code> 的子节点登记。</p>
+<p>改法是在注册入口加一份同步白名单，其余保持异步：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">import</span> wgOption <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./common-ui/base/option/index.js&#x27;</span><br><span class="hljs-keyword">import</span> wgTableColumn <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./common-ui/base/table-column/index.js&#x27;</span><br><span class="hljs-keyword">import</span> wgTabPane <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./common-ui/base/tab-pane/index.js&#x27;</span><br><span class="hljs-comment">// …其余高频原子件</span><br><br><span class="hljs-keyword">const</span> <span class="hljs-variable constant_">SYNC_COMPONENTS</span> = &#123;<br>  <span class="hljs-string">&#x27;./common-ui/base/option/index.js&#x27;</span>: wgOption,<br>  <span class="hljs-string">&#x27;./common-ui/base/table-column/index.js&#x27;</span>: wgTableColumn,<br>  <span class="hljs-string">&#x27;./common-ui/base/tab-pane/index.js&#x27;</span>: wgTabPane,<br>  <span class="hljs-comment">// …</span><br>&#125;<br><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">getComponent</span>(<span class="hljs-params">componentPath</span>) &#123;<br>  <span class="hljs-keyword">if</span> (!componentPath) <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span><br>  <span class="hljs-keyword">if</span> (<span class="hljs-variable constant_">SYNC_COMPONENTS</span>[componentPath]) <span class="hljs-keyword">return</span> <span class="hljs-variable constant_">SYNC_COMPONENTS</span>[componentPath]<br>  <span class="hljs-keyword">if</span> (asyncComponentsByPath.<span class="hljs-title function_">has</span>(componentPath)) <span class="hljs-keyword">return</span> asyncComponentsByPath.<span class="hljs-title function_">get</span>(componentPath)<br><br>  <span class="hljs-keyword">const</span> loader = <span class="hljs-variable constant_">ATHENA_COMPONENT_LOADERS</span>[componentPath]<br>  <span class="hljs-keyword">if</span> (!loader) <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span><br>  <span class="hljs-keyword">const</span> component = <span class="hljs-title function_">defineAsyncComponent</span>(<span class="hljs-function">() =&gt;</span> <span class="hljs-title function_">loader</span>().<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">m</span>) =&gt;</span> m.<span class="hljs-property">default</span> || m))<br>  asyncComponentsByPath.<span class="hljs-title function_">set</span>(componentPath, component)<br>  <span class="hljs-keyword">return</span> component<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="别按目录一刀切"><a href="#别按目录一刀切" class="headerlink" title="别按目录一刀切"></a>别按目录一刀切</h3><p>一开始想过「基础件目录整体同步、业务目录保持异步」，量了下体积就否掉了：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>base 目录下最大的几个</th>
+<th>体积</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>icon/</code></td>
+<td>3.2 MB</td>
+</tr>
+<tr>
+<td><code>date-picker/</code></td>
+<td>196 KB</td>
+</tr>
+<tr>
+<td><code>table/</code></td>
+<td>164 KB</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><code>icon</code> 一个就 3.2 MB（图标集数据打进了源码），恰恰是最该保持异步的；而它不被任何父组件枚举，异步完全无害。反过来，真正必须同步的 <code>table-column</code> 只有 4 KB。<strong>「基础件 = 轻」这个假设在真实仓库里往往不成立，按体积或目录切都会切歪。</strong></p>
+<p>还有个容易踩反的细节：<strong>父组件异步、子组件同步是安全的</strong>（整棵子树晚一拍原子挂载），反过来才出问题。所以 164 KB 的 <code>wgTable</code> 可以留异步，只把 4 KB 的 <code>wgTableColumn</code> 拎出来同步。</p>
+<h3 id="补一条-guard-测试"><a href="#补一条-guard-测试" class="headerlink" title="补一条 guard 测试"></a>补一条 guard 测试</h3><p>这类问题回归起来毫无征兆，值得钉死：</p>
+<ul>
+<li>三个子节点契约件必须在白名单里；</li>
+<li><code>icon</code> / <code>table</code> 必须留在异步侧；</li>
+<li>白名单每一项都要有对应的静态 import；</li>
+<li>白名单的优先级必须高于 <code>defineAsyncComponent</code>。</li>
+</ul>
+<h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>递归错误</th>
+<th>四个示例的 option 数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>改前</td>
+<td>有</td>
+<td>102 / 0 / 0 / 500</td>
+</tr>
+<tr>
+<td>改后</td>
+<td><strong>无</strong></td>
+<td><strong>500 × 4</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>运行时再确认一遍注册形态：<code>wgOption</code>、<code>wgSelect</code>、<code>wgTableColumn</code>、<code>wgTabPane</code> 已是同步组件，<code>wgIcon</code>、<code>wgTable</code>、<code>wgEditor</code> 仍是 <code>AsyncComponentWrapper</code>。代码分割该保留的都保留了。</p>
+<p>（说明：这次重新验证跑在调试场的 500 条用例上；初版那个会诊配置页没有再回归，但机制一致，页侧懒挂那套可以回退了。）</p>
+<h2 id="调试小记"><a href="#调试小记" class="headerlink" title="调试小记"></a>调试小记</h2><ul>
+<li><strong>逐层对照比读源码快</strong>。这次读了半天 EP 的 <code>options.mjs</code>、<code>useOption.mjs</code>，推了好几个假设都不对；真正定位靠的是起一个独立端口的 dev server，用 Playwright 把「EP select + EP option / EP select + 门面 option / 门面 select + EP option / …」九种组合各跑一遍，两轮就锁死了。写对照用例的成本远低于盯着响应式源码空想。</li>
+<li><strong>注意组件库改过 Element Plus 的 class 命名空间</strong>。这个项目里 wg-ui 把命名空间设成了 <code>wg</code>，页面上根本没有 <code>.el-select</code>，连原生 EP 组件也渲染成 <code>.wg-select</code>。我第一版探针全用 <code>.el-*</code> 选择器，结果每个用例都返回「点不开」，差点误判。写选择器或样式覆盖前先去 DevTools 确认真实类名。</li>
+</ul>
+<h2 id="迁移惯例（修订版）"><a href="#迁移惯例（修订版）" class="headerlink" title="迁移惯例（修订版）"></a>迁移惯例（修订版）</h2><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>做法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全局注册组件库</td>
+<td>子节点契约件（option / table-column / tab-pane 等）<strong>必须同步注册</strong></td>
+</tr>
+<tr>
+<td>体积大的叶子件（图标集、编辑器）</td>
+<td>保持异步，它们不被父组件枚举</td>
+</tr>
+<tr>
+<td>判定某个组件能不能异步</td>
+<td>只问一句：父组件需不需要在同一帧里数清它？</td>
+</tr>
+<tr>
+<td>大码表下拉</td>
+<td>同步注册后不需要页侧懒挂；上千条再考虑 SelectV2 / 远程搜索</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>再遇到同类报错时的最短路径：</p>
+<ol>
+<li>先分「刷新炸 / 切换不炸」——只要有这个差别，八成和异步加载时序有关，不是数量问题</li>
+<li>拿原生组件做对照，确认是不是自家封装引入的</li>
+<li>把封装层拆开逐个跑，别靠读源码猜</li>
+<li>找到扳机后，问清楚「谁必须在同一帧里被数到」</li>
+</ol>
+<h2 id="一句话"><a href="#一句话" class="headerlink" title="一句话"></a>一句话</h2><blockquote>
+<p>护栏数的是<strong>同一个 update job 在一轮 flush 里转了多少圈</strong>，不是 option 有多少个。把 option 注册成异步组件，等于让每个 option 各自触发一次父 Select 更新——一百个就顶穿了。<strong>数量只是放大器，异步注册才是扳机。</strong></p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>前端踩坑笔记</category>
+      </categories>
+      <tags>
+        <tag>Vue3</tag>
+        <tag>响应式</tag>
+        <tag>前端踩坑</tag>
+        <tag>Element Plus</tag>
+        <tag>ElSelect</tag>
+        <tag>异步组件</tag>
+        <tag>defineAsyncComponent</tag>
+        <tag>HIS 迁移</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Vue3 scoped 样式失效：Tooltip 打断 data-v 根链的一次排障</title>
+    <url>/posts/a7f3c1e2/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><p>迁移一套 HIS 公共图标组件时，遇到一个很「迷惑」的现象：<strong>去掉内部的 <code>WgTooltip</code>，根节点 <code>&lt;i&gt;</code> 上有调用方的 <code>data-v-*</code>；加上之后，根节点还是 <code>&lt;i&gt;</code>，但 <code>data-v-*</code> 没了，调用方的 scoped 样式全部失效。</strong></p>
+<p>表面像属性丢了，深挖下去其实是 Vue scoped CSS 的「单根作用域继承」被 Element Plus Tooltip 的 Fragment 根打断了。这篇记录完整推理链、Element UI / Plus 的实现差异，以及真正不受 <code>disabled</code> 影响的修法。</p>
+<h2 id="现象"><a href="#现象" class="headerlink" title="现象"></a>现象</h2><p>调用方大致是这样：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs vue">&lt;template&gt;<br>  &lt;wg-icon v-if=&quot;iconName&quot; class=&quot;order-type-icon f40&quot; :name=&quot;iconName&quot; /&gt;<br>&lt;/template&gt;<br><br>&lt;style scoped&gt;<br>.order-type-icon.f40 &#123;<br>  font-size: 40px;<br>  max-height: 20px;<br>&#125;<br>&lt;/style&gt;<br></code></pre></td></tr></table></figure>
+<p><code>wgIcon</code> 门面内部曾把图标包在 tooltip 里：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs vue">&lt;template&gt;<br>  &lt;WgTooltip :disabled=&quot;disabled&quot; :content=&quot;content&quot; :placement=&quot;placement&quot;&gt;<br>    &lt;WgIcon ...&gt;<br>      &lt;WgIconGlyph ... /&gt;<br>    &lt;/WgIcon&gt;<br>  &lt;/WgTooltip&gt;<br>&lt;/template&gt;<br></code></pre></td></tr></table></figure>
+<p>DevTools 里对照：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>结构</th>
+<th>根 DOM</th>
+<th>调用方 <code>data-v-*</code></th>
+<th>scoped 样式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>去掉 <code>WgTooltip</code></td>
+<td><code>&lt;i class=&quot;wg-icon order-type-icon&quot;&gt;</code></td>
+<td>有</td>
+<td>生效</td>
+</tr>
+<tr>
+<td>加上 <code>WgTooltip</code></td>
+<td>还是同一个 <code>&lt;i&gt;</code></td>
+<td><strong>无</strong></td>
+<td>失效</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>DOM 形态几乎没变，偏偏作用域属性没了——这正是误判点。</p>
+<h2 id="机制：data-v-不是谁「贴」上去的"><a href="#机制：data-v-不是谁「贴」上去的" class="headerlink" title="机制：data-v-* 不是谁「贴」上去的"></a>机制：<code>data-v-*</code> 不是谁「贴」上去的</h2><p><code>wgIcon</code> 和底层 <code>WgIcon</code> 都没有 <code>&lt;style scoped&gt;</code>。<code>&lt;i&gt;</code> 上的 <code>data-v-xxx</code> <strong>不是自己加的</strong>，而来自 Vue 的一条额外规则：</p>
+<blockquote>
+<p>子组件的<strong>根节点</strong>会同时带上父组件的 scope id，这样父组件的 scoped 样式才能给子组件根元素设外边距、字号等。</p>
+</blockquote>
+<p>Vue 3 在 patch 元素时走 <code>setScopeId</code>：除了打上当前 vnode 自己的 <code>scopeId</code>，还会判断「这个 vnode 是否正好等于某个组件实例的 <code>subTree</code>」；只要是，就取该组件 vnode 的 <code>scopeId</code> 继续往上递归。<strong>一旦某一层的根不是它，递归立刻终止。</strong></p>
+<p>可以把它想成一条「单根链」：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><code class="hljs text">调用方 &lt;wg-icon&gt; vnode（带 data-v-caller）<br>  → 必须是 wgIcon.subTree 的根<br>  → 必须是下一层组件.subTree 的根<br>  → ……<br>  → 最终落到真实 DOM（这里是 &lt;i&gt;）<br></code></pre></td></tr></table></figure>
+<p>链上任何一环变成 Fragment / 多根 / 插槽深处的孩子，继承就断。</p>
+<h2 id="为什么加了-Tooltip，链就断了"><a href="#为什么加了-Tooltip，链就断了" class="headerlink" title="为什么加了 Tooltip，链就断了"></a>为什么加了 Tooltip，链就断了</h2><p>去掉 tooltip 时，链是完整的：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><code class="hljs text">orderTypeIcon 的 &lt;wg-icon&gt; vnode<br>  → wgIcon.subTree 根 = WgIcon<br>  → WgIcon.subTree 根 = &lt;i&gt;<br></code></pre></td></tr></table></figure>
+<p><code>&lt;i&gt;</code> 一路继承到 <code>data-v-caller</code>，<code>.order-type-icon { font-size: 40px }</code> 命中。</p>
+<p>加上 <code>WgTooltip</code> 后，<code>wgIcon</code> 的 <code>subTree</code> 根变成了 <code>WgTooltip</code>。它只是转发到 <code>ElTooltip</code>，再落到 <code>ElPopper</code>。而 <code>ElPopper</code> 必须同时渲染：</p>
+<ol>
+<li>trigger（触发器）</li>
+<li>teleport 出去的 content（浮层）</li>
+</ol>
+<p>也就是一个 <strong>Fragment</strong>。<code>&lt;i&gt;</code> 是作为 slot 内容塞进 trigger 的，<strong>已经不在「根链」上了</strong>。递归在 Fragment 处停住，调用方的 <code>data-v-*</code> 到不了 <code>&lt;i&gt;</code>。</p>
+<h3 id="为什么-DOM-上看不出变化？"><a href="#为什么-DOM-上看不出变化？" class="headerlink" title="为什么 DOM 上看不出变化？"></a>为什么 DOM 上看不出变化？</h3><p>Element Plus 的 trigger 走 <code>ElOnlyChild</code>：不产生额外包裹元素，只透传并挂事件。所以肉眼看到的根还是 <code>&lt;i&gt;</code>，但 vnode 树的「谁是谁的 subTree 根」已经变了。</p>
+<p><strong>scoped 看的是 vnode 身份，不是最终 DOM 标签名。</strong></p>
+<h2 id="误区一：-deep-能治吗？"><a href="#误区一：-deep-能治吗？" class="headerlink" title="误区一：:deep() 能治吗？"></a>误区一：<code>:deep()</code> 能治吗？</h2><p>结构上就不可能。<code>:deep(.order-type-icon)</code> 编译出来是<strong>后代选择器</strong>：</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><code class="hljs css"><span class="hljs-selector-attr">[data-v-caller]</span> <span class="hljs-selector-class">.order-type-icon</span> &#123; ... &#125;<br></code></pre></td></tr></table></figure>
+<p>它要求存在一个带 <code>data-v-caller</code> 的<strong>祖先元素</strong>。而 <code>orderTypeIcon</code> 的模板根就是 <code>&lt;wg-icon&gt;</code> 本身——组件自己没有渲染任何真实包裹节点，<code>data-v-caller</code> 唯一可能落脚的地方就是那个 <code>&lt;i&gt;</code>。</p>
+<p>于是两头都不成立：</p>
+<ul>
+<li>加了 tooltip 后，<code>&lt;i&gt;</code> 连 id 都拿不到；</li>
+<li>就算拿到了，<code>:deep</code> 是后代组合器，也选不到元素自身。</li>
+</ul>
+<p><strong><code>:deep()</code> 治不了「组件根节点就是子组件」这种情况。</strong> 它只在你自己模板里有真实包裹元素时才有用——比如页面里 <code>&lt;div class=&quot;cell&quot;&gt;&lt;wg-order-type-icon /&gt;&lt;/div&gt;</code>，再写 <code>:deep(.order-type-icon)</code> 才能命中。</p>
+<p><code>class</code> / <code>style</code> 倒是能正常透传到 <code>&lt;i&gt;</code>（经 <code>$attrs</code> 转发），所以「类名在、样式挂不上」会显得更诡异。</p>
+<h2 id="误区二：默认关掉-tooltip-算根治吗？"><a href="#误区二：默认关掉-tooltip-算根治吗？" class="headerlink" title="误区二：默认关掉 tooltip 算根治吗？"></a>误区二：默认关掉 tooltip 算根治吗？</h2><p>有人会想：把 <code>disabled</code> 默认设为 <code>true</code>，大多数调用不渲染浮层，不就好了？</p>
+<p>这只是把暴露面从「100% 的调用」缩到「真正开 tip 的调用」。<strong>只要 <code>disabled: false</code>，tooltip 仍出现在根链上，链照样断。</strong> 称它「根治」是说过头了。</p>
+<p>结构上绕不过去：Element Plus 的 tooltip 一旦出现在根链上，就必须是 Fragment（trigger + content），Vue 3 的 scope id 只沿单根传递，遇到 Fragment 必停。没有「某个 prop 让它变回单根」的配置。</p>
+<h2 id="这是-Vue2→3-的规则变了，还是-EU→EP-的实现变了？"><a href="#这是-Vue2→3-的规则变了，还是-EU→EP-的实现变了？" class="headerlink" title="这是 Vue2→3 的规则变了，还是 EU→EP 的实现变了？"></a>这是 Vue2→3 的规则变了，还是 EU→EP 的实现变了？</h2><p>对照旧 HIS 同一组件：用或不用 tooltip，<code>.order-type-icon</code> 的 scoped 样式都生效。</p>
+<p><strong>主因是 Element UI 与 Element Plus 的实现差异，不是 Vue 2/3 的 scoped 规则变了。</strong></p>
+<p>Vue 2 的 <code>setScope</code> 同样只沿「渲染根」向上走：<code>vnode.parent</code> 只有在该 vnode 是某个组件的渲染根时才有值。语义和 Vue 3 的 <code>subTree</code> 判断同构——链断了照样拿不到 id。</p>
+<p>差异在 tooltip 本身：</p>
+<p><strong>Element UI</strong>：把 slot 的第一个 vnode <strong>直接当作自己的渲染结果返回</strong>，只往上挂事件和指令。根链天然不断，<code>&lt;svg&gt;</code> / <code>&lt;i&gt;</code> 能同时拿到组件自己的和调用方的 scope id。</p>
+<p><strong>Element Plus</strong>：必须同时渲染 trigger 与 teleport content，根是 Fragment。行为增强变成了结构改变。</p>
+<p>这是 Vue2→Vue3 迁移里一类<strong>隐性破坏面</strong>：旧代码「包一层 tooltip」在 EU 下无感，迁到 EP 后调用方 scoped 样式会静默失效，DevTools 里还几乎看不出 DOM 差了什么。</p>
+<h2 id="真正不受-disabled-影响的修法"><a href="#真正不受-disabled-影响的修法" class="headerlink" title="真正不受 disabled 影响的修法"></a>真正不受 <code>disabled</code> 影响的修法</h2><p>目标语义应回到 Element UI 时代：</p>
+<blockquote>
+<p>tooltip 是行为增强，不应该改变 vnode 结构。</p>
+</blockquote>
+<p>Element Plus 提供了公开 API：<code>virtual-triggering</code> + <code>virtual-ref</code>。trigger 不渲染任何元素，事件直接 <code>addEventListener</code> 到外部 DOM 上。</p>
+<p>把 <code>WgTooltip</code> 从外层挪进 <code>WgIcon</code> 的 slot：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs vue">&lt;script setup&gt;<br>const inner = ref(null)<br>const triggerEl = computed(() =&gt; inner.value?.$el ?? undefined)<br>&lt;/script&gt;<br><br>&lt;template&gt;<br>  &lt;WgIcon ref=&quot;inner&quot; v-bind=&quot;forwardedAttrs&quot; @click=&quot;onInnerClick&quot;&gt;<br>    &lt;slot&gt;<br>      &lt;WgIconGlyph :name=&quot;name&quot; :height=&quot;height&quot; /&gt;<br>    &lt;/slot&gt;<br>    &lt;WgTooltip<br>      v-if=&quot;!disabled&quot;<br>      virtual-triggering<br>      :virtual-ref=&quot;triggerEl&quot;<br>      :content=&quot;content&quot;<br>      :placement=&quot;placement&quot;<br>    /&gt;<br>  &lt;/WgIcon&gt;<br>&lt;/template&gt;<br></code></pre></td></tr></table></figure>
+<p>要点：</p>
+<ol>
+<li><strong>根永远是 <code>WgIcon</code></strong>，单根链恢复，<code>disabled</code> 真假都不断。</li>
+<li><code>v-if=&quot;!disabled&quot;</code> 只是少挂一个空 tooltip 实例，不是作用域修复本身。</li>
+<li><code>virtual-ref</code> / <code>virtual-triggering</code> 必须是 <code>ElTooltip</code> 的<strong>声明式 prop</strong>。若中间门面只转发 <code>props</code>、不转发 <code>$attrs</code>，这两个字段必须出现在 props 声明里，否则会被丢掉。</li>
+</ol>
+<p>用 Vite SSR 通道做了真实渲染对照（SSR 与客户端同一套 <code>subTree</code> 判断）：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th><code>&lt;i&gt;</code> 上的 <code>data-v-caller</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>对照：根是 <code>WgIcon</code></td>
+<td>有</td>
+</tr>
+<tr>
+<td>对照：根是 <code>WgTooltip</code> 包 <code>WgIcon</code>（改前坏结构）</td>
+<td>无</td>
+</tr>
+<tr>
+<td>实际组件，<code>disabled=true</code></td>
+<td>有</td>
+</tr>
+<tr>
+<td>实际组件，<code>disabled=false</code></td>
+<td>有</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>对照成功复现了现象，实际组件两种状态都拿到了 id。</p>
+<p>再加一条契约测试锁住结构——谁以后把 tooltip 挪回外层，AST 根节点就不是 <code>WgIcon</code>，测试立刻红：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><code class="hljs js"><span class="hljs-title function_">test</span>(<span class="hljs-string">&#x27;wgIcon keeps WgIcon as the single root so caller scoped styles still apply&#x27;</span>, <span class="hljs-function">() =&gt;</span> &#123;<br>  <span class="hljs-keyword">const</span> &#123; descriptor &#125; = <span class="hljs-title function_">parse</span>(source, &#123; filename &#125;)<br>  <span class="hljs-keyword">const</span> roots = descriptor.<span class="hljs-property">template</span>.<span class="hljs-property">ast</span>.<span class="hljs-property">children</span>.<span class="hljs-title function_">filter</span>(<br>    <span class="hljs-function">(<span class="hljs-params">node</span>) =&gt;</span> node.<span class="hljs-property">type</span> === <span class="hljs-number">1</span> || (node.<span class="hljs-property">type</span> === <span class="hljs-number">2</span> &amp;&amp; node.<span class="hljs-property">content</span>.<span class="hljs-title function_">trim</span>()),<br>  )<br>  assert.<span class="hljs-title function_">equal</span>(roots.<span class="hljs-property">length</span>, <span class="hljs-number">1</span>)<br>  assert.<span class="hljs-title function_">equal</span>(roots[<span class="hljs-number">0</span>].<span class="hljs-property">tag</span>, <span class="hljs-string">&#x27;WgIcon&#x27;</span>)<br>  assert.<span class="hljs-title function_">match</span>(source, <span class="hljs-regexp">/virtual-triggering/</span>)<br>&#125;)<br></code></pre></td></tr></table></figure>
+<h2 id="不止这一个组件"><a href="#不止这一个组件" class="headerlink" title="不止这一个组件"></a>不止这一个组件</h2><p>凡是「模板根就是 tooltip / popover」的封装，调用方写 scoped 定尺寸都会静默失效。迁移库里同类结构还包括 drag 容器、popTable、各类树选择输入等。</p>
+<p>排查清单可以记成四句：</p>
+<ol>
+<li>DevTools 看根 DOM 有没有调用方的 <code>data-v-*</code>。</li>
+<li>看组件模板根是不是 <code>el-tooltip</code> / <code>el-popover</code> 一类多出口组件。</li>
+<li>不要指望 <code>:deep()</code> 救「根就是子组件」的场景。</li>
+<li>行为增强优先用 <code>virtual-triggering</code>，或自己包一层真实 DOM 当根（会改变布局语义时再慎用）。</li>
+</ol>
+<h2 id="顺带踩到的相邻坑（同一轮清理）"><a href="#顺带踩到的相邻坑（同一轮清理）" class="headerlink" title="顺带踩到的相邻坑（同一轮清理）"></a>顺带踩到的相邻坑（同一轮清理）</h2><p>修完作用域链之后，同一组件上还有两处容易一起误判：</p>
+<p><strong>1. <code>height</code> 只设内层 SVG</strong></p>
+<p>Element Plus 给 <code>.wg-icon</code> 容器和 <code>.wg-icon svg</code> 都写死 <code>1em</code>。只给槽内 Iconify 设 <code>height=&quot;32px&quot;</code>，容器仍是 <code>1em</code>，图标会顶出盒子。正确做法是容器与 svg 同时设 <code>height</code>，宽度取 <code>auto</code>，让 viewBox 比例决定宽。</p>
+<p><strong>2. 老 <code>autoWidth</code> 的 <code>getBBox</code> 测量</strong></p>
+<p>Vue2 时代用运行时改 <code>viewBox</code> / <code>width</code> 适配非正方形图标。Iconify 图标自带真实 viewBox，<code>height + width:auto</code> 已够用。测量逻辑可以拆掉；若业务页仍在传 <code>autoWidth</code>，<strong>保留 prop 声明</strong>，避免它从 <code>$attrs</code> 泄漏成 DOM 上的 <code>autowidth=&quot;true&quot;</code>。</p>
+<p>这两条和 <code>data-v</code> 无关，但常在同一轮「图标看起来不对」里一起出现，容易把锅扣错地方。</p>
+<h2 id="一句话结论"><a href="#一句话结论" class="headerlink" title="一句话结论"></a>一句话结论</h2><p>Vue 的 scoped 样式依赖「单根 subTree 链」把父 scope id 传到子组件根 DOM；Element Plus 的 Tooltip 根是 Fragment，会打断这条链，而 Element UI 当年是直接返回 slot vnode，所以旧代码无感。修法不是 <code>:deep()</code>，也不是默认关掉 tip，而是让 tooltip <strong>离开根链</strong>——<code>virtual-triggering</code> + <code>virtual-ref</code> 正是为此准备的公开 API。</p>
+]]></content>
+      <categories>
+        <category>前端踩坑笔记</category>
+      </categories>
+      <tags>
+        <tag>Vue3</tag>
+        <tag>前端踩坑</tag>
+        <tag>Element Plus</tag>
+        <tag>Scoped CSS</tag>
+        <tag>Tooltip</tag>
       </tags>
   </entry>
   <entry>
@@ -2314,154 +2727,6 @@ int main() {
         <tag>OpenSpec</tag>
         <tag>Superpowers</tag>
         <tag>AI 编程</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Vue3 scoped 样式失效：Tooltip 打断 data-v 根链的一次排障</title>
-    <url>/posts/a7f3c1e2/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><p>迁移一套 HIS 公共图标组件时，遇到一个很「迷惑」的现象：<strong>去掉内部的 <code>WgTooltip</code>，根节点 <code>&lt;i&gt;</code> 上有调用方的 <code>data-v-*</code>；加上之后，根节点还是 <code>&lt;i&gt;</code>，但 <code>data-v-*</code> 没了，调用方的 scoped 样式全部失效。</strong></p>
-<p>表面像属性丢了，深挖下去其实是 Vue scoped CSS 的「单根作用域继承」被 Element Plus Tooltip 的 Fragment 根打断了。这篇记录完整推理链、Element UI / Plus 的实现差异，以及真正不受 <code>disabled</code> 影响的修法。</p>
-<h2 id="现象"><a href="#现象" class="headerlink" title="现象"></a>现象</h2><p>调用方大致是这样：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs vue">&lt;template&gt;<br>  &lt;wg-icon v-if=&quot;iconName&quot; class=&quot;order-type-icon f40&quot; :name=&quot;iconName&quot; /&gt;<br>&lt;/template&gt;<br><br>&lt;style scoped&gt;<br>.order-type-icon.f40 &#123;<br>  font-size: 40px;<br>  max-height: 20px;<br>&#125;<br>&lt;/style&gt;<br></code></pre></td></tr></table></figure>
-<p><code>wgIcon</code> 门面内部曾把图标包在 tooltip 里：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs vue">&lt;template&gt;<br>  &lt;WgTooltip :disabled=&quot;disabled&quot; :content=&quot;content&quot; :placement=&quot;placement&quot;&gt;<br>    &lt;WgIcon ...&gt;<br>      &lt;WgIconGlyph ... /&gt;<br>    &lt;/WgIcon&gt;<br>  &lt;/WgTooltip&gt;<br>&lt;/template&gt;<br></code></pre></td></tr></table></figure>
-<p>DevTools 里对照：</p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>结构</th>
-<th>根 DOM</th>
-<th>调用方 <code>data-v-*</code></th>
-<th>scoped 样式</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>去掉 <code>WgTooltip</code></td>
-<td><code>&lt;i class=&quot;wg-icon order-type-icon&quot;&gt;</code></td>
-<td>有</td>
-<td>生效</td>
-</tr>
-<tr>
-<td>加上 <code>WgTooltip</code></td>
-<td>还是同一个 <code>&lt;i&gt;</code></td>
-<td><strong>无</strong></td>
-<td>失效</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>DOM 形态几乎没变，偏偏作用域属性没了——这正是误判点。</p>
-<h2 id="机制：data-v-不是谁「贴」上去的"><a href="#机制：data-v-不是谁「贴」上去的" class="headerlink" title="机制：data-v-* 不是谁「贴」上去的"></a>机制：<code>data-v-*</code> 不是谁「贴」上去的</h2><p><code>wgIcon</code> 和底层 <code>WgIcon</code> 都没有 <code>&lt;style scoped&gt;</code>。<code>&lt;i&gt;</code> 上的 <code>data-v-xxx</code> <strong>不是自己加的</strong>，而来自 Vue 的一条额外规则：</p>
-<blockquote>
-<p>子组件的<strong>根节点</strong>会同时带上父组件的 scope id，这样父组件的 scoped 样式才能给子组件根元素设外边距、字号等。</p>
-</blockquote>
-<p>Vue 3 在 patch 元素时走 <code>setScopeId</code>：除了打上当前 vnode 自己的 <code>scopeId</code>，还会判断「这个 vnode 是否正好等于某个组件实例的 <code>subTree</code>」；只要是，就取该组件 vnode 的 <code>scopeId</code> 继续往上递归。<strong>一旦某一层的根不是它，递归立刻终止。</strong></p>
-<p>可以把它想成一条「单根链」：</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><code class="hljs text">调用方 &lt;wg-icon&gt; vnode（带 data-v-caller）<br>  → 必须是 wgIcon.subTree 的根<br>  → 必须是下一层组件.subTree 的根<br>  → ……<br>  → 最终落到真实 DOM（这里是 &lt;i&gt;）<br></code></pre></td></tr></table></figure>
-<p>链上任何一环变成 Fragment / 多根 / 插槽深处的孩子，继承就断。</p>
-<h2 id="为什么加了-Tooltip，链就断了"><a href="#为什么加了-Tooltip，链就断了" class="headerlink" title="为什么加了 Tooltip，链就断了"></a>为什么加了 Tooltip，链就断了</h2><p>去掉 tooltip 时，链是完整的：</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><code class="hljs text">orderTypeIcon 的 &lt;wg-icon&gt; vnode<br>  → wgIcon.subTree 根 = WgIcon<br>  → WgIcon.subTree 根 = &lt;i&gt;<br></code></pre></td></tr></table></figure>
-<p><code>&lt;i&gt;</code> 一路继承到 <code>data-v-caller</code>，<code>.order-type-icon { font-size: 40px }</code> 命中。</p>
-<p>加上 <code>WgTooltip</code> 后，<code>wgIcon</code> 的 <code>subTree</code> 根变成了 <code>WgTooltip</code>。它只是转发到 <code>ElTooltip</code>，再落到 <code>ElPopper</code>。而 <code>ElPopper</code> 必须同时渲染：</p>
-<ol>
-<li>trigger（触发器）</li>
-<li>teleport 出去的 content（浮层）</li>
-</ol>
-<p>也就是一个 <strong>Fragment</strong>。<code>&lt;i&gt;</code> 是作为 slot 内容塞进 trigger 的，<strong>已经不在「根链」上了</strong>。递归在 Fragment 处停住，调用方的 <code>data-v-*</code> 到不了 <code>&lt;i&gt;</code>。</p>
-<h3 id="为什么-DOM-上看不出变化？"><a href="#为什么-DOM-上看不出变化？" class="headerlink" title="为什么 DOM 上看不出变化？"></a>为什么 DOM 上看不出变化？</h3><p>Element Plus 的 trigger 走 <code>ElOnlyChild</code>：不产生额外包裹元素，只透传并挂事件。所以肉眼看到的根还是 <code>&lt;i&gt;</code>，但 vnode 树的「谁是谁的 subTree 根」已经变了。</p>
-<p><strong>scoped 看的是 vnode 身份，不是最终 DOM 标签名。</strong></p>
-<h2 id="误区一：-deep-能治吗？"><a href="#误区一：-deep-能治吗？" class="headerlink" title="误区一：:deep() 能治吗？"></a>误区一：<code>:deep()</code> 能治吗？</h2><p>结构上就不可能。<code>:deep(.order-type-icon)</code> 编译出来是<strong>后代选择器</strong>：</p>
-<figure class="highlight css"><table><tr><td class="code"><pre><code class="hljs css"><span class="hljs-selector-attr">[data-v-caller]</span> <span class="hljs-selector-class">.order-type-icon</span> &#123; ... &#125;<br></code></pre></td></tr></table></figure>
-<p>它要求存在一个带 <code>data-v-caller</code> 的<strong>祖先元素</strong>。而 <code>orderTypeIcon</code> 的模板根就是 <code>&lt;wg-icon&gt;</code> 本身——组件自己没有渲染任何真实包裹节点，<code>data-v-caller</code> 唯一可能落脚的地方就是那个 <code>&lt;i&gt;</code>。</p>
-<p>于是两头都不成立：</p>
-<ul>
-<li>加了 tooltip 后，<code>&lt;i&gt;</code> 连 id 都拿不到；</li>
-<li>就算拿到了，<code>:deep</code> 是后代组合器，也选不到元素自身。</li>
-</ul>
-<p><strong><code>:deep()</code> 治不了「组件根节点就是子组件」这种情况。</strong> 它只在你自己模板里有真实包裹元素时才有用——比如页面里 <code>&lt;div class=&quot;cell&quot;&gt;&lt;wg-order-type-icon /&gt;&lt;/div&gt;</code>，再写 <code>:deep(.order-type-icon)</code> 才能命中。</p>
-<p><code>class</code> / <code>style</code> 倒是能正常透传到 <code>&lt;i&gt;</code>（经 <code>$attrs</code> 转发），所以「类名在、样式挂不上」会显得更诡异。</p>
-<h2 id="误区二：默认关掉-tooltip-算根治吗？"><a href="#误区二：默认关掉-tooltip-算根治吗？" class="headerlink" title="误区二：默认关掉 tooltip 算根治吗？"></a>误区二：默认关掉 tooltip 算根治吗？</h2><p>有人会想：把 <code>disabled</code> 默认设为 <code>true</code>，大多数调用不渲染浮层，不就好了？</p>
-<p>这只是把暴露面从「100% 的调用」缩到「真正开 tip 的调用」。<strong>只要 <code>disabled: false</code>，tooltip 仍出现在根链上，链照样断。</strong> 称它「根治」是说过头了。</p>
-<p>结构上绕不过去：Element Plus 的 tooltip 一旦出现在根链上，就必须是 Fragment（trigger + content），Vue 3 的 scope id 只沿单根传递，遇到 Fragment 必停。没有「某个 prop 让它变回单根」的配置。</p>
-<h2 id="这是-Vue2→3-的规则变了，还是-EU→EP-的实现变了？"><a href="#这是-Vue2→3-的规则变了，还是-EU→EP-的实现变了？" class="headerlink" title="这是 Vue2→3 的规则变了，还是 EU→EP 的实现变了？"></a>这是 Vue2→3 的规则变了，还是 EU→EP 的实现变了？</h2><p>对照旧 HIS 同一组件：用或不用 tooltip，<code>.order-type-icon</code> 的 scoped 样式都生效。</p>
-<p><strong>主因是 Element UI 与 Element Plus 的实现差异，不是 Vue 2/3 的 scoped 规则变了。</strong></p>
-<p>Vue 2 的 <code>setScope</code> 同样只沿「渲染根」向上走：<code>vnode.parent</code> 只有在该 vnode 是某个组件的渲染根时才有值。语义和 Vue 3 的 <code>subTree</code> 判断同构——链断了照样拿不到 id。</p>
-<p>差异在 tooltip 本身：</p>
-<p><strong>Element UI</strong>：把 slot 的第一个 vnode <strong>直接当作自己的渲染结果返回</strong>，只往上挂事件和指令。根链天然不断，<code>&lt;svg&gt;</code> / <code>&lt;i&gt;</code> 能同时拿到组件自己的和调用方的 scope id。</p>
-<p><strong>Element Plus</strong>：必须同时渲染 trigger 与 teleport content，根是 Fragment。行为增强变成了结构改变。</p>
-<p>这是 Vue2→Vue3 迁移里一类<strong>隐性破坏面</strong>：旧代码「包一层 tooltip」在 EU 下无感，迁到 EP 后调用方 scoped 样式会静默失效，DevTools 里还几乎看不出 DOM 差了什么。</p>
-<h2 id="真正不受-disabled-影响的修法"><a href="#真正不受-disabled-影响的修法" class="headerlink" title="真正不受 disabled 影响的修法"></a>真正不受 <code>disabled</code> 影响的修法</h2><p>目标语义应回到 Element UI 时代：</p>
-<blockquote>
-<p>tooltip 是行为增强，不应该改变 vnode 结构。</p>
-</blockquote>
-<p>Element Plus 提供了公开 API：<code>virtual-triggering</code> + <code>virtual-ref</code>。trigger 不渲染任何元素，事件直接 <code>addEventListener</code> 到外部 DOM 上。</p>
-<p>把 <code>WgTooltip</code> 从外层挪进 <code>WgIcon</code> 的 slot：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs vue">&lt;script setup&gt;<br>const inner = ref(null)<br>const triggerEl = computed(() =&gt; inner.value?.$el ?? undefined)<br>&lt;/script&gt;<br><br>&lt;template&gt;<br>  &lt;WgIcon ref=&quot;inner&quot; v-bind=&quot;forwardedAttrs&quot; @click=&quot;onInnerClick&quot;&gt;<br>    &lt;slot&gt;<br>      &lt;WgIconGlyph :name=&quot;name&quot; :height=&quot;height&quot; /&gt;<br>    &lt;/slot&gt;<br>    &lt;WgTooltip<br>      v-if=&quot;!disabled&quot;<br>      virtual-triggering<br>      :virtual-ref=&quot;triggerEl&quot;<br>      :content=&quot;content&quot;<br>      :placement=&quot;placement&quot;<br>    /&gt;<br>  &lt;/WgIcon&gt;<br>&lt;/template&gt;<br></code></pre></td></tr></table></figure>
-<p>要点：</p>
-<ol>
-<li><strong>根永远是 <code>WgIcon</code></strong>，单根链恢复，<code>disabled</code> 真假都不断。</li>
-<li><code>v-if=&quot;!disabled&quot;</code> 只是少挂一个空 tooltip 实例，不是作用域修复本身。</li>
-<li><code>virtual-ref</code> / <code>virtual-triggering</code> 必须是 <code>ElTooltip</code> 的<strong>声明式 prop</strong>。若中间门面只转发 <code>props</code>、不转发 <code>$attrs</code>，这两个字段必须出现在 props 声明里，否则会被丢掉。</li>
-</ol>
-<p>用 Vite SSR 通道做了真实渲染对照（SSR 与客户端同一套 <code>subTree</code> 判断）：</p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>场景</th>
-<th><code>&lt;i&gt;</code> 上的 <code>data-v-caller</code></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>对照：根是 <code>WgIcon</code></td>
-<td>有</td>
-</tr>
-<tr>
-<td>对照：根是 <code>WgTooltip</code> 包 <code>WgIcon</code>（改前坏结构）</td>
-<td>无</td>
-</tr>
-<tr>
-<td>实际组件，<code>disabled=true</code></td>
-<td>有</td>
-</tr>
-<tr>
-<td>实际组件，<code>disabled=false</code></td>
-<td>有</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>对照成功复现了现象，实际组件两种状态都拿到了 id。</p>
-<p>再加一条契约测试锁住结构——谁以后把 tooltip 挪回外层，AST 根节点就不是 <code>WgIcon</code>，测试立刻红：</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><code class="hljs js"><span class="hljs-title function_">test</span>(<span class="hljs-string">&#x27;wgIcon keeps WgIcon as the single root so caller scoped styles still apply&#x27;</span>, <span class="hljs-function">() =&gt;</span> &#123;<br>  <span class="hljs-keyword">const</span> &#123; descriptor &#125; = <span class="hljs-title function_">parse</span>(source, &#123; filename &#125;)<br>  <span class="hljs-keyword">const</span> roots = descriptor.<span class="hljs-property">template</span>.<span class="hljs-property">ast</span>.<span class="hljs-property">children</span>.<span class="hljs-title function_">filter</span>(<br>    <span class="hljs-function">(<span class="hljs-params">node</span>) =&gt;</span> node.<span class="hljs-property">type</span> === <span class="hljs-number">1</span> || (node.<span class="hljs-property">type</span> === <span class="hljs-number">2</span> &amp;&amp; node.<span class="hljs-property">content</span>.<span class="hljs-title function_">trim</span>()),<br>  )<br>  assert.<span class="hljs-title function_">equal</span>(roots.<span class="hljs-property">length</span>, <span class="hljs-number">1</span>)<br>  assert.<span class="hljs-title function_">equal</span>(roots[<span class="hljs-number">0</span>].<span class="hljs-property">tag</span>, <span class="hljs-string">&#x27;WgIcon&#x27;</span>)<br>  assert.<span class="hljs-title function_">match</span>(source, <span class="hljs-regexp">/virtual-triggering/</span>)<br>&#125;)<br></code></pre></td></tr></table></figure>
-<h2 id="不止这一个组件"><a href="#不止这一个组件" class="headerlink" title="不止这一个组件"></a>不止这一个组件</h2><p>凡是「模板根就是 tooltip / popover」的封装，调用方写 scoped 定尺寸都会静默失效。迁移库里同类结构还包括 drag 容器、popTable、各类树选择输入等。</p>
-<p>排查清单可以记成四句：</p>
-<ol>
-<li>DevTools 看根 DOM 有没有调用方的 <code>data-v-*</code>。</li>
-<li>看组件模板根是不是 <code>el-tooltip</code> / <code>el-popover</code> 一类多出口组件。</li>
-<li>不要指望 <code>:deep()</code> 救「根就是子组件」的场景。</li>
-<li>行为增强优先用 <code>virtual-triggering</code>，或自己包一层真实 DOM 当根（会改变布局语义时再慎用）。</li>
-</ol>
-<h2 id="顺带踩到的相邻坑（同一轮清理）"><a href="#顺带踩到的相邻坑（同一轮清理）" class="headerlink" title="顺带踩到的相邻坑（同一轮清理）"></a>顺带踩到的相邻坑（同一轮清理）</h2><p>修完作用域链之后，同一组件上还有两处容易一起误判：</p>
-<p><strong>1. <code>height</code> 只设内层 SVG</strong></p>
-<p>Element Plus 给 <code>.wg-icon</code> 容器和 <code>.wg-icon svg</code> 都写死 <code>1em</code>。只给槽内 Iconify 设 <code>height=&quot;32px&quot;</code>，容器仍是 <code>1em</code>，图标会顶出盒子。正确做法是容器与 svg 同时设 <code>height</code>，宽度取 <code>auto</code>，让 viewBox 比例决定宽。</p>
-<p><strong>2. 老 <code>autoWidth</code> 的 <code>getBBox</code> 测量</strong></p>
-<p>Vue2 时代用运行时改 <code>viewBox</code> / <code>width</code> 适配非正方形图标。Iconify 图标自带真实 viewBox，<code>height + width:auto</code> 已够用。测量逻辑可以拆掉；若业务页仍在传 <code>autoWidth</code>，<strong>保留 prop 声明</strong>，避免它从 <code>$attrs</code> 泄漏成 DOM 上的 <code>autowidth=&quot;true&quot;</code>。</p>
-<p>这两条和 <code>data-v</code> 无关，但常在同一轮「图标看起来不对」里一起出现，容易把锅扣错地方。</p>
-<h2 id="一句话结论"><a href="#一句话结论" class="headerlink" title="一句话结论"></a>一句话结论</h2><p>Vue 的 scoped 样式依赖「单根 subTree 链」把父 scope id 传到子组件根 DOM；Element Plus 的 Tooltip 根是 Fragment，会打断这条链，而 Element UI 当年是直接返回 slot vnode，所以旧代码无感。修法不是 <code>:deep()</code>，也不是默认关掉 tip，而是让 tooltip <strong>离开根链</strong>——<code>virtual-triggering</code> + <code>virtual-ref</code> 正是为此准备的公开 API。</p>
-]]></content>
-      <categories>
-        <category>前端踩坑笔记</category>
-      </categories>
-      <tags>
-        <tag>Vue3</tag>
-        <tag>前端踩坑</tag>
-        <tag>Scoped CSS</tag>
-        <tag>Element Plus</tag>
-        <tag>Tooltip</tag>
       </tags>
   </entry>
   <entry>
@@ -2841,271 +3106,6 @@ frontend-code-review/SKILL.md
         <tag>Codex</tag>
         <tag>Agent Skills</tag>
         <tag>前端工程化</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Vue3 + Element Plus：ElSelect Maximum recursive updates 的一次排障</title>
-    <url>/posts/e8a4b2c1/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><blockquote>
-<p><strong>2026-09-03 修正</strong>：本文初版把根因定在「大码表 × 多实例首屏全挂，把 Vue3 递归护栏顶穿」，解法是页侧懒挂 option。后来在真实浏览器里做逐层对照复现，发现那个结论<strong>不成立</strong>——数量本身不是原因，真正的扳机是<strong>全局把 <code>wg-option</code> 注册成了异步组件</strong>。初版的页侧懒挂之所以「看起来修好了」，只是把 option 数压到了护栏阈值以下。下文按新证据重写，初版推断保留在「第一轮结论错在哪」一节。</p>
-</blockquote>
-<p>把一套老 HIS 页面从 <strong>Vue2 + Element UI</strong> 迁到 <strong>Vue3 + Element Plus</strong> 时，大下拉进页就炸：</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><code class="hljs text">Maximum recursive updates exceeded in component &lt;ElSelect&gt;<br></code></pre></td></tr></table></figure>
-<p>表面像是 <code>wg-select</code> 门面或 checkbox 写坏了，实际是三件事叠出来的：<strong>EP 的 option 挂载会改父 Select 的响应式状态</strong>、<strong>Vue3 有一条数 update 次数的护栏</strong>，而<strong>把 option 注册成异步组件，会让每个 option 各自触发一次父级更新</strong>。</p>
-<h2 id="现象"><a href="#现象" class="headerlink" title="现象"></a>现象</h2><p>组件调试场里放了四个 500 条 option 的 <code>wg-select</code> 示例，表现很有辨识度：</p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>场景</th>
-<th>结果</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>从别的菜单切进来</td>
-<td>不报错</td>
-</tr>
-<tr>
-<td><strong>在本页直接刷新</strong></td>
-<td>报 <code>Maximum recursive updates</code>，组件是 <code>&lt;ElSelect&gt;</code></td>
-</tr>
-<tr>
-<td>示例① 单选（slot 写法）</td>
-<td>下拉里只剩 <strong>102</strong> 条</td>
-</tr>
-<tr>
-<td>示例②③ 多选（slot 写法）</td>
-<td>下拉<strong>完全没数据</strong></td>
-</tr>
-<tr>
-<td>示例④ <code>:options</code> 配置式（无子节点）</td>
-<td><strong>完全正常</strong></td>
-</tr>
-<tr>
-<td>同样写法但只有 30 条</td>
-<td>不报错</td>
-</tr>
-<tr>
-<td>旁边放一个原生 <code>el-select</code> + <code>el-option</code> 对照，500 条</td>
-<td><strong>不报错</strong></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>两个关键信号：</p>
-<ol>
-<li><strong>示例④正常</strong>——它走 <code>:options</code> 属性，没有 option 子组件。说明问题出在「option 作为子节点」这条路径上。</li>
-<li><strong>原生 EP 对照不炸，过了门面就炸</strong>——但门面代码本身后来被证明是无辜的，见下文二分。</li>
-</ol>
-<p>还有个数字巧合值得记下：报错后只渲染出 <strong>102</strong> 条，和 Vue 的护栏阈值 <strong>100</strong> 贴得很近。这不是巧合，是本案的关键线索。</p>
-<h2 id="第一轮结论错在哪"><a href="#第一轮结论错在哪" class="headerlink" title="第一轮结论错在哪"></a>第一轮结论错在哪</h2><p>初版的推理链是这样的：</p>
-<blockquote>
-<p>首屏多张卡同时挂大码表（约 150 条 × 多实例）→ 每个 option 向父 Select <code>onOptionCreate</code> → 同一轮 flush 里 Select 的 update 转了 100 多圈 → 护栏抛错。</p>
-</blockquote>
-<p>于是解法做在业务页：关闭时只挂已选项，展开才挂全量。</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// 初版的止血方案：现在可以回退了</span><br><span class="hljs-title function_">pickSelectOptions</span>(<span class="hljs-params">list, modelValue, openKey</span>) &#123;<br>  <span class="hljs-keyword">const</span> source = <span class="hljs-title class_">Array</span>.<span class="hljs-title function_">isArray</span>(list) ? list : []<br>  <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">selectOpenKeys</span>[openKey]) <span class="hljs-keyword">return</span> source<br>  <span class="hljs-keyword">if</span> (modelValue == <span class="hljs-literal">null</span> || modelValue === <span class="hljs-string">&#x27;&#x27;</span>) <span class="hljs-keyword">return</span> []<br>  <span class="hljs-comment">// …只返回已选项</span><br>&#125;<br></code></pre></td></tr></table></figure>
-<p><strong>它确实让报错消失了</strong>，所以当时就收工了。但它骗过我的原因是：懒挂把首屏 option 数从 150 压到了 0～1，自然低于护栏阈值。<strong>症状消失 ≠ 根因找到</strong>。</p>
-<p>真正的破绽是那条「切换进来不报错、刷新才报错」。如果根因只是数量，切换和刷新挂的 option 一样多，不该有差别。</p>
-<h2 id="二分复现"><a href="#二分复现" class="headerlink" title="二分复现"></a>二分复现</h2><p>这次没有再靠推理，而是起了一个独立的 dev server，用 Playwright 把每一层拆开单独渲染，逐个跑（每页只放一个用例，避免互相干扰）：</p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>组合（500 条，除非注明）</th>
-<th>结果</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>EP select + EP option</td>
-<td>正常</td>
-</tr>
-<tr>
-<td>EP select + 全局 <code>wg-option</code></td>
-<td><strong>报错</strong></td>
-</tr>
-<tr>
-<td>EP select + 全局 <code>wg-option</code>（<strong>150 条</strong>）</td>
-<td><strong>报错</strong></td>
-</tr>
-<tr>
-<td><code>wg-select</code> + EP option</td>
-<td>正常</td>
-</tr>
-<tr>
-<td><code>wg-select</code> + 全局 <code>wg-option</code>（30 条）</td>
-<td>正常</td>
-</tr>
-<tr>
-<td>EP select + 手写同构 wrapper（含 inject、onMounted 注册、两层嵌套）</td>
-<td>正常</td>
-</tr>
-<tr>
-<td>EP select + wg-ui 原生 <code>WgOption</code></td>
-<td>正常</td>
-</tr>
-<tr>
-<td><strong>EP select + <code>defineAsyncComponent(原生 ElOption)</code></strong></td>
-<td><strong>报错</strong></td>
-</tr>
-<tr>
-<td><strong>EP select + 直接 <code>import</code> 的 HIS <code>wg-option</code></strong></td>
-<td><strong>正常</strong></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>最后两行是决定性的：</p>
-<ul>
-<li>把<strong>原生 <code>ElOption</code></strong>（跟业务门面完全无关）包一层 <code>defineAsyncComponent</code>，一样炸；</li>
-<li>把 <strong>HIS <code>wg-option</code> 直接 import</strong>、绕开全局注册，500 条完全正常。</li>
-</ul>
-<p>门面实现无辜，扳机是<strong>异步注册</strong>。顺带也否掉了「多实例」这个条件——单个 select 挂 150 个异步 option 就已经炸了。</p>
-<h2 id="根因：异步注册-×-子节点契约-×-递归护栏"><a href="#根因：异步注册-×-子节点契约-×-递归护栏" class="headerlink" title="根因：异步注册 × 子节点契约 × 递归护栏"></a>根因：异步注册 × 子节点契约 × 递归护栏</h2><h3 id="1-EP-的-option-挂载会改父-Select-的响应式状态"><a href="#1-EP-的-option-挂载会改父-Select-的响应式状态" class="headerlink" title="1. EP 的 option 挂载会改父 Select 的响应式状态"></a>1. EP 的 option 挂载会改父 Select 的响应式状态</h3><p><strong>Element UI（Vue2）</strong>在 <code>created</code> 里 <code>push</code> 普通数组：</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><code class="hljs js"><span class="hljs-variable language_">this</span>.<span class="hljs-property">select</span>.<span class="hljs-property">options</span>.<span class="hljs-title function_">push</span>(<span class="hljs-variable language_">this</span>)<br><span class="hljs-variable language_">this</span>.<span class="hljs-property">select</span>.<span class="hljs-property">cachedOptions</span>.<span class="hljs-title function_">push</span>(<span class="hljs-variable language_">this</span>)<br></code></pre></td></tr></table></figure>
-<p><strong>Element Plus</strong> 写的是响应式 <code>Map</code>，而且父级还 watch 着它：</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">const</span> <span class="hljs-title function_">onOptionCreate</span> = (<span class="hljs-params">vm</span>) =&gt; &#123;<br>  states.<span class="hljs-property">options</span>.<span class="hljs-title function_">set</span>(vm.<span class="hljs-property">value</span>, vm)<br>  states.<span class="hljs-property">cachedOptions</span>.<span class="hljs-title function_">set</span>(vm.<span class="hljs-property">value</span>, vm)<br>&#125;<br><br><span class="hljs-title function_">watch</span>(<span class="hljs-function">() =&gt;</span> states.<span class="hljs-property">options</span>.<span class="hljs-title function_">entries</span>(), <span class="hljs-function">() =&gt;</span> &#123;<br>  <span class="hljs-title function_">setSelected</span>()<br>  <span class="hljs-comment">// ...</span><br>&#125;, &#123; <span class="hljs-attr">flush</span>: <span class="hljs-string">&#x27;post&#x27;</span> &#125;)<br></code></pre></td></tr></table></figure>
-<p>也就是说，<strong>每挂一个 option，父 Select 就会被重新调度一次更新</strong>。这是「可能出问题」的前提，但只要所有 option 在同一次渲染里一起挂完，父 Select 只需要更新一次，什么事都没有——原生 500 条不炸就是这个道理。</p>
-<h3 id="2-Vue3-数的是「同一个-job-转了多少圈」"><a href="#2-Vue3-数的是「同一个-job-转了多少圈」" class="headerlink" title="2. Vue3 数的是「同一个 job 转了多少圈」"></a>2. Vue3 数的是「同一个 job 转了多少圈」</h3><p><code>vue@3.5.x</code> 里写死：</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">const</span> <span class="hljs-variable constant_">RECURSION_LIMIT</span> = <span class="hljs-number">100</span><br><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">checkRecursiveUpdates</span>(<span class="hljs-params">seen, fn</span>) &#123;<br>  <span class="hljs-keyword">const</span> count = seen.<span class="hljs-title function_">get</span>(fn) || <span class="hljs-number">0</span><br>  <span class="hljs-keyword">if</span> (count &gt; <span class="hljs-variable constant_">RECURSION_LIMIT</span>) &#123;<br>    <span class="hljs-comment">// throw: Maximum recursive updates exceeded in component &lt;XXX&gt;</span><br>  &#125;<br>  seen.<span class="hljs-title function_">set</span>(fn, count + <span class="hljs-number">1</span>)<br>&#125;<br></code></pre></td></tr></table></figure>
-<p>注意它数的是<strong>同一个 update job 在一轮 flush 里被执行的次数</strong>，不是 option 个数。这是防无限更新的护栏，不是性能打分。所以「option 超过 100 条就炸」这个流传很广的说法是错的——同步挂 2000 个 option 一样没事。</p>
-<p>相关 issue：</p>
-<ul>
-<li><a href="https://github.com/vuejs/core/issues/11712">vuejs/core#11712</a></li>
-<li><a href="https://github.com/element-plus/element-plus/issues/18166">element-plus#18166</a></li>
-<li><a href="https://github.com/element-plus/element-plus/issues/15323">element-plus#15323</a></li>
-</ul>
-<h3 id="3-异步组件把「一次更新」拆成了「N-次更新」"><a href="#3-异步组件把「一次更新」拆成了「N-次更新」" class="headerlink" title="3. 异步组件把「一次更新」拆成了「N 次更新」"></a>3. 异步组件把「一次更新」拆成了「N 次更新」</h3><p>项目里全局注册组件时图省事，一律走了 <code>defineAsyncComponent</code>：</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">const</span> component = <span class="hljs-title function_">defineAsyncComponent</span>(<span class="hljs-function">() =&gt;</span> <span class="hljs-title function_">loader</span>().<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">m</span>) =&gt;</span> m.<span class="hljs-property">default</span> || m))<br></code></pre></td></tr></table></figure>
-<p>关键在于 <code>defineAsyncComponent</code> 的 <code>setup</code> 是<strong>每实例</strong>的：</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><code class="hljs js"><span class="hljs-title function_">setup</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">const</span> instance = currentInstance<br>  <span class="hljs-keyword">if</span> (resolvedComp) &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-function">() =&gt;</span> <span class="hljs-title function_">createInnerComp</span>(resolvedComp, instance)  <span class="hljs-comment">// 已缓存：当场同步返回</span><br>  &#125;<br>  <span class="hljs-comment">// 未缓存：每个实例各自持有一个 loaded</span><br>  <span class="hljs-keyword">const</span> loaded = <span class="hljs-title function_">ref</span>(<span class="hljs-literal">false</span>)<br>  <span class="hljs-comment">// …promise resolve 后 loaded.value = true，触发本实例的更新</span><br>&#125;<br></code></pre></td></tr></table></figure>
-<p>于是首次加载时：500 个 <code>wg-option</code> 首帧全是占位，promise 落地后<strong>每个实例各自把自己的 <code>loaded</code> 翻成 true，各自排一个更新 job</strong>，各自挂载，各自调一次 <code>onOptionCreate</code> → 各自把父 <code>ElSelect</code> 重新推进队列。同一轮 flush 里 ElSelect 的 job 被执行了 100 多次，护栏抛错并中断本次 flush——所以画面停在 <strong>102 条</strong>，多选那两个更是一条都没渲染出来。</p>
-<h3 id="4-这也解释了「刷新炸、切换不炸」"><a href="#4-这也解释了「刷新炸、切换不炸」" class="headerlink" title="4. 这也解释了「刷新炸、切换不炸」"></a>4. 这也解释了「刷新炸、切换不炸」</h3><p><code>resolvedComp</code> 是<strong>闭包里共享的缓存</strong>。chunk 已经加载过之后，后续实例的 <code>setup</code> 直接命中 <code>if (resolvedComp)</code> 分支同步返回，所有 option 在同一次渲染里挂完，父 Select 只更新一次。</p>
-<p>所以：</p>
-<ul>
-<li><strong>硬刷新</strong>（chunk 未加载）→ 逐个解析、逐拍补挂 → 炸；</li>
-<li><strong>从别的菜单切过来</strong>（chunk 已缓存）→ 一拍挂完 → 不炸。</li>
-</ul>
-<p>初版那条「修好后单独打开一个 150 项的下拉也不报错」，同理——那时候组件早就缓存好了。</p>
-<p><strong>一句话概括三者关系</strong>：EP 让父级对子节点敏感，Vue3 提供了护栏，而异步注册把本该一拍完成的挂载摊成了上百拍。</p>
-<h2 id="真正的修法：子节点契约件必须同步注册"><a href="#真正的修法：子节点契约件必须同步注册" class="headerlink" title="真正的修法：子节点契约件必须同步注册"></a>真正的修法：子节点契约件必须同步注册</h2><p>判定标准不是体积，也不是目录，而是：<strong>这个组件是否必须被父组件在同一渲染帧内枚举到</strong>。异步注册破坏的正是这个契约。按这个标准筛，全局异步注册里命中的只有三个：<code>wgOption</code>、<code>wgTableColumn</code>、<code>wgTabPane</code>——分别对应 <code>ElSelect</code>、<code>ElTable</code>、<code>ElTabs</code> 的子节点登记。</p>
-<p>改法是在注册入口加一份同步白名单，其余保持异步：</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">import</span> wgOption <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./common-ui/base/option/index.js&#x27;</span><br><span class="hljs-keyword">import</span> wgTableColumn <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./common-ui/base/table-column/index.js&#x27;</span><br><span class="hljs-keyword">import</span> wgTabPane <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./common-ui/base/tab-pane/index.js&#x27;</span><br><span class="hljs-comment">// …其余高频原子件</span><br><br><span class="hljs-keyword">const</span> <span class="hljs-variable constant_">SYNC_COMPONENTS</span> = &#123;<br>  <span class="hljs-string">&#x27;./common-ui/base/option/index.js&#x27;</span>: wgOption,<br>  <span class="hljs-string">&#x27;./common-ui/base/table-column/index.js&#x27;</span>: wgTableColumn,<br>  <span class="hljs-string">&#x27;./common-ui/base/tab-pane/index.js&#x27;</span>: wgTabPane,<br>  <span class="hljs-comment">// …</span><br>&#125;<br><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">getComponent</span>(<span class="hljs-params">componentPath</span>) &#123;<br>  <span class="hljs-keyword">if</span> (!componentPath) <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span><br>  <span class="hljs-keyword">if</span> (<span class="hljs-variable constant_">SYNC_COMPONENTS</span>[componentPath]) <span class="hljs-keyword">return</span> <span class="hljs-variable constant_">SYNC_COMPONENTS</span>[componentPath]<br>  <span class="hljs-keyword">if</span> (asyncComponentsByPath.<span class="hljs-title function_">has</span>(componentPath)) <span class="hljs-keyword">return</span> asyncComponentsByPath.<span class="hljs-title function_">get</span>(componentPath)<br><br>  <span class="hljs-keyword">const</span> loader = <span class="hljs-variable constant_">ATHENA_COMPONENT_LOADERS</span>[componentPath]<br>  <span class="hljs-keyword">if</span> (!loader) <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span><br>  <span class="hljs-keyword">const</span> component = <span class="hljs-title function_">defineAsyncComponent</span>(<span class="hljs-function">() =&gt;</span> <span class="hljs-title function_">loader</span>().<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">m</span>) =&gt;</span> m.<span class="hljs-property">default</span> || m))<br>  asyncComponentsByPath.<span class="hljs-title function_">set</span>(componentPath, component)<br>  <span class="hljs-keyword">return</span> component<br>&#125;<br></code></pre></td></tr></table></figure>
-<h3 id="别按目录一刀切"><a href="#别按目录一刀切" class="headerlink" title="别按目录一刀切"></a>别按目录一刀切</h3><p>一开始想过「基础件目录整体同步、业务目录保持异步」，量了下体积就否掉了：</p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>base 目录下最大的几个</th>
-<th>体积</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>icon/</code></td>
-<td>3.2 MB</td>
-</tr>
-<tr>
-<td><code>date-picker/</code></td>
-<td>196 KB</td>
-</tr>
-<tr>
-<td><code>table/</code></td>
-<td>164 KB</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p><code>icon</code> 一个就 3.2 MB（图标集数据打进了源码），恰恰是最该保持异步的；而它不被任何父组件枚举，异步完全无害。反过来，真正必须同步的 <code>table-column</code> 只有 4 KB。<strong>「基础件 = 轻」这个假设在真实仓库里往往不成立，按体积或目录切都会切歪。</strong></p>
-<p>还有个容易踩反的细节：<strong>父组件异步、子组件同步是安全的</strong>（整棵子树晚一拍原子挂载），反过来才出问题。所以 164 KB 的 <code>wgTable</code> 可以留异步，只把 4 KB 的 <code>wgTableColumn</code> 拎出来同步。</p>
-<h3 id="补一条-guard-测试"><a href="#补一条-guard-测试" class="headerlink" title="补一条 guard 测试"></a>补一条 guard 测试</h3><p>这类问题回归起来毫无征兆，值得钉死：</p>
-<ul>
-<li>三个子节点契约件必须在白名单里；</li>
-<li><code>icon</code> / <code>table</code> 必须留在异步侧；</li>
-<li>白名单每一项都要有对应的静态 import；</li>
-<li>白名单的优先级必须高于 <code>defineAsyncComponent</code>。</li>
-</ul>
-<h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><div class="table-container">
-<table>
-<thead>
-<tr>
-<th></th>
-<th>递归错误</th>
-<th>四个示例的 option 数</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>改前</td>
-<td>有</td>
-<td>102 / 0 / 0 / 500</td>
-</tr>
-<tr>
-<td>改后</td>
-<td><strong>无</strong></td>
-<td><strong>500 × 4</strong></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>运行时再确认一遍注册形态：<code>wgOption</code>、<code>wgSelect</code>、<code>wgTableColumn</code>、<code>wgTabPane</code> 已是同步组件，<code>wgIcon</code>、<code>wgTable</code>、<code>wgEditor</code> 仍是 <code>AsyncComponentWrapper</code>。代码分割该保留的都保留了。</p>
-<p>（说明：这次重新验证跑在调试场的 500 条用例上；初版那个会诊配置页没有再回归，但机制一致，页侧懒挂那套可以回退了。）</p>
-<h2 id="调试小记"><a href="#调试小记" class="headerlink" title="调试小记"></a>调试小记</h2><ul>
-<li><strong>逐层对照比读源码快</strong>。这次读了半天 EP 的 <code>options.mjs</code>、<code>useOption.mjs</code>，推了好几个假设都不对；真正定位靠的是起一个独立端口的 dev server，用 Playwright 把「EP select + EP option / EP select + 门面 option / 门面 select + EP option / …」九种组合各跑一遍，两轮就锁死了。写对照用例的成本远低于盯着响应式源码空想。</li>
-<li><strong>注意组件库改过 Element Plus 的 class 命名空间</strong>。这个项目里 wg-ui 把命名空间设成了 <code>wg</code>，页面上根本没有 <code>.el-select</code>，连原生 EP 组件也渲染成 <code>.wg-select</code>。我第一版探针全用 <code>.el-*</code> 选择器，结果每个用例都返回「点不开」，差点误判。写选择器或样式覆盖前先去 DevTools 确认真实类名。</li>
-</ul>
-<h2 id="迁移惯例（修订版）"><a href="#迁移惯例（修订版）" class="headerlink" title="迁移惯例（修订版）"></a>迁移惯例（修订版）</h2><div class="table-container">
-<table>
-<thead>
-<tr>
-<th>场景</th>
-<th>做法</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>全局注册组件库</td>
-<td>子节点契约件（option / table-column / tab-pane 等）<strong>必须同步注册</strong></td>
-</tr>
-<tr>
-<td>体积大的叶子件（图标集、编辑器）</td>
-<td>保持异步，它们不被父组件枚举</td>
-</tr>
-<tr>
-<td>判定某个组件能不能异步</td>
-<td>只问一句：父组件需不需要在同一帧里数清它？</td>
-</tr>
-<tr>
-<td>大码表下拉</td>
-<td>同步注册后不需要页侧懒挂；上千条再考虑 SelectV2 / 远程搜索</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>再遇到同类报错时的最短路径：</p>
-<ol>
-<li>先分「刷新炸 / 切换不炸」——只要有这个差别，八成和异步加载时序有关，不是数量问题</li>
-<li>拿原生组件做对照，确认是不是自家封装引入的</li>
-<li>把封装层拆开逐个跑，别靠读源码猜</li>
-<li>找到扳机后，问清楚「谁必须在同一帧里被数到」</li>
-</ol>
-<h2 id="一句话"><a href="#一句话" class="headerlink" title="一句话"></a>一句话</h2><blockquote>
-<p>护栏数的是<strong>同一个 update job 在一轮 flush 里转了多少圈</strong>，不是 option 有多少个。把 option 注册成异步组件，等于让每个 option 各自触发一次父 Select 更新——一百个就顶穿了。<strong>数量只是放大器，异步注册才是扳机。</strong></p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>前端踩坑笔记</category>
-      </categories>
-      <tags>
-        <tag>Vue3</tag>
-        <tag>响应式</tag>
-        <tag>前端踩坑</tag>
-        <tag>Element Plus</tag>
-        <tag>ElSelect</tag>
-        <tag>异步组件</tag>
-        <tag>defineAsyncComponent</tag>
-        <tag>HIS 迁移</tag>
       </tags>
   </entry>
   <entry>

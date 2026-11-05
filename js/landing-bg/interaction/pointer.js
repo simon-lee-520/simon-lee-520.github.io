@@ -16,7 +16,7 @@ function screenPxToWorldOnPlane (px, camera, mouse3) {
 }
 
 /**
- * featured 区块鼠标追踪（mouseRefToWindow: true）
+ * featured 鼠标追踪：NDC 相对 metrics 可见窗（与 tall film viewOffset 一致）
  */
 export function createPointerSystem ({
   camera,
@@ -33,7 +33,9 @@ export function createPointerSystem ({
   function updateMouse () {
     const metrics = getFeaturedMetrics?.()
     if (!metrics) return
-    updateFeaturedMouse(camera, mouse3, getElasticMouse(), metrics)
+    updateFeaturedMouse(camera, mouse3, getElasticMouse(), metrics, {
+      refToWindow: false
+    })
   }
 
   function syncCameraPosition () {

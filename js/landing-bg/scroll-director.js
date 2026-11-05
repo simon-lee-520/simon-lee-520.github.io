@@ -5,7 +5,7 @@ import {
   TOTAL_VH,
   OCEAN_INTERACTIVE_BLEND
 } from './constants.js'
-import { CITY_LOOK } from './scenes/city.js'
+import { CITY_CAMERA } from './scenes/city.js'
 
 function smoothstep (t) {
   const x = Math.max(0, Math.min(1, t))
@@ -50,14 +50,8 @@ export function computeScrollState (scrollY) {
 
 /** 剑客注视点（与 space.js 中 swordsman.group 位置对齐） */
 const LOOK_SWORD = [0, 2.2, -8]
-/** 城市夜景：隔江平视，注视对岸地平线（与 city.js CITY_LOOK 同步） */
-const LOOK_CITY = CITY_LOOK
-/** 45° 斜向俯视；幕 2 城市段固定正视（azimuth = 0），滚动时不绕 Y 轴转镜头 */
 const OBLIQUE_ELEV = Math.PI / 4
-/** 城市段低仰角 ≈ 隔江远眺，非俯冲到楼顶 */
-const CITY_OBLIQUE_ELEV = 0.13
 const CAM_DIST_SWORD = 16
-const CAM_DIST_CITY = 98
 
 function obliqueCameraKey (p, azimuth, distance, look, fov, elev = OBLIQUE_ELEV) {
   const horiz = distance * Math.cos(elev)
@@ -71,18 +65,26 @@ function obliqueCameraKey (p, azimuth, distance, look, fov, elev = OBLIQUE_ELEV)
       lz + horiz * Math.cos(azimuth)
     ],
     look: [...look],
+    up: [0, 1, 0],
     fov
   }
 }
 
-/** 城市段全程共用机位：正视 + 远景，滚动时不改变视角 */
-const CITY_CAMERA_KEY = obliqueCameraKey(0.43, 0, CAM_DIST_CITY, LOOK_CITY, 52, CITY_OBLIQUE_ELEV)
+/** 城市段：Blender 对齐机位（全程固定） */
+const CITY_CAMERA_KEY = {
+  p: 0.43,
+  pos: [...CITY_CAMERA.position],
+  look: [...CITY_CAMERA.lookAt],
+  up: [...CITY_CAMERA.up],
+  fov: CITY_CAMERA.fov
+}
 
-/** 海底段：固定正视（沿 -Z 平视），进入混合区后滚动不再改机位 */
+/** 海底段：固定正视 */
 const LOOK_OCEAN = [0, 1.15, -30]
 const OCEAN_CAMERA = {
   position: [0, 1.15, -8],
   lookAt: [...LOOK_OCEAN],
+  up: [0, 1, 0],
   fov: 50
 }
 
@@ -94,6 +96,9 @@ const CAMERA_KEYS = [
 ]
 
 function lerp (a, b, t) { return a + (b - a) * t }
+function lerp3 (a, b, t) {
+  return [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)]
+}
 
 export function computeCameraPose (progress, scrollVh) {
   const oceanBlendStartVh = BOUNDARY_23_VH - BLEND_HALF_VH
@@ -101,6 +106,7 @@ export function computeCameraPose (progress, scrollVh) {
     return {
       position: [...OCEAN_CAMERA.position],
       lookAt: [...OCEAN_CAMERA.lookAt],
+      up: [...OCEAN_CAMERA.up],
       fov: OCEAN_CAMERA.fov
     }
   }
@@ -113,6 +119,7 @@ export function computeCameraPose (progress, scrollVh) {
   return {
     position: a.pos.map((v, j) => lerp(v, b.pos[j], t)),
     lookAt: a.look.map((v, j) => lerp(v, b.look[j], t)),
+    up: lerp3(a.up || [0, 1, 0], b.up || [0, 1, 0], t),
     fov: lerp(a.fov, b.fov, t)
   }
 }

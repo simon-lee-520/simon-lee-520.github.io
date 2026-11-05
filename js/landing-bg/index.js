@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
+import { createCitySunsetEnvScene } from './environments/city-sunset.js'
 import { MOBILE_MQ, PALETTE, BOUNDARY_12_VH, BOUNDARY_23_VH } from './constants.js'
 import { computeScrollState, computeCameraPose } from './scroll-director.js'
 import { createPointerSystem } from './interaction/pointer.js'
@@ -9,7 +10,8 @@ import { createCityScene } from './scenes/city.js'
 import { createOceanScene } from './scenes/ocean.js'
 import {
   createFeaturedSharedUniforms,
-  FEATURED_CYAN
+  FEATURED_CYAN,
+  getOceanColorExperimentFlags
 } from './materials/featured-scene.js'
 import { createSkills } from './character/skills.js'
 import { createPostPipeline } from './post/composer.js'
@@ -17,7 +19,9 @@ import { updateFogVeils } from './scenes/enclosure.js'
 import {
   applyFeaturedCamera,
   clearFeaturedCamera,
-  computeFeaturedActMetrics
+  computeFeaturedActMetrics,
+  featuredLayoutHeight,
+  resolveOceanFeaturedMetrics
 } from './engine/featured-viewport.js'
 import { ActVisual } from './engine/act-visual.js'
 import { setGroupSceneOpacity } from './engine/scene-blend.js'
@@ -100,18 +104,35 @@ function initWebGLBackground () {
   renderer.shadowMap.enabled = true
   renderer.shadowMap.type = THREE.PCFSoftShadowMap
 
+  /** 实验 1：海底幕强制 PR=1（对齐线上无 setPixelRatio）；离开后恢复 */
+  let oceanPixelRatioLocked = false
+
+  function applyRendererPixelRatio (oceanInteractive) {
+    const next = oceanInteractive ? 1 : getPixelRatioCap(qualityTier)
+    const cur = renderer.getPixelRatio()
+    if (Math.abs(cur - next) < 1e-6 && oceanPixelRatioLocked === oceanInteractive) return
+    oceanPixelRatioLocked = oceanInteractive
+    renderer.setPixelRatio(next)
+    renderer.setSize(window.innerWidth, window.innerHeight)
+    postPipeline.setSize(window.innerWidth, window.innerHeight)
+  }
+
   const scene = new THREE.Scene()
-  const envScene = new RoomEnvironment()
   const pmrem = new THREE.PMREMGenerator(renderer)
-  scene.environment = pmrem.fromScene(envScene, 0.04).texture
+  const roomEnvMap = pmrem.fromScene(new RoomEnvironment(), 0.04).texture
+  const cityEnvMap = pmrem.fromScene(createCitySunsetEnvScene(), 0.04).texture
   pmrem.dispose()
+  scene.environment = roomEnvMap
+  scene.environmentIntensity = 1
   scene.fog = new THREE.FogExp2(PALETTE.fogSpace, 0.012)
 
   const hemi = new THREE.HemisphereLight(0x283848, 0x060810, 0.22)
   const fill = new THREE.AmbientLight(0x1a2030, 0.18)
+  const hemiBase = { color: hemi.color.clone(), ground: hemi.groundColor.clone(), intensity: hemi.intensity }
+  const fillBase = { color: fill.color.clone(), intensity: fill.intensity }
   scene.add(hemi, fill)
 
-  const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 500)
+  const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 2500)
   const lookTarget = new THREE.Vector3()
   const postPipeline = createPostPipeline(renderer, scene, camera)
 
@@ -153,7 +174,10 @@ function initWebGLBackground () {
         createOceanScene({
           cameraPosition: featuredCameraPosition,
           mouse3: featuredMouse3,
-          sharedUniforms: featuredSharedUniforms
+          sharedUniforms: featuredSharedUniforms,
+          renderer,
+          // 与线上 size 模块 i.height 一致（不是 scissor 可见高）
+          getViewportCssHeight: () => featuredLayoutHeight()
         })
     })
   ]
@@ -176,14 +200,72 @@ function initWebGLBackground () {
     getFeaturedMetrics: () => {
       const visual = getActVisual(3)
       if (!visual?.refDom) return null
-      return computeFeaturedActMetrics(visual)
+      return resolveOceanFeaturedMetrics(visual)
     },
     cameraPosition: featuredCameraPosition,
     mouse3: featuredMouse3,
     sharedUniforms: featuredSharedUniforms
   })
 
-  let scrollState = computeScrollState(0)
+  let scrollState = computeScrollState(window.scrollY)
+  /** 上次已应用到幕状态的 scrollY；用于捕获无 scroll 事件的浏览器滚动恢复 */
+  let appliedScrollY = Number.NaN
+  /** 海底交互边沿：刚进入时做一次纵向重生扫刷 */
+  let oceanWasInteractive = false
+
+  /** 诊断探针：只读。控制台执行 __landingBgProbe.snapshot() */
+  window.__landingBgProbe = {
+    snapshot () {
+      const points = []
+      scene.traverse((obj) => {
+        if (!obj.isPoints || !obj.material?.uniforms?.u_viewportHeight) return
+        const u = obj.material.uniforms
+        points.push({
+          count: obj.geometry?.attributes?.position?.count ?? 0,
+          u_viewportHeight: u.u_viewportHeight.value,
+          u_particleScale: u.u_particleScale?.value,
+          u_lightDistance: u.u_lightDistance?.value,
+          scatterDiv: u.u_lightScatterDivider?.value,
+          lightPos: u.u_lightPosition?.value?.toArray?.() ?? null,
+          camUniform: u.u_cameraPosition?.value?.toArray?.() ?? null
+        })
+      })
+      return {
+        oceanInteractive: !!scrollState?.oceanInteractive,
+        actOcean: document.body.classList.contains('act-ocean'),
+        pixelRatio: renderer.getPixelRatio(),
+        drawingBuffer: [renderer.domElement.width, renderer.domElement.height],
+        cssSize: [renderer.domElement.clientWidth, renderer.domElement.clientHeight],
+        layoutH:
+          (window.innerWidth || 1) > 1280
+            ? window.innerHeight
+            : Math.max(1, (window.innerHeight || 1) - 70),
+        screenH: window.screen?.height,
+        pointCountFormula: 64 * Math.ceil((window.screen?.height || window.innerHeight) / 30),
+        camera: {
+          near: camera.near,
+          far: camera.far,
+          fov: camera.fov,
+          aspect: camera.aspect,
+          pos: camera.position.toArray(),
+          view: camera.view
+            ? {
+                fullWidth: camera.view.fullWidth,
+                fullHeight: camera.view.fullHeight,
+                offsetX: camera.view.offsetX,
+                offsetY: camera.view.offsetY,
+                width: camera.view.width,
+                height: camera.view.height
+              }
+            : null
+        },
+        featuredCameraPosition: featuredCameraPosition.toArray(),
+        featuredMouse3: featuredMouse3.toArray(),
+        particleY: getActVisual(3)?.sceneModule?.samplePositionYStats?.() ?? null,
+        points
+      }
+    }
+  }
 
   function getActVisual (actIndex) {
     return actVisuals.find((v) => v.actIndex === actIndex)
@@ -194,10 +276,24 @@ function initWebGLBackground () {
     if (shouldPreloadOcean(state)) getActVisual(3).ensureMounted(scene)
   }
 
+  /**
+   * 从 window.scrollY 同步幕状态。
+   * 刷新时浏览器常在脚本之后才恢复滚动，且不一定派发 scroll —— 必须每帧校对。
+   */
+  function syncScrollState (force = false) {
+    const y = window.scrollY
+    if (!force && y === appliedScrollY) return false
+    appliedScrollY = y
+    scrollState = computeScrollState(y)
+    testActViewports()
+    applyScrollState(scrollState)
+    return true
+  }
+
   function updateOceanFeaturedCamera () {
     const visual = getActVisual(3)
     if (!visual?.refDom) return
-    const metrics = computeFeaturedActMetrics(visual)
+    const metrics = resolveOceanFeaturedMetrics(visual)
     applyFeaturedCamera(camera, lookTarget, metrics, 0)
     camera.matrixWorld.decompose(
       featuredCameraPosition,
@@ -226,10 +322,12 @@ function initWebGLBackground () {
       spaceVisual.group.visible = spaceVisual.shouldDraw()
     }
     if (cityVisual.group) {
+      cityVisual.group.userData.sceneOpacity = cityOpacity
       setGroupSceneOpacity(cityVisual.group, cityOpacity)
       cityVisual.group.visible = cityVisual.shouldDraw()
     }
     if (oceanVisual.group) {
+      oceanVisual.group.userData.sceneOpacity = oceanOpacity
       setGroupSceneOpacity(oceanVisual.group, oceanOpacity)
       oceanVisual.group.visible = oceanVisual.shouldDraw()
     }
@@ -237,31 +335,82 @@ function initWebGLBackground () {
     document.body.classList.toggle('act-ocean', state.oceanInteractive)
 
     pointer.setOceanMode?.(state.oceanInteractive)
+    applyRendererPixelRatio(state.oceanInteractive)
+
+    if (state.oceanInteractive && !oceanWasInteractive) {
+      oceanVisual.sceneModule?.seedVerticalSpread?.()
+    }
+    oceanWasInteractive = state.oceanInteractive
 
     const fogColor = new THREE.Color(PALETTE.fogSpace)
       .lerp(new THREE.Color(PALETTE.fogCity), state.blend12)
       .lerp(new THREE.Color(PALETTE.fogOcean), state.blend23)
 
     if (state.oceanInteractive) {
-      const bg = new THREE.Color(FEATURED_CYAN.backgroundColor)
+      const oceanTheme =
+        getActVisual(3)?.sceneModule?.getTheme?.() || FEATURED_CYAN
+      const bg = new THREE.Color(oceanTheme.backgroundColor)
       scene.fog.color.copy(bg)
       scene.fog.density = 0
       renderer.setClearColor(bg)
+      // 对齐线上 r112：无 tone mapping、无 sRGB 出屏编码（否则体积光偏暗）
       renderer.toneMapping = THREE.NoToneMapping
       renderer.toneMappingExposure = 1
+      // 取证：?oceanColorExp=srgbOut 时改回 SRGB，对比是否偏冷
+      renderer.outputColorSpace = getOceanColorExperimentFlags().srgbOut
+        ? THREE.SRGBColorSpace
+        : THREE.LinearSRGBColorSpace
+      if (scene.environment !== roomEnvMap) scene.environment = roomEnvMap
+      scene.environmentIntensity = 1
+      hemi.color.copy(hemiBase.color)
+      hemi.groundColor.copy(hemiBase.ground)
+      hemi.intensity = hemiBase.intensity
+      fill.color.copy(fillBase.color)
+      fill.intensity = fillBase.intensity
     } else {
       scene.fog.color.copy(fogColor)
       const cityFog = state.blend12 * (1 - state.blend23)
+      // 城市幕原模型直出：关雾、关城市向 bloom 偏置；ACES 中性曝光
       scene.fog.density = THREE.MathUtils.lerp(
         0.014,
-        THREE.MathUtils.lerp(0.008, 0.0095, state.blend23),
+        THREE.MathUtils.lerp(0.0, 0.0095, state.blend23),
         cityFog
       )
       renderer.setClearColor(fogColor)
+      renderer.outputColorSpace = THREE.SRGBColorSpace
       updateFogVeils(scene, fogColor)
-      clearFeaturedCamera(camera)
-      renderer.toneMapping = THREE.ACESFilmicToneMapping
-      renderer.toneMappingExposure = THREE.MathUtils.lerp(1.58, 1.18, state.blend23)
+      clearFeaturedCamera(camera, { near: 0.1, far: 2500 })
+      // 城市幕：暖色户外 IBL；离开则回到室内 Room 探针
+      const useCityEnv = cityOpacity > 0.4 && oceanOpacity < 0.25
+      if (useCityEnv) {
+        if (scene.environment !== cityEnvMap) scene.environment = cityEnvMap
+        scene.environmentIntensity = 0.95
+        hemi.color.setHex(0xffd0b0)
+        hemi.groundColor.setHex(0x1a0c14)
+        hemi.intensity = 0.12
+        fill.color.setHex(0xffe8d8)
+        fill.intensity = 0.08
+      } else {
+        if (scene.environment !== roomEnvMap) scene.environment = roomEnvMap
+        scene.environmentIntensity = 1
+        hemi.color.copy(hemiBase.color)
+        hemi.groundColor.copy(hemiBase.ground)
+        hemi.intensity = hemiBase.intensity
+        fill.color.copy(fillBase.color)
+        fill.intensity = fillBase.intensity
+      }
+      if (cityOpacity > 0.45) {
+        renderer.toneMapping = THREE.ACESFilmicToneMapping
+        renderer.toneMappingExposure = 1.05
+      } else {
+        renderer.toneMapping = THREE.ACESFilmicToneMapping
+        const cityExposure = 1.48 - cityOpacity * 0.32
+        renderer.toneMappingExposure = THREE.MathUtils.lerp(
+          cityExposure,
+          1.18,
+          state.blend23
+        )
+      }
     }
 
     postPipeline.setActBloom?.({
@@ -287,6 +436,8 @@ function initWebGLBackground () {
     if (!state.oceanInteractive) {
       const pose = computeCameraPose(state.progress, state.scrollVh)
       camera.position.set(...pose.position)
+      if (pose.up) camera.up.set(...pose.up)
+      else camera.up.set(0, 1, 0)
       lookTarget.set(...pose.lookAt)
       camera.lookAt(lookTarget)
       camera.fov = pose.fov
@@ -311,12 +462,6 @@ function initWebGLBackground () {
     }
   }
 
-  function onScroll () {
-    scrollState = computeScrollState(window.scrollY)
-    testActViewports()
-    applyScrollState(scrollState)
-  }
-
   let scrollTicking = false
   window.addEventListener(
     'scroll',
@@ -324,21 +469,25 @@ function initWebGLBackground () {
       if (scrollTicking) return
       scrollTicking = true
       requestAnimationFrame(() => {
-        onScroll()
+        syncScrollState()
         scrollTicking = false
       })
     },
     { passive: true }
   )
 
+  // bfcache / 部分浏览器的滚动恢复
+  window.addEventListener('pageshow', () => syncScrollState(true))
+
   function onResize () {
     camera.aspect = window.innerWidth / window.innerHeight
     camera.updateProjectionMatrix()
+    // 保持当前幕的 PR（海底=1），只重设尺寸
     renderer.setSize(window.innerWidth, window.innerHeight)
     postPipeline.setSize(window.innerWidth, window.innerHeight)
     const city = getActVisual(2)
     if (city?.mounted && city.sceneModule?.onResize) city.sceneModule.onResize()
-    onScroll()
+    syncScrollState(true)
   }
   window.addEventListener('resize', onResize)
 
@@ -357,7 +506,12 @@ function initWebGLBackground () {
     if (avgFps < 18) {
       qualityTier = 'low'
       skipHeavyUpdates = true
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5))
+      // 海底实验锁 PR=1 时不要被 FPS 降级改回去
+      if (!oceanPixelRatioLocked) {
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5))
+        renderer.setSize(window.innerWidth, window.innerHeight)
+        postPipeline.setSize(window.innerWidth, window.innerHeight)
+      }
     }
 
     fpsWindowStart = now
@@ -372,11 +526,12 @@ function initWebGLBackground () {
 
     trackFps(now)
     updateMotion(delta)
+    // 必须先于 ensureLazyActs：捕获无事件的 scroll restoration
+    syncScrollState()
     if (scrollState.oceanInteractive) {
       updateOceanFeaturedCamera()
       pointer.updateFromElastic?.()
     }
-    testActViewports()
 
     const foreground = document.getElementById('landing-foreground')
     if (foreground && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -388,7 +543,20 @@ function initWebGLBackground () {
     const cityVisual = getActVisual(2)
     const oceanVisual = getActVisual(3)
 
+    const cityWasMounted = cityVisual.mounted
+    const oceanWasMounted = oceanVisual.mounted
     ensureLazyActs(scrollState)
+    // sync 未触发时若本帧才懒挂载，补一次透明度
+    if (cityVisual.mounted && !cityWasMounted && cityVisual.group) {
+      cityVisual.group.userData.sceneOpacity = cityVisual.opacity
+      setGroupSceneOpacity(cityVisual.group, cityVisual.opacity)
+      cityVisual.group.visible = cityVisual.shouldDraw()
+    }
+    if (oceanVisual.mounted && !oceanWasMounted && oceanVisual.group) {
+      oceanVisual.group.userData.sceneOpacity = oceanVisual.opacity
+      setGroupSceneOpacity(oceanVisual.group, oceanVisual.opacity)
+      oceanVisual.group.visible = oceanVisual.shouldDraw()
+    }
 
     spaceVisual.tick(scrollState, now, delta)
 
@@ -412,8 +580,14 @@ function initWebGLBackground () {
     }
   }
 
-  onScroll()
-  animate()
+  syncScrollState(true)
+  // 再等两帧：部分浏览器在 load 后才写回 scrollY
+  requestAnimationFrame(() => {
+    syncScrollState(true)
+    requestAnimationFrame(() => syncScrollState(true))
+  })
+  // 必须走 rAF，直接 animate() 时 now 为 undefined → matte phase 变 NaN 会拖垮整段 WebGL
+  requestAnimationFrame(animate)
   document.body.classList.add('landing-bg-ready')
   window.__landingBgInited = true
 }

@@ -26,6 +26,13 @@ function bind () {
   _bound = true
   _reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   _lastScrollY = window.scrollY
+  // 与线上一致：弹性鼠标从视口中心起步
+  const cx = (window.innerWidth || 0) * 0.5
+  const cy = (window.innerHeight || 0) * 0.5
+  _mouse.x = cx
+  _mouse.y = cy
+  _elastic.x = cx
+  _elastic.y = cy
   window.addEventListener('pointermove', onPointerMove, { passive: true })
   window.addEventListener('scroll', onScroll, { passive: true })
 }

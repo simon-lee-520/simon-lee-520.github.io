@@ -1,10 +1,55 @@
 import * as THREE from 'three'
 import { FEATURED_THEMES } from './light-scatter.js'
+export {
+  FEATURED_THEMES,
+  FEATURED_DEFAULT,
+  createFeaturedThemeSampler
+} from './light-scatter.js'
 
-/** featured 主题表 [2]（青色海水）— 颜色与 scatter 原样 */
+/** featured 主题表 [2]（青色海水）— 只保留这一套色，参数与线上表一致 */
 export const FEATURED_CYAN = {
   ...FEATURED_THEMES[2],
   lightDistance: 9
+}
+
+/**
+ * 颜色取证实验（URL ?oceanColorExp=...）：
+ * - lightAsPoint：体积光 lightColor 改用 pointColor（验「偏蓝是否由 lightColor 主导」）
+ * - srgbOut：海底幕出屏改回 SRGB（验 LinearSRGB 是否加重偏冷）
+ * 可组合：?oceanColorExp=lightAsPoint,srgbOut
+ */
+export function getOceanColorExperimentFlags () {
+  if (typeof window === 'undefined') {
+    return { lightAsPoint: false, srgbOut: false }
+  }
+  const raw = new URLSearchParams(window.location.search).get('oceanColorExp') || ''
+  const parts = raw.split(',').map((s) => s.trim()).filter(Boolean)
+  return {
+    lightAsPoint: parts.includes('lightAsPoint'),
+    srgbOut: parts.includes('srgbOut')
+  }
+}
+
+/** 运行时主题（可被颜色实验覆盖 lightColor） */
+export function resolveFeaturedOceanTheme () {
+  const flags = getOceanColorExperimentFlags()
+  if (!flags.lightAsPoint) return FEATURED_CYAN
+  return {
+    ...FEATURED_CYAN,
+    lightColor: FEATURED_CYAN.pointColor
+  }
+}
+
+/**
+ * 线上 Three r112 无 ColorManagement：shader 直接吃 0–1 的 hex 分量。
+ * 用 Vector3 避免 r186 把 Color uniform 转成线性后再出屏导致偏暗。
+ */
+export function hexToRgbVec3 (hex, target = new THREE.Vector3()) {
+  return target.set(
+    ((hex >> 16) & 255) / 255,
+    ((hex >> 8) & 255) / 255,
+    (hex & 255) / 255
+  )
 }
 
 /** getScatter GLSL */
@@ -66,7 +111,7 @@ export function createFeaturedSharedUniforms (cameraPosition, mouse3) {
     u_lightScatterDivider: { value: t.scatterDivider },
     u_lightScatterPowInv: { value: t.scatterPowInv },
     u_cameraPosition: { value: cameraPosition },
-    u_lightColor: { value: new THREE.Color(t.lightColor) },
+    u_lightColor: { value: hexToRgbVec3(t.lightColor) },
     u_lightPosition: { value: mouse3 },
     u_lightViewPosition: { value: new THREE.Vector3() },
     u_lightDistance: { value: t.lightDistance },
@@ -81,7 +126,7 @@ export function createFeaturedBgMesh (sharedUniforms) {
     new THREE.PlaneGeometry(1000, 1000),
     new THREE.ShaderMaterial({
       uniforms: {
-        u_color: { value: new THREE.Color(FEATURED_CYAN.backgroundColor) },
+        u_color: { value: hexToRgbVec3(FEATURED_CYAN.backgroundColor) },
         u_lightColor: sharedUniforms.u_lightColor,
         u_lightScatterDivider: sharedUniforms.u_lightScatterDivider,
         u_lightScatterPowInv: sharedUniforms.u_lightScatterPowInv,
@@ -102,13 +147,13 @@ export function createFeaturedBgMesh (sharedUniforms) {
 /** featured 背景每帧更新 */
 export function updateFeaturedBg (sharedUniforms, camera, theme = FEATURED_CYAN) {
   const uColor = sharedUniforms._bgColorUniform
-  if (uColor) uColor.value.setHex(theme.backgroundColor)
+  if (uColor) hexToRgbVec3(theme.backgroundColor, uColor.value)
   sharedUniforms.u_lightViewPosition.value
     .copy(sharedUniforms.u_lightPosition.value)
     .applyMatrix4(camera.matrixWorldInverse)
   sharedUniforms.u_lightScatterDivider.value = theme.scatterDivider
   sharedUniforms.u_lightScatterPowInv.value = theme.scatterPowInv
-  sharedUniforms.u_lightColor.value.setHex(theme.lightColor)
+  hexToRgbVec3(theme.lightColor, sharedUniforms.u_lightColor.value)
   sharedUniforms.u_lightDistance.value = theme.lightDistance ?? 9
   sharedUniforms.u_diffMultiplier.value = theme.diffMultiplier
   sharedUniforms.u_specMultiplier.value = theme.specMultiplier
